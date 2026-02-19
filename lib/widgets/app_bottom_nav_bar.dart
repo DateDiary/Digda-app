@@ -3,12 +3,12 @@ import '../theme/colors.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final Function(int) onTap;
+  final Function(int)? onTap;
 
   const AppBottomNavBar({
     super.key,
     required this.currentIndex,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
@@ -37,7 +37,7 @@ class AppBottomNavBar extends StatelessWidget {
     final bool isSelected = currentIndex == index;
     final Color color = isSelected ? AppColors.primary : AppColors.gray400;
     return GestureDetector(
-      onTap: () => onTap(index),
+      onTap: () => onTap?.call(index),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 60,
