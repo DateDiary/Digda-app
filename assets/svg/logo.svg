@@ -1,0 +1,18 @@
+<svg width="60" height="62" viewBox="0 0 60 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Heart outline -->
+  <path d="M30 62C30 62 0 40 0 22C0 10 9 0 20 0C25 0 29 3 30 8C31 3 35 0 40 0C51 0 60 10 60 22C60 40 30 62 30 62Z" stroke="#FF6B6B" stroke-width="2.5"/>
+  <!-- Calendar border -->
+  <path d="M40 20H20C17.791 20 16 21.791 16 24V38C16 40.209 17.791 42 20 42H40C42.209 42 44 40.209 44 38V24C44 21.791 42.209 20 40 20Z" stroke="#FF6B6B" stroke-width="1.8"/>
+  <!-- Horizontal divider -->
+  <path d="M16 27H44" stroke="#FF6B6B" stroke-width="1.2"/>
+  <!-- Calendar pegs -->
+  <circle cx="24" cy="22" r="1" fill="#FF6B6B"/>
+  <circle cx="36" cy="22" r="1" fill="#FF6B6B"/>
+  <!-- Grid cells row 1 -->
+  <rect x="21" y="31" width="3.4" height="2.4" rx="0.8" fill="#FF6B6B" opacity="0.5"/>
+  <rect x="28" y="31" width="3.4" height="2.4" rx="0.8" fill="#FF6B6B"/>
+  <rect x="35" y="31" width="3.4" height="2.4" rx="0.8" fill="#FF6B6B" opacity="0.3"/>
+  <!-- Grid cells row 2 -->
+  <rect x="21" y="36" width="3.4" height="2.4" rx="0.8" fill="#FF6B6B" opacity="0.3"/>
+  <rect x="28" y="36" width="3.4" height="2.4" rx="0.8" fill="#FF6B6B" opacity="0.5"/>
+</svg>
