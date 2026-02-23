@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../theme/text_styles.dart';
 import '../../widgets/primary_button.dart';
 
 class TermsAgreementScreen extends StatefulWidget {
@@ -42,41 +43,25 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
               const SizedBox(height: 60),
               const Text(
                 '서비스 이용을 위해',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 24,
-                  height: 1.21,
-                  letterSpacing: 0,
-                  color: AppColors.gray900,
-                ),
+                style: AppTextStyles.heading2,
               ),
               const Text(
                 '약관에 동의해주세요',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 24,
-                  height: 1.21,
-                  letterSpacing: 0,
-                  color: AppColors.gray900,
-                ),
+                style: AppTextStyles.heading2,
               ),
               const SizedBox(height: 32),
               _buildCheckAll(),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                height: 1,
-                color: AppColors.gray100,
-              ),
+              const SizedBox(height: 20),
               _buildCheckItem(0, '이용약관 동의', true),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               _buildCheckItem(1, '개인정보 수집 및 이용 동의', true),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               _buildCheckItem(2, '만 14세 이상입니다', true),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
+              Container(height: 1, color: AppColors.gray100),
+              const SizedBox(height: 16),
               _buildCheckItem(3, '마케팅 정보 수신 동의', false),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               _buildCheckItem(4, '푸시 알림 수신 동의', false),
               const Spacer(),
               Center(
@@ -98,26 +83,26 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
   Widget _buildCheckAll() {
     return GestureDetector(
       onTap: () => _toggleAll(!_checkAll),
-      child: Row(
-        children: [
-          Icon(
-            _checkAll ? Icons.check_circle : Icons.radio_button_unchecked,
-            size: 24,
-            color: _checkAll ? AppColors.primary : AppColors.gray300,
-          ),
-          const SizedBox(width: 12),
-          const Text(
-            '전체 동의',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              height: 1.21,
-              letterSpacing: 0,
-              color: AppColors.gray900,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.gray50,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              _checkAll ? Icons.check_box : Icons.check_box_outline_blank,
+              size: 22,
+              color: _checkAll ? AppColors.primary : AppColors.gray300,
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            const Text(
+              '전체 동의',
+              style: AppTextStyles.title,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -128,11 +113,20 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
       child: Row(
         children: [
           Icon(
-            _checks[index] ? Icons.check_circle : Icons.radio_button_unchecked,
+            _checks[index] ? Icons.check_box : Icons.check_box_outline_blank,
             size: 20,
             color: _checks[index] ? AppColors.primary : AppColors.gray300,
           ),
           const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.gray900,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
@@ -143,31 +137,17 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
             ),
             child: Text(
               isRequired ? '필수' : '선택',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 10,
-                height: 1.21,
-                letterSpacing: 0,
+              style: AppTextStyles.tiny.copyWith(
                 color: isRequired ? AppColors.primary : AppColors.gray500,
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                height: 1.21,
-                letterSpacing: 0,
-                color: AppColors.gray900,
-              ),
-            ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.chevron_right,
+            size: 16,
+            color: AppColors.gray400,
           ),
-          const Icon(Icons.chevron_right, size: 16, color: AppColors.gray400),
         ],
       ),
     );

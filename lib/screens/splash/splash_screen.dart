@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 
@@ -23,36 +24,76 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 60,
-                height: 62,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(Icons.book_outlined, size: 32, color: AppColors.white),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                '디그다',
-                style: AppTextStyles.heading1.copyWith(color: AppColors.gray900),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                '디지털 그룹 다이어리',
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.gray500),
-                textAlign: TextAlign.center,
-              ),
-            ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.white, Color(0xFFFFF8F8)],
           ),
         ),
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  'assets/svg/logo.svg',
+                  width: 80,
+                  height: 83,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '디그다',
+                  style: AppTextStyles.heading1,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '디지털 그룹 다이어리',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.gray500,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                const _LoadingDots(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadingDots extends StatelessWidget {
+  const _LoadingDots();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _Dot(),
+        const SizedBox(width: 8),
+        _Dot(),
+        const SizedBox(width: 8),
+        _Dot(),
+      ],
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 7,
+      height: 7,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.primary.withOpacity(0.25),
       ),
     );
   }
