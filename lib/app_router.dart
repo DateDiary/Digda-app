@@ -37,6 +37,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const CodeGenerateScreen());
       case '/create-diary':
         return MaterialPageRoute(builder: (_) => const CreateDiaryScreen());
+      case '/update-diary':
+        return MaterialPageRoute(
+            builder: (_) => const CreateDiaryScreen(isEdit: true));
       case '/group-list':
         return MaterialPageRoute(builder: (_) => const GroupListScreen());
       case '/group-home':

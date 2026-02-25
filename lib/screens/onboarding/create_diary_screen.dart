@@ -3,19 +3,31 @@ import '../../theme/colors.dart';
 import '../../widgets/primary_button.dart';
 
 class CreateDiaryScreen extends StatefulWidget {
-  const CreateDiaryScreen({super.key});
+  const CreateDiaryScreen({super.key, this.isEdit = false});
+
+  final bool isEdit;
 
   @override
   State<CreateDiaryScreen> createState() => _CreateDiaryScreenState();
 }
 
 class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  int _maxMembers = 4;
+  late final TextEditingController _nameController;
+  late int _maxMembers;
 
   static const List<int?> _presets = [2, 4, 6, 10, null]; // null = 제한없음
 
   bool get _canCreate => _nameController.text.trim().isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    // 수정 모드: 기존 값 pre-fill (실제 앱에서는 인자로 전달)
+    _nameController = TextEditingController(
+      text: widget.isEdit ? '여행 모임' : '',
+    );
+    _maxMembers = widget.isEdit ? 6 : 4;
+  }
 
   @override
   void dispose() {
@@ -341,54 +353,56 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 28),
-                    // 초대 코드 섹션
-                    const Text(
-                      '초대 코드',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        height: 1.3,
-                        color: AppColors.gray900,
+                    // 초대 코드 섹션 (생성 모드에서만 표시)
+                    if (!widget.isEdit) ...[
+                      const SizedBox(height: 28),
+                      const Text(
+                        '초대 코드',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          height: 1.3,
+                          color: AppColors.gray900,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.gray50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.gray100),
-                      ),
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 16,
-                            color: AppColors.gray400,
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              '다이어리 생성 시 초대 코드가 자동으로\n만들어집니다',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                height: 1.5,
-                                color: AppColors.gray500,
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.gray50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.gray100),
+                        ),
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: AppColors.gray400,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '다이어리 생성 시 초대 코드가 자동으로\n만들어집니다',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  height: 1.5,
+                                  color: AppColors.gray500,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -397,10 +411,12 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               child: PrimaryButton(
-                text: '다이어리 만들기',
+                text: widget.isEdit ? '다이어리 수정하기' : '다이어리 만들기',
                 onPressed: _canCreate
-                    ? () =>
-                        Navigator.of(context).pushReplacementNamed('/group-list')
+                    ? () => widget.isEdit
+                        ? Navigator.of(context).pop()
+                        : Navigator.of(context)
+                            .pushReplacementNamed('/group-list')
                     : null,
               ),
             ),
