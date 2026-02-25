@@ -43,7 +43,7 @@ class SocialLoginScreen extends StatelessWidget {
                 size: 20,
                 color: AppColors.kakaoText,
               ),
-              onPressed: () => Navigator.of(context).pushNamed('/terms'),
+              onPressed: () => Navigator.of(context).pushNamed('/terms', arguments: 'kakao'),
             ),
             const SizedBox(height: 12),
             _SocialButton(
@@ -59,7 +59,7 @@ class SocialLoginScreen extends StatelessWidget {
                   color: AppColors.white,
                 ),
               ),
-              onPressed: () => Navigator.of(context).pushNamed('/terms'),
+              onPressed: () => Navigator.of(context).pushNamed('/terms', arguments: 'naver'),
             ),
             const SizedBox(height: 12),
             _SocialButton(
@@ -67,7 +67,7 @@ class SocialLoginScreen extends StatelessWidget {
               backgroundColor: AppColors.appleBlack,
               textColor: AppColors.white,
               icon: const Icon(Icons.apple, size: 20, color: AppColors.white),
-              onPressed: () => Navigator.of(context).pushNamed('/terms'),
+              onPressed: () => Navigator.of(context).pushNamed('/terms', arguments: 'apple'),
             ),
             const SizedBox(height: 48),
             Text(

@@ -118,6 +118,10 @@ class GroupListScreen extends StatelessWidget {
                         showActions: g.showActions,
                         onTap: () =>
                             Navigator.of(context).pushNamed('/group-home'),
+                        onShare: () =>
+                            Navigator.of(context).pushNamed('/code-generate'),
+                        onSettings: () =>
+                            Navigator.of(context).pushNamed('/update-diary'),
                       ),
                     ),
                   ),
