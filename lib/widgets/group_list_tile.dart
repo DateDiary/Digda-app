@@ -6,9 +6,11 @@ class GroupListTile extends StatelessWidget {
   final String memberCount;
   final IconData groupIcon;
   final Color groupIconBg;
-  final bool hasNotification;
-  final bool hasSettings;
+  final Color groupIconColor;
+  final bool showActions;
   final VoidCallback? onTap;
+  final VoidCallback? onShare;
+  final VoidCallback? onSettings;
 
   const GroupListTile({
     super.key,
@@ -16,9 +18,11 @@ class GroupListTile extends StatelessWidget {
     required this.memberCount,
     this.groupIcon = Icons.group,
     this.groupIconBg = AppColors.gray50,
-    this.hasNotification = false,
-    this.hasSettings = false,
+    this.groupIconColor = AppColors.gray500,
+    this.showActions = false,
     this.onTap,
+    this.onShare,
+    this.onSettings,
   });
 
   @override
@@ -26,14 +30,8 @@ class GroupListTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 361,
-        height: 92,
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 14,
-          bottom: 14,
-        ),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
@@ -42,13 +40,13 @@ class GroupListTile extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
                 color: groupIconBg,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(groupIcon, size: 24, color: AppColors.gray500),
+              child: Icon(groupIcon, size: 24, color: groupIconColor),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -62,7 +60,7 @@ class GroupListTile extends StatelessWidget {
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      height: 1.21,
+                      height: 1.3,
                       letterSpacing: 0,
                       color: AppColors.gray900,
                     ),
@@ -73,8 +71,8 @@ class GroupListTile extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      height: 1.21,
+                      fontSize: 13,
+                      height: 1.3,
                       letterSpacing: 0,
                       color: AppColors.gray500,
                     ),
@@ -82,12 +80,25 @@ class GroupListTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (hasNotification || hasSettings) ...[
-              const Icon(Icons.notifications_outlined, size: 24, color: AppColors.gray400),
-              const SizedBox(width: 8),
-              const Icon(Icons.settings_outlined, size: 24, color: AppColors.gray400),
+            if (showActions) ...[
+              GestureDetector(
+                onTap: onShare,
+                child: const Icon(
+                  Icons.ios_share_outlined,
+                  size: 20,
+                  color: AppColors.gray400,
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: onSettings,
+                child: const Icon(
+                  Icons.radio_button_unchecked,
+                  size: 20,
+                  color: AppColors.gray400,
+                ),
+              ),
             ],
-            const Icon(Icons.chevron_right, size: 20, color: AppColors.gray400),
           ],
         ),
       ),

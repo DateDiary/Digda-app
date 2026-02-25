@@ -6,71 +6,150 @@ import '../../widgets/app_bottom_nav_bar.dart';
 class GroupListScreen extends StatelessWidget {
   const GroupListScreen({super.key});
 
+  static const _groups = [
+    _GroupData(
+      name: '대학 친구들',
+      memberCount: '4명 참여 중',
+      icon: Icons.image_outlined,
+      bgColor: Color(0xFFFFEAEA),
+      iconColor: AppColors.primary,
+      showActions: false,
+    ),
+    _GroupData(
+      name: '여행 모임',
+      memberCount: '6명 참여 중',
+      icon: Icons.diamond_outlined,
+      bgColor: Color(0xFFEAEEFF),
+      iconColor: Color(0xFF6B82F0),
+      showActions: true,
+    ),
+    _GroupData(
+      name: '회사 동기',
+      memberCount: '2명 참여 중',
+      icon: Icons.coffee_outlined,
+      bgColor: Color(0xFFFFF3E0),
+      iconColor: Color(0xFFF0A050),
+      showActions: true,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final groups = [
-      {'name': '우리 커플 다이어리', 'memberCount': '멤버 2명', 'icon': Icons.favorite_outline, 'bg': AppColors.gray50},
-      {'name': '가족 여행 기록', 'memberCount': '멤버 4명', 'icon': Icons.flight_outlined, 'bg': AppColors.gray50},
-      {'name': '친구들과 일상', 'memberCount': '멤버 5명', 'icon': Icons.group_outlined, 'bg': AppColors.gray50},
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
           children: [
+            // 헤더
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Date Diary',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                      height: 1.21,
-                      letterSpacing: 0,
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 20,
                       color: AppColors.gray900,
                     ),
+                    onPressed: () => Navigator.of(context).maybePop(),
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pushNamed('/create-diary'),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 20,
-                        color: AppColors.white,
+                  const Expanded(
+                    child: Text(
+                      '내 다이어리',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        height: 1.3,
+                        color: AppColors.gray900,
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 24,
+                          color: AppColors.gray700,
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/notifications'),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.adjust_outlined,
+                      size: 24,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () {},
                   ),
                 ],
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: groups.length,
-                itemBuilder: (context, index) {
-                  final group = groups[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: GroupListTile(
-                      name: group['name'] as String,
-                      memberCount: group['memberCount'] as String,
-                      groupIcon: group['icon'] as IconData,
-                      groupIconBg: group['bg'] as Color,
-                      onTap: () => Navigator.of(context).pushNamed('/group-home'),
+              child: ListView(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                children: [
+                  ..._groups.map(
+                    (g) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: GroupListTile(
+                        name: g.name,
+                        memberCount: g.memberCount,
+                        groupIcon: g.icon,
+                        groupIconBg: g.bgColor,
+                        groupIconColor: g.iconColor,
+                        showActions: g.showActions,
+                        onTap: () =>
+                            Navigator.of(context).pushNamed('/group-home'),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(height: 8),
+                  // 새 다이어리 추가
+                  GestureDetector(
+                    onTap: () =>
+                        Navigator.of(context).pushNamed('/create-diary'),
+                    child: const Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.add_circle_outline,
+                            size: 18,
+                            color: AppColors.primary,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            '새 다이어리 추가',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -79,4 +158,22 @@ class GroupListScreen extends StatelessWidget {
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
+}
+
+class _GroupData {
+  final String name;
+  final String memberCount;
+  final IconData icon;
+  final Color bgColor;
+  final Color iconColor;
+  final bool showActions;
+
+  const _GroupData({
+    required this.name,
+    required this.memberCount,
+    required this.icon,
+    required this.bgColor,
+    required this.iconColor,
+    required this.showActions,
+  });
 }

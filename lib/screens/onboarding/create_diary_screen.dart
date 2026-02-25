@@ -1,27 +1,50 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/back_header.dart';
 import '../../widgets/primary_button.dart';
 
 class CreateDiaryScreen extends StatefulWidget {
-  const CreateDiaryScreen({super.key});
+  const CreateDiaryScreen({super.key, this.isEdit = false});
+
+  final bool isEdit;
 
   @override
   State<CreateDiaryScreen> createState() => _CreateDiaryScreenState();
 }
 
 class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  String _selectedEmoji = '📔';
+  late final TextEditingController _nameController;
+  late int _maxMembers;
 
-  final List<String> _emojis = ['📔', '💕', '🌸', '✈️', '🎮', '🎵', '🍕', '⚽'];
+  static const List<int?> _presets = [2, 4, 6, 10, null]; // null = 제한없음
 
   bool get _canCreate => _nameController.text.trim().isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    // 수정 모드: 기존 값 pre-fill (실제 앱에서는 인자로 전달)
+    _nameController = TextEditingController(
+      text: widget.isEdit ? '여행 모임' : '',
+    );
+    _maxMembers = widget.isEdit ? 6 : 4;
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  void _increment() {
+    setState(() {
+      if (_maxMembers < 99) _maxMembers++;
+    });
+  }
+
+  void _decrement() {
+    setState(() {
+      if (_maxMembers > 2) _maxMembers--;
+    });
   }
 
   @override
@@ -30,11 +53,36 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BackHeader(
-              title: '새 다이어리 만들기',
-              onBack: () => Navigator.of(context).pop(),
+            // 헤더
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 20,
+                        color: AppColors.gray900,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  const Text(
+                    '다이어리',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      height: 1.3,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -42,49 +90,15 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 32),
-                    Center(
-                      child: GestureDetector(
-                        onTap: _showEmojiPicker,
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                            child: Text(
-                              _selectedEmoji,
-                              style: const TextStyle(fontSize: 36),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Center(
-                      child: Text(
-                        '이모지를 탭해서 변경하세요',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          height: 1.21,
-                          letterSpacing: 0,
-                          color: AppColors.gray400,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    // 방 이름
                     const Text(
-                      '다이어리 이름',
+                      '방 이름',
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        height: 1.21,
-                        letterSpacing: 0,
+                        height: 1.3,
                         color: AppColors.gray900,
                       ),
                     ),
@@ -96,23 +110,27 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 15,
-                        height: 1.21,
-                        letterSpacing: 0,
+                        height: 1.4,
                         color: AppColors.gray900,
                       ),
                       decoration: InputDecoration(
-                        hintText: '다이어리 이름을 입력해주세요',
+                        hintText: '여행 모임',
                         hintStyle: const TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           fontSize: 15,
-                          height: 1.21,
-                          letterSpacing: 0,
                           color: AppColors.gray300,
                         ),
-                        border: OutlineInputBorder(
+                        counterStyle: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          color: AppColors.gray400,
+                        ),
+                        filled: true,
+                        fillColor: AppColors.gray50,
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.gray200),
+                          borderSide: const BorderSide(color: AppColors.gray100),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -125,84 +143,283 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
+                    const SizedBox(height: 24),
+                    // 대표 이미지
+                    const Row(
+                      children: [
+                        Text(
+                          '대표 이미지',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            height: 1.3,
+                            color: AppColors.gray900,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          '(선택)',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: AppColors.gray400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: () {
+                        // 이미지 선택 (추후 구현)
+                      },
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.gray200,
+                            width: 1.5,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.camera_alt_outlined,
+                              size: 24,
+                              color: AppColors.gray400,
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '사진 추가',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 11,
+                                color: AppColors.gray400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    // 최대 인원
+                    const Text(
+                      '최대 인원',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        height: 1.3,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      '이 다이어리에 참여할 수 있는 최대 인원을 설정하세요',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        height: 1.5,
+                        color: AppColors.gray500,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // 스테퍼
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.gray100),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: _decrement,
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppColors.gray200),
+                              ),
+                              child: const Icon(
+                                Icons.remove,
+                                size: 18,
+                                color: AppColors.gray700,
+                              ),
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '$_maxMembers',
+                                style: const TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 22,
+                                  color: AppColors.gray900,
+                                ),
+                              ),
+                              const Text(
+                                '명',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: AppColors.gray500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: _increment,
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppColors.gray200),
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 18,
+                                color: AppColors.gray700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // 프리셋 버튼
+                    Row(
+                      children: _presets.map((preset) {
+                        final label = preset == null ? '제한없음' : '$preset명';
+                        final isSelected = preset == null
+                            ? _maxMembers > 10
+                            : _maxMembers == preset;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _maxMembers = preset ?? 99;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.gray50,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.gray200,
+                                ),
+                              ),
+                              child: Text(
+                                label,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  color: isSelected
+                                      ? AppColors.white
+                                      : AppColors.gray700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    // 초대 코드 섹션 (생성 모드에서만 표시)
+                    if (!widget.isEdit) ...[
+                      const SizedBox(height: 28),
+                      const Text(
+                        '초대 코드',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          height: 1.3,
+                          color: AppColors.gray900,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.gray50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.gray100),
+                        ),
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: AppColors.gray400,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '다이어리 생성 시 초대 코드가 자동으로\n만들어집니다',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  height: 1.5,
+                                  color: AppColors.gray500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               child: PrimaryButton(
-                text: '다이어리 만들기',
+                text: widget.isEdit ? '다이어리 수정하기' : '다이어리 만들기',
                 onPressed: _canCreate
-                    ? () => Navigator.of(context)
-                        .pushReplacementNamed('/group-list')
+                    ? () => widget.isEdit
+                        ? Navigator.of(context).pop()
+                        : Navigator.of(context)
+                            .pushReplacementNamed('/group-list')
                     : null,
               ),
             ),
-            const SizedBox(height: 48),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showEmojiPicker() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '이모지 선택',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                height: 1.21,
-                letterSpacing: 0,
-                color: AppColors.gray900,
-              ),
-            ),
-            const SizedBox(height: 20),
-            GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-              ),
-              itemCount: _emojis.length,
-              itemBuilder: (context, index) {
-                final emoji = _emojis[index];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() => _selectedEmoji = emoji);
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: _selectedEmoji == emoji
-                          ? AppColors.primary.withValues(alpha: 0.1)
-                          : AppColors.gray50,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        emoji,
-                        style: const TextStyle(fontSize: 28),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
           ],
         ),
       ),

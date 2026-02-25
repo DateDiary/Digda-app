@@ -6,6 +6,13 @@ import '../../widgets/feature_card.dart';
 class GroupHomeScreen extends StatelessWidget {
   const GroupHomeScreen({super.key});
 
+  static const _memberColors = [
+    AppColors.primary,
+    AppColors.blue,
+    AppColors.green,
+    AppColors.purple,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,50 +20,49 @@ class GroupHomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // 헤더
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
+                  IconButton(
+                    icon: const Icon(
                       Icons.arrow_back_ios,
-                      size: 14,
+                      size: 20,
                       color: AppColors.gray900,
                     ),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  const Text(
-                    '우리 커플 다이어리',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                      height: 1.21,
-                      letterSpacing: 0,
-                      color: AppColors.gray900,
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        '대학 친구들',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                          height: 1.3,
+                          color: AppColors.gray900,
+                        ),
+                      ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pushNamed('/notifications'),
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          size: 22,
-                          color: AppColors.gray700,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.settings_outlined,
-                          size: 22,
-                          color: AppColors.gray700,
-                        ),
-                      ),
-                    ],
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
+                      size: 22,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/notifications'),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.adjust_outlined,
+                      size: 22,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -65,55 +71,91 @@ class GroupHomeScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8),
-                    _buildMemberAvatars(),
-                    const SizedBox(height: 24),
-                    const Text(
-                      '무엇을 기록할까요?',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray900,
-                      ),
-                    ),
                     const SizedBox(height: 16),
+                    // 멤버 아바타
+                    _buildMemberSection(),
+                    const SizedBox(height: 24),
+                    // 기능 카드들
                     FeatureCard(
-                      icon: Icons.calendar_today_outlined,
-                      iconBgColor: AppColors.gray50,
-                      title: '일정',
-                      subtitle: '함께하는 일정을 관리해요',
-                      onTap: () => Navigator.of(context).pushNamed('/schedule'),
+                      icon: Icons.calendar_month_outlined,
+                      iconBgColor: AppColors.primary.withValues(alpha: 0.15),
+                      iconColor: AppColors.primary,
+                      cardBgColor: AppColors.primary.withValues(alpha: 0.06),
+                      title: '일정 관리',
+                      subtitle: '우리 모임 일정을 한눈에',
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/schedule'),
                     ),
                     const SizedBox(height: 12),
                     FeatureCard(
                       icon: Icons.book_outlined,
-                      iconBgColor: AppColors.gray50,
-                      title: '일기',
-                      subtitle: '소중한 순간을 기록해요',
+                      iconBgColor: const Color(0xFFFFE88A),
+                      iconColor: const Color(0xFFC89A00),
+                      cardBgColor: const Color(0xFFFFFBEE),
+                      title: '그림일기',
+                      subtitle: '오늘의 추억을 기록해요',
                       onTap: () => Navigator.of(context).pushNamed('/diary'),
                     ),
                     const SizedBox(height: 12),
                     FeatureCard(
-                      icon: Icons.quiz_outlined,
-                      iconBgColor: AppColors.gray50,
-                      title: '퀴즈',
-                      subtitle: '서로를 얼마나 아는지 확인해요',
-                      onTap: () => Navigator.of(context).pushNamed('/quiz'),
+                      icon: Icons.sentiment_satisfied_outlined,
+                      iconBgColor: AppColors.gray100,
+                      iconColor: AppColors.gray400,
+                      cardBgColor: AppColors.gray50,
+                      title: '퀴즈 게임',
+                      subtitle: '준비 중이에요',
+                      isDisabled: true,
+                      badge: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.gray200,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'Coming Soon',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     FeatureCard(
-                      icon: Icons.check_circle_outline,
-                      iconBgColor: AppColors.gray50,
+                      icon: Icons.check_box_outlined,
+                      iconBgColor: AppColors.blue.withValues(alpha: 0.2),
+                      iconColor: AppColors.blue,
+                      cardBgColor: AppColors.blue.withValues(alpha: 0.06),
                       title: '투두리스트',
-                      subtitle: '함께 해야 할 일을 체크해요',
+                      subtitle: '할 일을 함께 관리해요',
+                      badge: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.blue.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          '3개 남음',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: AppColors.blue,
+                          ),
+                        ),
+                      ),
                       onTap: () => Navigator.of(context).pushNamed('/todo'),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -125,76 +167,77 @@ class GroupHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberAvatars() {
-    return Row(
+  Widget _buildMemberSection() {
+    const totalMembers = 7;
+    const displayCount = 4;
+    const extraCount = totalMembers - displayCount;
+
+    return Column(
       children: [
-        _buildAvatar('나', AppColors.primary),
-        const SizedBox(width: 8),
-        _buildAvatar('상대', AppColors.blue),
-        const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ...List.generate(displayCount, (i) => _buildAvatar(i)),
+            const SizedBox(width: 8),
+            _buildExtraAvatar(extraCount),
+          ],
+        ),
+        const SizedBox(height: 10),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.gray50,
+            color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Row(
-            children: const [
-              Icon(Icons.people_outline, size: 14, color: AppColors.gray500),
-              SizedBox(width: 4),
-              Text(
-                '멤버 2명',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  height: 1.21,
-                  letterSpacing: 0,
-                  color: AppColors.gray500,
-                ),
-              ),
-            ],
+          child: const Text(
+            '7명 참여 중',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: AppColors.primary,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildAvatar(String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              label[0],
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: color,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
+  Widget _buildAvatar(int index) {
+    final color = _memberColors[index % _memberColors.length];
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.18),
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.white, width: 2),
+      ),
+      child: Icon(Icons.person_outline, size: 22, color: color),
+    );
+  }
+
+  Widget _buildExtraAvatar(int count) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: AppColors.gray100,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.white, width: 2),
+      ),
+      child: Center(
+        child: Text(
+          '+$count',
           style: const TextStyle(
             fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontSize: 12,
-            height: 1.21,
-            letterSpacing: 0,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
             color: AppColors.gray500,
           ),
         ),
-      ],
+      ),
     );
   }
 }

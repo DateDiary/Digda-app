@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/colors.dart';
-import '../../widgets/center_title_header.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/outline_button.dart';
 
 class CodeGenerateScreen extends StatefulWidget {
   const CodeGenerateScreen({super.key});
@@ -12,7 +12,7 @@ class CodeGenerateScreen extends StatefulWidget {
 }
 
 class _CodeGenerateScreenState extends State<CodeGenerateScreen> {
-  final String _generatedCode = 'A1B2C3';
+  final String _generatedCode = 'A3X9K2';
   bool _copied = false;
 
   void _copyCode() {
@@ -23,101 +23,134 @@ class _CodeGenerateScreenState extends State<CodeGenerateScreen> {
     });
   }
 
+  void _shareCode() {
+    // 공유 기능 (추후 구현)
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            CenterTitleHeader(
-              title: '참여 코드',
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            const Spacer(),
-            const Text(
-              '다이어리 참여 코드',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-                height: 1.21,
-                letterSpacing: 0,
-                color: AppColors.gray500,
+      backgroundColor: AppColors.gray50,
+      body: Stack(
+        children: [
+          // 하단 흰색 시트
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _generatedCode,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                fontSize: 34,
-                height: 1.21,
-                letterSpacing: 8,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: _copyCode,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _copied ? Icons.check : Icons.copy,
-                      size: 16,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _copied ? '복사됨' : '코드 복사',
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.primary,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.gray200,
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    '초대 코드가 생성됐어요!',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      height: 1.3,
+                      letterSpacing: 0,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // 코드 표시 박스
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _generatedCode,
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 36,
+                          letterSpacing: 6,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // 버튼 2개
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppOutlineButton(
+                          text: _copied ? '복사됨' : '코드 복사',
+                          onPressed: _copyCode,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: PrimaryButton(
+                          text: '공유하기',
+                          onPressed: _shareCode,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      '상대방이 이 코드를 입력하면 연결돼요',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        height: 1.5,
+                        color: AppColors.gray500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Center(
+                    child: Text(
+                      '코드는 24시간 후 만료됩니다',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        height: 1.5,
+                        color: AppColors.gray400,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 40),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                '이 코드를 친구에게 공유하면\n같은 다이어리에 참여할 수 있어요',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  height: 1.5,
-                  letterSpacing: 0,
-                  color: AppColors.gray500,
-                ),
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: PrimaryButton(
-                text: '확인',
+          ),
+          // 상단 닫기 버튼
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: IconButton(
+                icon: const Icon(Icons.close, color: AppColors.gray500),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
-            const SizedBox(height: 48),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
