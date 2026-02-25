@@ -20,9 +20,8 @@ class TodoItem extends StatelessWidget {
     return GestureDetector(
       onTap: onToggle,
       child: Container(
-        width: 345,
-        height: 50,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(12),
@@ -30,16 +29,27 @@ class TodoItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
-              size: 22,
-              color: isCompleted ? AppColors.blue : AppColors.gray300,
+            // 체크박스 (둥근 사각형 스타일)
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                color: isCompleted ? AppColors.blue : Colors.transparent,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: isCompleted ? AppColors.blue : AppColors.gray300,
+                  width: 1.5,
+                ),
+              ),
+              child: isCompleted
+                  ? const Icon(Icons.check, size: 14, color: AppColors.white)
+                  : null,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     text,
@@ -47,24 +57,28 @@ class TodoItem extends StatelessWidget {
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                       fontSize: 15,
-                      height: 1.21,
+                      height: 1.3,
                       letterSpacing: 0,
-                      color: isCompleted ? AppColors.gray400 : AppColors.gray900,
-                      decoration: isCompleted ? TextDecoration.lineThrough : null,
+                      color:
+                          isCompleted ? AppColors.gray400 : AppColors.gray900,
+                      decoration:
+                          isCompleted ? TextDecoration.lineThrough : null,
+                      decorationColor: AppColors.gray400,
                     ),
                   ),
-                  if (isCompleted && completedDate != null)
+                  if (isCompleted && completedDate != null) ...[
+                    const SizedBox(height: 2),
                     Text(
                       completedDate!,
                       style: const TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 11,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray200,
+                        height: 1.3,
+                        color: AppColors.gray400,
                       ),
                     ),
+                  ],
                 ],
               ),
             ),
