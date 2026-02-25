@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/primary_button.dart';
@@ -14,105 +15,60 @@ class EmptyStateScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Date Diary',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 22,
-                          height: 1.21,
-                          letterSpacing: 0,
-                          color: AppColors.gray900,
-                        ),
-                      ),
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.book_outlined,
-                          size: 20,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+              child: Text(
+                'Date Diary',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 24,
+                  height: 1.2,
+                  letterSpacing: 0,
+                  color: AppColors.gray900,
+                ),
               ),
             ),
             const Spacer(),
-            Stack(
-              alignment: Alignment.center,
+            Column(
               children: [
-                Positioned(
-                  top: 0,
-                  left: 80,
-                  child: _buildDecorativeMark(),
+                SvgPicture.asset(
+                  'assets/svg/empty_state.svg',
+                  width: 160,
+                  height: 160,
                 ),
-                Positioned(
-                  top: 20,
-                  right: 60,
-                  child: _buildDecorativeMark(),
+                const SizedBox(height: 24),
+                const Text(
+                  '아직 참여 중인 다이어리가 없어요',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                    height: 1.3,
+                    letterSpacing: 0,
+                    color: AppColors.gray900,
+                  ),
                 ),
-                Column(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.gray100,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.book_outlined,
-                        size: 40,
-                        color: AppColors.gray300,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      '아직 참여 중인 다이어리가 없어요',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '코드를 입력하거나 새 다이어리를 만들어보세요',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray500,
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 8),
+                const Text(
+                  '초대 코드를 입력하거나, 새로 만들어보세요',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    height: 1.5,
+                    letterSpacing: 0,
+                    color: AppColors.gray500,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 40),
-            AppOutlineButton(
-              text: '코드로 참여하기',
-              onPressed: () {
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: AppOutlineButton(
+                text: '초대 코드 입력하기',
+                onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -123,38 +79,21 @@ class EmptyStateScreen extends StatelessWidget {
                 );
               },
             ),
+            ),
             const SizedBox(height: 12),
-            PrimaryButton(
-              text: '새 다이어리 만들기',
-              onPressed: () => Navigator.of(context).pushNamed('/create-diary'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: PrimaryButton(
+                text: '새 다이어리 만들기',
+                onPressed: () =>
+                    Navigator.of(context).pushNamed('/create-diary'),
+              ),
             ),
             const Spacer(),
           ],
         ),
       ),
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
-    );
-  }
-
-  Widget _buildDecorativeMark() {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: const Center(
-        child: Text(
-          '?',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-            color: AppColors.primary,
-          ),
-        ),
-      ),
     );
   }
 }
