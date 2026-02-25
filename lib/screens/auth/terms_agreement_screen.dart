@@ -4,7 +4,9 @@ import '../../theme/text_styles.dart';
 import '../../widgets/primary_button.dart';
 
 class TermsAgreementScreen extends StatefulWidget {
-  const TermsAgreementScreen({super.key});
+  const TermsAgreementScreen({super.key, this.loginType = 'kakao'});
+
+  final String loginType;
 
   @override
   State<TermsAgreementScreen> createState() => _TermsAgreementScreenState();
@@ -68,7 +70,15 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                 child: PrimaryButton(
                   text: '동의하고 시작하기',
                   onPressed: _allRequiredChecked
-                      ? () => Navigator.of(context).pushReplacementNamed('/home')
+                      ? () {
+                          if (widget.loginType == 'naver') {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/group-list');
+                          } else {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/home');
+                          }
+                        }
                       : null,
                 ),
               ),

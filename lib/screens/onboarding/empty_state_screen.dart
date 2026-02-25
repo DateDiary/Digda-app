@@ -15,27 +15,66 @@ class EmptyStateScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
-              child: Text(
-                'Date Diary',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 24,
-                  height: 1.2,
-                  letterSpacing: 0,
-                  color: AppColors.gray900,
-                ),
+            // 헤더
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/svg/logo.svg',
+                    width: 28,
+                    height: 29,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Date Diary',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      height: 1.2,
+                      letterSpacing: 0,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
+                      size: 24,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/notifications'),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.adjust_outlined,
+                      size: 24,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ),
             const Spacer(),
+            // 빈 상태 일러스트
             Column(
               children: [
-                SvgPicture.asset(
-                  'assets/svg/empty_state.svg',
-                  width: 160,
-                  height: 160,
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_stories_outlined,
+                    size: 52,
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 const Text(
@@ -69,16 +108,17 @@ class EmptyStateScreen extends StatelessWidget {
               child: AppOutlineButton(
                 text: '초대 코드 입력하기',
                 onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  builder: (context) => const CodeInputBottomSheet(),
-                );
-              },
-            ),
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    builder: (context) => const CodeInputBottomSheet(),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 12),
             Padding(
