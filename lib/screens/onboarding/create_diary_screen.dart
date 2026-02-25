@@ -416,7 +416,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                     ? () => widget.isEdit
                         ? Navigator.of(context).pop()
                         : Navigator.of(context)
-                            .pushReplacementNamed('/group-list')
+                            .pushReplacementNamed('/code-generate')
                     : null,
               ),
             ),

@@ -30,7 +30,9 @@ class AppRouter {
       case '/login':
         return MaterialPageRoute(builder: (_) => const SocialLoginScreen());
       case '/terms':
-        return MaterialPageRoute(builder: (_) => const TermsAgreementScreen());
+        final loginType = settings.arguments as String? ?? 'kakao';
+        return MaterialPageRoute(
+            builder: (_) => TermsAgreementScreen(loginType: loginType));
       case '/home':
         return MaterialPageRoute(builder: (_) => const EmptyStateScreen());
       case '/code-generate':
