@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/back_header.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -12,10 +11,28 @@ class NotificationSettingsScreen extends StatefulWidget {
 
 class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
-  bool _pushEnabled = true;
-  bool _scheduleEnabled = true;
-  bool _diaryEnabled = true;
-  bool _marketingEnabled = false;
+  bool _allEnabled = true;
+
+  final List<Map<String, dynamic>> _groups = [
+    {
+      'name': '대학 친구들',
+      'memberCount': 5,
+      'emoji': '🎓',
+      'enabled': true,
+    },
+    {
+      'name': '여행 모임',
+      'memberCount': 8,
+      'emoji': '✈️',
+      'enabled': true,
+    },
+    {
+      'name': '회사 동기',
+      'memberCount': 4,
+      'emoji': '☕',
+      'enabled': false,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -25,41 +42,146 @@ class _NotificationSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BackHeader(
-              title: '알림 설정',
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            Expanded(
-              child: ListView(
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  _buildSwitchItem(
-                    '푸시 알림',
-                    '모든 알림을 받습니다',
-                    _pushEnabled,
-                    (val) => setState(() => _pushEnabled = val),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
+                      ),
+                    ),
                   ),
-                  const Divider(color: AppColors.gray100, height: 1),
-                  _buildSwitchItem(
-                    '일정 알림',
-                    '일정 시작 전 알림을 받습니다',
-                    _scheduleEnabled,
-                    (val) => setState(() => _scheduleEnabled = val),
-                  ),
-                  const Divider(color: AppColors.gray100, height: 1),
-                  _buildSwitchItem(
-                    '일기 알림',
-                    '새 일기가 작성되면 알림을 받습니다',
-                    _diaryEnabled,
-                    (val) => setState(() => _diaryEnabled = val),
-                  ),
-                  const Divider(color: AppColors.gray100, height: 1),
-                  _buildSwitchItem(
-                    '마케팅 알림',
-                    '이벤트 및 마케팅 정보를 받습니다',
-                    _marketingEnabled,
-                    (val) => setState(() => _marketingEnabled = val),
+                  const Text(
+                    '알림 설정',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
                   ),
                 ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    // Global toggle
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.notifications_outlined,
+                            size: 22,
+                            color: AppColors.gray700,
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '전체 알림',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                    color: AppColors.gray900,
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  '모든 그룹방 알림을 제어합니다',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: AppColors.gray500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            value: _allEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                _allEnabled = val;
+                                for (final g in _groups) {
+                                  g['enabled'] = val;
+                                }
+                              });
+                            },
+                            activeColor: AppColors.primary,
+                            activeTrackColor:
+                                AppColors.primary.withValues(alpha: 0.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Group section label
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        '그룹별 알림',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: AppColors.gray400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Group list
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: List.generate(_groups.length, (index) {
+                          final group = _groups[index];
+                          final isLast = index == _groups.length - 1;
+                          return Column(
+                            children: [
+                              _buildGroupRow(group),
+                              if (!isLast)
+                                const Divider(
+                                  color: AppColors.gray100,
+                                  height: 1,
+                                  indent: 16,
+                                  endIndent: 16,
+                                ),
+                            ],
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -68,40 +190,54 @@ class _NotificationSettingsScreenState
     );
   }
 
-  Widget _buildSwitchItem(
-    String title,
-    String subtitle,
-    bool value,
-    void Function(bool) onChanged,
-  ) {
+  Widget _buildGroupRow(Map<String, dynamic> group) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
+          // Emoji icon in circle
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                group['emoji'] as String,
+                style: const TextStyle(fontSize: 22),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  group['name'] as String,
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
-                    height: 1.21,
-                    letterSpacing: 0,
                     color: AppColors.gray900,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  subtitle,
+                  '멤버 ${group['memberCount']}명',
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    height: 1.21,
-                    letterSpacing: 0,
+                    fontSize: 12,
                     color: AppColors.gray500,
                   ),
                 ),
@@ -109,9 +245,15 @@ class _NotificationSettingsScreenState
             ),
           ),
           Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: AppColors.primary,
+            value: group['enabled'] as bool,
+            onChanged: (val) {
+              setState(() {
+                group['enabled'] = val;
+                _allEnabled = _groups.every((g) => g['enabled'] as bool);
+              });
+            },
+            activeColor: AppColors.primary,
+            activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
           ),
         ],
       ),
