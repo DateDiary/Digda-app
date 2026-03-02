@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/back_header.dart';
 
 class PrivacySettingsScreen extends StatelessWidget {
   const PrivacySettingsScreen({super.key});
@@ -13,47 +12,154 @@ class PrivacySettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BackHeader(
-              title: '개인정보 처리방침',
-              onBack: () => Navigator.of(context).pop(),
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    '개인정보 관리',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSection(
-                      '1. 수집하는 개인정보 항목',
-                      '디그다는 서비스 제공을 위해 다음과 같은 개인정보를 수집합니다.\n\n- 필수항목: 이메일 주소, 닉네임\n- 선택항목: 프로필 사진',
+                    const SizedBox(height: 16),
+                    // 기본 정보 section
+                    _buildSectionLabel('기본 정보'),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildInfoRow('이름', '김민수'),
+                          const Divider(
+                              color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
+                          _buildInfoRow('이메일', 'minsu@email.com'),
+                          const Divider(
+                              color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
+                          _buildInfoRowWithBadge(
+                            '가입일\n로그인',
+                            '2026.01.15',
+                            badge: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.kakaoYellow,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                '카카오',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: AppColors.kakaoText,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    _buildSection(
-                      '2. 개인정보의 수집 및 이용목적',
-                      '수집된 개인정보는 다음의 목적을 위해 활용합니다.\n\n- 서비스 제공 및 운영\n- 고객 문의 응대\n- 서비스 개선',
+                    // 보안 설정 section
+                    _buildSectionLabel('보안 설정'),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSecurityRow(
+                            icon: Icons.lock_outline,
+                            label: '비밀번호 변경',
+                            onTap: () {},
+                          ),
+                          const Divider(
+                              color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
+                          _buildSecurityRow(
+                            icon: Icons.check_box_outline_blank,
+                            label: '2차 인증 설정',
+                            subtitle: '사용 안함',
+                            onTap: () {},
+                          ),
+                          const Divider(
+                              color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
+                          _buildSecurityRow(
+                            icon: Icons.access_time_outlined,
+                            label: '로그인 기록',
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    _buildSection(
-                      '3. 개인정보의 보유 및 이용기간',
-                      '수집된 개인정보는 회원 탈퇴 시까지 보유하며, 탈퇴 후 즉시 파기합니다.',
+                    // 계정 관리 section
+                    _buildSectionLabel('계정 관리'),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSecurityRow(
+                            label: '로그아웃',
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed('/login'),
+                          ),
+                          const Divider(
+                              color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
+                          _buildSecurityRow(
+                            label: '회원 탈퇴',
+                            labelColor: AppColors.primaryDark,
+                            rowColor: AppColors.primary.withValues(alpha: 0.05),
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    _buildSection(
-                      '4. 개인정보의 제3자 제공',
-                      '디그다는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다.',
-                    ),
-                    const SizedBox(height: 40),
-                    Text(
-                      '시행일: 2025년 1월 1일',
-                      style: const TextStyle(
+                    const SizedBox(height: 8),
+                    const Text(
+                      '탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.',
+                      style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
-                        height: 1.21,
-                        letterSpacing: 0,
                         color: AppColors.gray400,
                       ),
                     ),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -64,34 +170,148 @@ class PrivacySettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-            height: 1.21,
-            letterSpacing: 0,
-            color: AppColors.gray900,
+  Widget _buildSectionLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontFamily: 'Inter',
+        fontWeight: FontWeight.w400,
+        fontSize: 13,
+        color: AppColors.gray400,
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 64,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: AppColors.gray500,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          content,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-            height: 1.6,
-            letterSpacing: 0,
-            color: AppColors.gray700,
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              color: AppColors.gray900,
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRowWithBadge(
+    String label,
+    String value, {
+    required Widget badge,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 64,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                height: 1.6,
+                color: AppColors.gray500,
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: AppColors.gray900,
+                ),
+              ),
+              const SizedBox(height: 4),
+              badge,
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSecurityRow({
+    IconData? icon,
+    required String label,
+    String? subtitle,
+    Color? labelColor,
+    Color? rowColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        color: rowColor ?? Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 20, color: AppColors.gray500),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: labelColor ?? AppColors.gray900,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        color: AppColors.gray400,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: AppColors.gray400,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
