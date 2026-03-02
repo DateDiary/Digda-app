@@ -1,86 +1,245 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/center_title_header.dart';
-import '../../widgets/notification_item.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final notifications = [
-      {
-        'emoji': '📅',
-        'groupName': '일정 알림',
-        'message': '내일 영화 데이트 일정이 있어요',
-        'time': '방금 전',
-        'isRead': false,
-      },
-      {
-        'emoji': '📔',
-        'groupName': '우리 커플 다이어리',
-        'message': '상대방이 새 일기를 작성했어요',
-        'time': '1시간 전',
-        'isRead': false,
-      },
-      {
-        'emoji': '✅',
-        'groupName': '투두리스트',
-        'message': '투두리스트 항목이 완료됐어요',
-        'time': '2시간 전',
-        'isRead': true,
-      },
-      {
-        'emoji': '💕',
-        'groupName': '기념일 알림',
-        'message': '오늘은 기념일이에요! 축하해요',
-        'time': '어제',
-        'isRead': true,
-      },
-    ];
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
 
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  final List<Map<String, dynamic>> _today = [
+    {
+      'groupName': '대학 친구들',
+      'message': '지수님이 새 일정을 등록했습니다',
+      'time': '3분 전',
+      'icon': '📅',
+      'isRead': false,
+    },
+    {
+      'groupName': '여행 모임',
+      'message': '민호님이 일기에 댓글을 남겼습니다',
+      'time': '28분 전',
+      'icon': '✏️',
+      'isRead': false,
+    },
+    {
+      'groupName': '대학 친구들',
+      'message': '새 퀴즈가 등록되었습니다',
+      'time': '1시간 전',
+      'icon': '🎮',
+      'isRead': false,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _yesterday = [
+    {
+      'groupName': '회사 동기',
+      'message': '수진님이 일정을 수정했습니다',
+      'time': '어제 오후 6:30',
+      'icon': '📅',
+      'isRead': true,
+    },
+    {
+      'groupName': '대학 친구들',
+      'message': '지수님이 새 일기를 작성했습니다',
+      'time': '어제 오후 3:15',
+      'icon': '📔',
+      'isRead': true,
+    },
+    {
+      'groupName': '여행 모임',
+      'message': '새 멤버 현우님이 참여했습니다',
+      'time': '어제 오전 11:00',
+      'icon': '👋',
+      'isRead': true,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _earlier = [
+    {
+      'groupName': '회사 동기',
+      'message': '영희님의 생일이 다가옵니다',
+      'time': '2월 6일',
+      'icon': '🎂',
+      'isRead': true,
+    },
+  ];
+
+  void _markAllRead() {
+    setState(() {
+      for (final n in _today) {
+        n['isRead'] = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
           children: [
-            CenterTitleHeader(
-              title: '알림',
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            Expanded(
-              child: notifications.isEmpty
-                  ? const Center(
-                      child: Text(
-                        '새로운 알림이 없어요',
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    '알림',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: _markAllRead,
+                      child: const Text(
+                        '모두 읽음',
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: AppColors.gray400,
+                          color: AppColors.primary,
                         ),
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      itemCount: notifications.length,
-                      itemBuilder: (context, index) {
-                        final n = notifications[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: NotificationItem(
-                            emoji: n['emoji'] as String,
-                            groupName: n['groupName'] as String,
-                            message: n['message'] as String,
-                            time: n['time'] as String,
-                            isRead: n['isRead'] as bool,
-                          ),
-                        );
-                      },
                     ),
+                  ),
+                ],
+              ),
+            ),
+            // List
+            Expanded(
+              child: ListView(
+                children: [
+                  if (_today.isNotEmpty) ...[
+                    _buildSectionLabel('오늘'),
+                    ..._today.map((n) => _buildNotificationItem(n)),
+                  ],
+                  if (_yesterday.isNotEmpty) ...[
+                    _buildSectionLabel('어제'),
+                    ..._yesterday.map((n) => _buildNotificationItem(n)),
+                  ],
+                  if (_earlier.isNotEmpty) ...[
+                    _buildSectionLabel('이전'),
+                    ..._earlier.map((n) => _buildNotificationItem(n)),
+                  ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontFamily: 'Inter',
+          fontWeight: FontWeight.w700,
+          fontSize: 13,
+          color: AppColors.gray400,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationItem(Map<String, dynamic> notification) {
+    final isRead = notification['isRead'] as bool;
+    return Container(
+      color: isRead ? AppColors.white : AppColors.primary.withValues(alpha: 0.03),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Unread indicator
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(top: 18),
+            decoration: BoxDecoration(
+              color: isRead ? Colors.transparent : AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Icon
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.gray50,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                notification['icon'] as String,
+                style: const TextStyle(fontSize: 22),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  notification['groupName'] as String,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: isRead ? FontWeight.w400 : FontWeight.w700,
+                    fontSize: 14,
+                    color: AppColors.gray900,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  notification['message'] as String,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    color: AppColors.gray700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  notification['time'] as String,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11,
+                    color: AppColors.gray400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
