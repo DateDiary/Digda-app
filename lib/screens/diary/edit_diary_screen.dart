@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/back_header.dart';
-import '../../widgets/primary_button.dart';
 
 class EditDiaryScreen extends StatefulWidget {
   const EditDiaryScreen({super.key});
@@ -12,13 +10,27 @@ class EditDiaryScreen extends StatefulWidget {
 
 class _EditDiaryScreenState extends State<EditDiaryScreen> {
   final TextEditingController _titleController =
-      TextEditingController(text: '발렌타인 데이');
+      TextEditingController(text: '설날 모임');
   final TextEditingController _contentController = TextEditingController(
-      text: '오늘은 정말 특별한 발렌타인 데이였어요. 한강에서 피크닉을 하면서 함께 보낸 시간이 너무 소중했어요.');
+    text: '오늘은 설날이라서 친구들이랑 같이 떡국을\n먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n오후에는 영화관에서 영화를 봤는데 너무\n재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n저녁에는 집에 와서 같이 셀카도 찍었다.\n다음에도 이렇게 만나고 싶다!',
+  );
+
+  int _selectedWeather = 0;
+  int _selectedMood = 1;
+  bool _hasImage = true;
 
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
       _contentController.text.trim().isNotEmpty;
+
+  final List<_WeatherOption> _weatherOptions = const [
+    _WeatherOption(icon: Icons.wb_sunny_outlined, color: Color(0xFFFBBF24)),
+    _WeatherOption(icon: Icons.wb_cloudy_outlined, color: AppColors.gray400),
+    _WeatherOption(icon: Icons.grain, color: AppColors.blue),
+    _WeatherOption(icon: Icons.ac_unit, color: AppColors.saturdayBlue),
+  ];
+
+  final List<String> _moodEmojis = ['😊', '😍', '😂', '🥰'];
 
   @override
   void dispose() {
@@ -27,121 +39,352 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
     super.dispose();
   }
 
+  String _formatDate(DateTime date) {
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final weekday = weekdays[date.weekday - 1];
+    return '${date.year}년 ${date.month}월 ${date.day}일 ${weekday}요일';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: const Color(0xFFFDF8F4),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BackHeader(
-              title: '일기 수정',
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      '2025년 2월 14일 금요일',
+            // Header
+            Container(
+              color: AppColors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Text(
+                    '일기 수정',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: _canSave
+                        ? () => Navigator.of(context).pop()
+                        : null,
+                    child: Text(
+                      '저장',
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray400,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _titleController,
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                        height: 1.3,
-                        letterSpacing: 0,
-                        color: AppColors.gray900,
-                      ),
-                      decoration: const InputDecoration(
-                        hintText: '제목',
-                        hintStyle: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                          color: AppColors.gray200,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                    const Divider(color: AppColors.gray100),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _contentController,
-                      maxLines: null,
-                      minLines: 10,
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
                         fontSize: 15,
-                        height: 1.6,
-                        letterSpacing: 0,
-                        color: AppColors.gray800,
+                        color: _canSave ? AppColors.primary : AppColors.gray400,
                       ),
-                      decoration: const InputDecoration(
-                        hintText: '오늘의 소중한 순간을 기록해보세요...',
-                        hintStyle: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 15,
-                          color: AppColors.inputHint,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onChanged: (_) => setState(() {}),
                     ),
-                    const SizedBox(height: 16),
+                  ),
+                ],
+              ),
+            ),
+            // Weather + Mood selector
+            Container(
+              color: AppColors.white,
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+              child: Row(
+                children: [
+                  const Text(
+                    '날씨',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      color: AppColors.gray500,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ...List.generate(_weatherOptions.length, (i) {
+                    final opt = _weatherOptions[i];
+                    final isSelected = _selectedWeather == i;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedWeather = i),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? opt.color.withValues(alpha: 0.15)
+                              : Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          opt.icon,
+                          size: 20,
+                          color: isSelected ? opt.color : AppColors.gray400,
+                        ),
+                      ),
+                    );
+                  }),
+                  const SizedBox(width: 16),
+                  const Text(
+                    '기분',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      color: AppColors.gray500,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ...List.generate(_moodEmojis.length, (i) {
+                    final isSelected = _selectedMood == i;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedMood = i),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 6),
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primary.withValues(alpha: 0.15)
+                              : Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            _moodEmojis[i],
+                            style: TextStyle(
+                              fontSize: isSelected ? 20 : 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Writing area
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Date + title + image block
                     Container(
-                      width: double.infinity,
-                      height: 200,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: AppColors.gray100,
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.gray100),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 40,
-                          color: AppColors.gray300,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title input
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 14,
+                                ),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(color: AppColors.gray100),
+                                  ),
+                                ),
+                                child: const Text(
+                                  '제목',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: AppColors.gray400,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: _titleController,
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: AppColors.gray900,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                    ),
+                                  ),
+                                  onChanged: (_) => setState(() {}),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(color: AppColors.gray100, height: 1),
+                          // Image area (with existing image + remove button)
+                          if (_hasImage)
+                            Stack(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  margin: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(alpha: 0.07),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.primary.withValues(alpha: 0.3),
+                                      style: BorderStyle.solid,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      width: 80,
+                                      height: 64,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: const Color(0xFFFBBF24),
+                                          width: 1.5,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(
+                                        Icons.image_outlined,
+                                        size: 32,
+                                        color: Color(0xFFFBBF24),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 16,
+                                  right: 16,
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        setState(() => _hasImage = false),
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.gray700,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 14,
+                                        color: AppColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            GestureDetector(
+                              onTap: () => setState(() => _hasImage = true),
+                              child: Container(
+                                width: double.infinity,
+                                height: 100,
+                                margin: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.gray50,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppColors.gray200),
+                                ),
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: 28,
+                                      color: AppColors.gray300,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '사진 추가',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 12,
+                                        color: AppColors.gray400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
+                    // Lined writing area
+                    _buildLinedArea(),
                     const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: PrimaryButton(
-                text: '수정 완료',
-                onPressed: _canSave
-                    ? () => Navigator.of(context).pop()
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 48),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildLinedArea() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Stack(
+        children: [
+          Column(
+            children: List.generate(
+              12,
+              (i) => Container(
+                height: 44,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.gray100, width: 1),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          TextField(
+            controller: _contentController,
+            maxLines: null,
+            minLines: 12,
+            style: const TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              height: 2.93,
+              color: AppColors.gray800,
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeatherOption {
+  final IconData icon;
+  final Color color;
+
+  const _WeatherOption({required this.icon, required this.color});
 }
