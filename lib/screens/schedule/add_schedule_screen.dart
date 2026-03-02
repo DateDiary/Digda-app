@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/back_header.dart';
 import '../../widgets/primary_button.dart';
 
 class AddScheduleScreen extends StatefulWidget {
@@ -12,17 +11,29 @@ class AddScheduleScreen extends StatefulWidget {
 
 class _AddScheduleScreenState extends State<AddScheduleScreen> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _memoController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay _startTime = const TimeOfDay(hour: 18, minute: 0);
-  TimeOfDay _endTime = const TimeOfDay(hour: 20, minute: 0);
+  TimeOfDay _startTime = const TimeOfDay(hour: 14, minute: 0);
+  TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
   Color _selectedColor = AppColors.primary;
+
+  // Participants (mock)
+  final List<Map<String, dynamic>> _allParticipants = [
+    {'name': '승호', 'isMe': true, 'color': AppColors.primary, 'selected': true},
+    {'name': '지수', 'isMe': false, 'color': AppColors.blue, 'selected': true},
+    {'name': '민호', 'isMe': false, 'color': AppColors.green, 'selected': true},
+    {'name': '수진', 'isMe': false, 'color': Color(0xFFFBBF24), 'selected': false},
+    {'name': '현우', 'isMe': false, 'color': AppColors.purple, 'selected': false},
+  ];
+
+  int get _selectedCount =>
+      _allParticipants.where((p) => p['selected'] as bool).length;
 
   final List<Color> _colorOptions = [
     AppColors.primary,
-    AppColors.blue,
     AppColors.purple,
+    AppColors.blue,
     AppColors.green,
+    const Color(0xFFFBBF24),
   ];
 
   bool get _canSave => _titleController.text.trim().isNotEmpty;
@@ -30,8 +41,42 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   @override
   void dispose() {
     _titleController.dispose();
-    _memoController.dispose();
     super.dispose();
+  }
+
+  String _formatDate(DateTime date) {
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final weekday = weekdays[date.weekday - 1];
+    return '${date.year}년 ${date.month}월 ${date.day}일 ($weekday)';
+  }
+
+  String _formatTime(TimeOfDay time) {
+    final period = time.hour < 12 ? '오전' : '오후';
+    final hour = time.hour == 0
+        ? 12
+        : time.hour > 12
+            ? time.hour - 12
+            : time.hour;
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$period $hour:$minute';
+  }
+
+  void _showParticipantPopup() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _ParticipantPopup(
+        participants: _allParticipants,
+        onConfirm: (updated) {
+          setState(() {
+            for (int i = 0; i < _allParticipants.length; i++) {
+              _allParticipants[i]['selected'] = updated[i]['selected'];
+            }
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -42,9 +87,34 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BackHeader(
-              title: '일정 추가',
-              onBack: () => Navigator.of(context).pop(),
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    '일정 등록',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -52,25 +122,34 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 20),
+                    // Category/Color
+                    _buildSectionLabel('카테고리 분류'),
+                    const SizedBox(height: 12),
+                    _buildColorPicker(),
                     const SizedBox(height: 24),
-                    _buildSectionLabel('일정 이름'),
+                    // Title
+                    _buildSectionLabel('제목'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _titleController,
-                      hintText: '일정 이름을 입력해주세요',
+                      hintText: '일정 제목을 입력하세요',
                       onChanged: (_) => setState(() {}),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
+                    // Date
                     _buildSectionLabel('날짜'),
                     const SizedBox(height: 8),
                     GestureDetector(
                       onTap: _pickDate,
                       child: _buildDisplayField(
-                        '${_selectedDate.year}년 ${_selectedDate.month}월 ${_selectedDate.day}일',
+                        _formatDate(_selectedDate),
                         Icons.calendar_today_outlined,
+                        showChevron: true,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
+                    // Time
                     _buildSectionLabel('시간'),
                     const SizedBox(height: 8),
                     Row(
@@ -78,14 +157,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _pickTime(isStart: true),
-                            child: _buildDisplayField(
-                              _startTime.format(context),
-                              Icons.access_time_outlined,
-                            ),
+                            child: _buildTimeField(_formatTime(_startTime)),
                           ),
                         ),
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             '~',
                             style: TextStyle(
@@ -98,47 +174,62 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _pickTime(isStart: false),
-                            child: _buildDisplayField(
-                              _endTime.format(context),
-                              Icons.access_time_outlined,
-                            ),
+                            child: _buildTimeField(_formatTime(_endTime)),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    _buildSectionLabel('색상'),
+                    const SizedBox(height: 24),
+                    // Participants
+                    _buildSectionLabel('참가자'),
                     const SizedBox(height: 8),
-                    Row(
-                      children: _colorOptions.map((color) {
-                        final isSelected = _selectedColor == color;
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedColor = color),
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 12),
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: isSelected
-                                  ? Border.all(color: AppColors.gray900, width: 2)
-                                  : null,
+                    GestureDetector(
+                      onTap: _showParticipantPopup,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.gray50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            // Selected participant avatars
+                            ..._allParticipants
+                                .where((p) => p['selected'] as bool)
+                                .take(3)
+                                .map((p) => _buildSmallAvatar(
+                                      p['color'] as Color,
+                                    )),
+                            // Add button avatar
+                            Container(
+                              width: 32,
+                              height: 32,
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.gray200,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 16,
+                                color: AppColors.gray500,
+                              ),
                             ),
-                            child: isSelected
-                                ? const Icon(Icons.check, size: 16, color: AppColors.white)
-                                : null,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildSectionLabel('메모 (선택)'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _memoController,
-                      hintText: '메모를 입력해주세요',
-                      maxLines: 3,
+                            Text(
+                              '$_selectedCount명 참가 · 추가하기',
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.gray500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 40),
                   ],
@@ -148,10 +239,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: PrimaryButton(
-                text: '일정 추가',
-                onPressed: _canSave
-                    ? () => Navigator.of(context).pop()
-                    : null,
+                text: '일정 저장하기',
+                onPressed: _canSave ? () => Navigator.of(context).pop() : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -168,28 +257,64 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         fontFamily: 'Inter',
         fontWeight: FontWeight.w700,
         fontSize: 14,
-        height: 1.21,
-        letterSpacing: 0,
         color: AppColors.gray900,
       ),
+    );
+  }
+
+  Widget _buildColorPicker() {
+    return Row(
+      children: [
+        ..._colorOptions.map((color) {
+          final isSelected = _selectedColor == color;
+          return GestureDetector(
+            onTap: () => setState(() => _selectedColor = color),
+            child: Container(
+              margin: const EdgeInsets.only(right: 10),
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 20, color: AppColors.white)
+                  : null,
+            ),
+          );
+        }),
+        // Add color button
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.gray100,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.add,
+              size: 20,
+              color: AppColors.gray500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
-    int maxLines = 1,
     void Function(String)? onChanged,
   }) {
     return TextField(
       controller: controller,
-      maxLines: maxLines,
       style: const TextStyle(
         fontFamily: 'Inter',
         fontWeight: FontWeight.w400,
         fontSize: 15,
-        height: 1.21,
-        letterSpacing: 0,
         color: AppColors.gray900,
       ),
       decoration: InputDecoration(
@@ -200,29 +325,38 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           fontSize: 15,
           color: AppColors.gray300,
         ),
+        filled: true,
+        fillColor: AppColors.gray50,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.gray200),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primary),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       onChanged: onChanged,
     );
   }
 
-  Widget _buildDisplayField(String value, IconData icon) {
+  Widget _buildDisplayField(
+    String value,
+    IconData icon, {
+    bool showChevron = false,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.gray200),
+        color: AppColors.gray50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
+          Icon(icon, size: 18, color: AppColors.gray400),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               value,
@@ -234,9 +368,43 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
               ),
             ),
           ),
-          Icon(icon, size: 18, color: AppColors.gray400),
+          if (showChevron)
+            const Icon(Icons.chevron_right, size: 18, color: AppColors.gray400),
         ],
       ),
+    );
+  }
+
+  Widget _buildTimeField(String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.gray50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        value,
+        style: const TextStyle(
+          fontFamily: 'Inter',
+          fontWeight: FontWeight.w400,
+          fontSize: 15,
+          color: AppColors.gray900,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildSmallAvatar(Color color) {
+    return Container(
+      width: 32,
+      height: 32,
+      margin: const EdgeInsets.only(right: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.person, size: 18, color: color),
     );
   }
 
@@ -264,5 +432,180 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
         }
       });
     }
+  }
+}
+
+class _ParticipantPopup extends StatefulWidget {
+  final List<Map<String, dynamic>> participants;
+  final void Function(List<Map<String, dynamic>>) onConfirm;
+
+  const _ParticipantPopup({
+    required this.participants,
+    required this.onConfirm,
+  });
+
+  @override
+  State<_ParticipantPopup> createState() => _ParticipantPopupState();
+}
+
+class _ParticipantPopupState extends State<_ParticipantPopup> {
+  late List<Map<String, dynamic>> _local;
+
+  @override
+  void initState() {
+    super.initState();
+    _local = widget.participants
+        .map((p) => Map<String, dynamic>.from(p))
+        .toList();
+  }
+
+  int get _selectedCount => _local.where((p) => p['selected'] as bool).length;
+
+  String get _headerTitle {
+    final me = _local.firstWhere((p) => p['isMe'] as bool, orElse: () => {});
+    final myName = me.isNotEmpty ? me['name'] as String : '나';
+    final others = _selectedCount - (me.isNotEmpty && me['selected'] as bool ? 1 : 0);
+    return '참가자 : $myName(나), 기타 $others명';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final me = _local.where((p) => p['isMe'] as bool).toList();
+    final members = _local.where((p) => !(p['isMe'] as bool)).toList();
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom + 16,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.gray200,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _headerTitle,
+            style: const TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              color: AppColors.gray700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(color: AppColors.gray100, height: 1),
+          // 나 section
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                '나',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: AppColors.gray500,
+                ),
+              ),
+            ),
+          ),
+          ...me.map((p) => _buildParticipantRow(p)),
+          // 멤버 section
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '멤버 (${members.length})',
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: AppColors.gray500,
+                ),
+              ),
+            ),
+          ),
+          ...members.map((p) => _buildParticipantRow(p)),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: PrimaryButton(
+              text: '확인',
+              onPressed: () {
+                widget.onConfirm(_local);
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParticipantRow(Map<String, dynamic> participant) {
+    final idx = _local.indexOf(participant);
+    final isSelected = participant['selected'] as bool;
+    final color = participant['color'] as Color;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() => _local[idx]['selected'] = !isSelected);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.person, size: 24, color: color),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                participant['name'] as String,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                  color: AppColors.gray900,
+                ),
+              ),
+            ),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(6),
+                border: isSelected
+                    ? null
+                    : Border.all(color: AppColors.gray200, width: 1.5),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 16, color: AppColors.white)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
