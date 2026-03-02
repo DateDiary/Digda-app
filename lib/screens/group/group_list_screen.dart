@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/group_list_tile.dart';
 
 class GroupListScreen extends StatelessWidget {
@@ -36,6 +37,7 @@ class GroupListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
       body: SafeArea(
         child: Column(
           children: [
@@ -95,7 +97,8 @@ class GroupListScreen extends StatelessWidget {
                       size: 24,
                       color: AppColors.gray700,
                     ),
-                    onPressed: () {},
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
                   ),
                 ],
               ),

@@ -79,7 +79,7 @@ class QuizComingSoonScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
     );
   }
 }

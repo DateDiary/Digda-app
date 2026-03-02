@@ -293,7 +293,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
         shape: const CircleBorder(),
         child: const Icon(Icons.add, color: AppColors.white, size: 28),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
     );
   }
 }

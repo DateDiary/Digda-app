@@ -309,7 +309,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
         shape: const CircleBorder(),
         child: const Icon(Icons.add, color: AppColors.white, size: 28),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
   }
 

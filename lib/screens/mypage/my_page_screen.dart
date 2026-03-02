@@ -138,7 +138,6 @@ class MyPageScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
     );
   }
 

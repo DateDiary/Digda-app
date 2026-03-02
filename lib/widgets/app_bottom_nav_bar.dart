@@ -13,7 +13,7 @@ class AppBottomNavBar extends StatelessWidget {
 
   void _navigate(BuildContext context, int index) {
     if (currentIndex == index) return;
-    const routes = ['/home', '/diary', '/quiz', '/my-page'];
+    const routes = ['/group-list', '/schedule', '/diary', '/quiz'];
     if (index < routes.length) {
       Navigator.of(context).pushReplacementNamed(routes[index]);
     }
@@ -37,10 +37,10 @@ class AppBottomNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildTab(context, 0, Icons.calendar_today_outlined, '일정'),
-                _buildTab(context, 1, Icons.menu_book_outlined, '일기'),
-                _buildTab(context, 2, Icons.sports_esports_outlined, '게임'),
-                _buildTab(context, 3, Icons.person_outline, '마이'),
+                _buildTab(context, 0, Icons.home_outlined, '홈'),
+                _buildTab(context, 1, Icons.calendar_today_outlined, '일정'),
+                _buildTab(context, 2, Icons.menu_book_outlined, '일기'),
+                _buildTab(context, 3, Icons.sports_esports_outlined, '게임'),
               ],
             ),
           ),

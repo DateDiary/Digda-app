@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/feature_card.dart';
 
 class GroupHomeScreen extends StatelessWidget {
@@ -16,6 +17,7 @@ class GroupHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
       body: SafeArea(
         child: Column(
           children: [
@@ -61,7 +63,8 @@ class GroupHomeScreen extends StatelessWidget {
                       size: 22,
                       color: AppColors.gray700,
                     ),
-                    onPressed: () {},
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
                   ),
                 ],
               ),
