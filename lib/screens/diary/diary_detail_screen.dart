@@ -1,146 +1,384 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/center_title_header.dart';
 
-class DiaryDetailScreen extends StatelessWidget {
+class DiaryDetailScreen extends StatefulWidget {
   const DiaryDetailScreen({super.key});
+
+  @override
+  State<DiaryDetailScreen> createState() => _DiaryDetailScreenState();
+}
+
+class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
+  bool _showMenu = false;
+
+  void _onEditTap() {
+    setState(() => _showMenu = false);
+    Navigator.of(context).pushNamed('/edit-diary');
+  }
+
+  void _onDeleteTap() {
+    setState(() => _showMenu = false);
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            CenterTitleHeader(
-              title: '일기',
-              onBack: () => Navigator.of(context).pop(),
-              trailing: GestureDetector(
-                onTap: () {},
-                child: const Icon(
-                  Icons.more_horiz,
-                  size: 22,
-                  color: AppColors.gray700,
-                ),
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    const Text(
-                      '2025년 2월 14일 금요일',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray400,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '발렌타인 데이',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 22,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildAuthorChip('나'),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: AppColors.gray100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 40,
-                          color: AppColors.gray300,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                          size: 14,
+                          color: AppColors.gray900,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      '오늘은 정말 특별한 발렌타인 데이였어요. 한강에서 피크닉을 하면서 함께 보낸 시간이 너무 소중했어요. 다음에도 이런 날이 많았으면 좋겠어요.',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        height: 1.6,
-                        letterSpacing: 0,
-                        color: AppColors.gray800,
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: _onEditTap,
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.edit_outlined,
+                              size: 16,
+                              color: AppColors.gray700,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              '편집',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.gray700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    const Divider(color: AppColors.gray100),
-                    const SizedBox(height: 16),
-                    const Text(
-                      '상대의 일기',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        height: 1.21,
-                        letterSpacing: 0,
-                        color: AppColors.gray900,
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: _onDeleteTap,
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: AppColors.primaryDark,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              '삭제',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.primaryDark,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildAuthorChip('상대'),
-                    const SizedBox(height: 12),
-                    const Text(
-                      '오늘 같이 한강에서 피크닉을 했는데 날씨도 좋고 정말 행복했어요. 앞으로도 이런 추억 많이 만들고 싶어요!',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        height: 1.6,
-                        letterSpacing: 0,
-                        color: AppColors.gray800,
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () => setState(() => _showMenu = !_showMenu),
+                        child: const Icon(
+                          Icons.more_horiz,
+                          size: 22,
+                          color: AppColors.gray700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 40),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                // Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Date + mood
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              const Text(
+                                '2026년 2월 8일 일요일',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: AppColors.gray400,
+                                ),
+                              ),
+                              const Spacer(),
+                              // Weather icon
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: AppColors.gray100,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.wb_sunny_outlined,
+                                  size: 18,
+                                  color: Color(0xFFFBBF24),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              // Mood emoji
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '😊',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Title row
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 12,
+                                ),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(color: AppColors.gray100),
+                                  ),
+                                ),
+                                child: const Text(
+                                  '제목',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: AppColors.gray400,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                '설날 모임',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: AppColors.gray900,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Image area
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          width: double.infinity,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.07),
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                            ),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 80,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: const Color(0xFFFBBF24),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.image_outlined,
+                                size: 32,
+                                color: Color(0xFFFBBF24),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Diary content
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            '오늘은 설날이라서 친구들이랑 같이 떡국을\n먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n오후에는 영화관에서 영화를 봤는데 너무\n재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n저녁에는 집에 와서 같이 셀카도 찍었다.\n다음에도 이렇게 만나고 싶다!',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                              height: 1.9,
+                              color: AppColors.gray800,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        const Divider(color: AppColors.gray100),
+                        const SizedBox(height: 12),
+                        // Author info
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '나 · 오후 8:32',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: AppColors.gray400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+            // Dropdown menu
+            if (_showMenu) ...[
+              GestureDetector(
+                onTap: () => setState(() => _showMenu = false),
+                child: Container(color: Colors.transparent),
+              ),
+              Positioned(
+                top: 44,
+                right: 20,
+                child: _buildDropdownMenu(),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAuthorChip(String name) {
+  Widget _buildDropdownMenu() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.gray50,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Text(
-        name,
-        style: const TextStyle(
-          fontFamily: 'Inter',
-          fontWeight: FontWeight.w400,
-          fontSize: 12,
-          height: 1.21,
-          letterSpacing: 0,
-          color: AppColors.gray500,
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: _onEditTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 16,
+                    color: AppColors.gray700,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '편집',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(height: 1, color: AppColors.gray100),
+          GestureDetector(
+            onTap: _onDeleteTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 16,
+                    color: AppColors.primaryDark,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '삭제',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
