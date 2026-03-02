@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../widgets/group_list_tile.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 
 class GroupListScreen extends StatelessWidget {
   const GroupListScreen({super.key});
@@ -159,7 +158,6 @@ class GroupListScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
 }

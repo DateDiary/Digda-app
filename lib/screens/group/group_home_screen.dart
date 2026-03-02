@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/feature_card.dart';
 
 class GroupHomeScreen extends StatelessWidget {
@@ -163,7 +162,6 @@ class GroupHomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
 

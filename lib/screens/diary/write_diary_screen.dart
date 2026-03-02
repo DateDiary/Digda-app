@@ -156,7 +156,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                     : null,
               ),
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 16),
           ],
         ),
       ),
