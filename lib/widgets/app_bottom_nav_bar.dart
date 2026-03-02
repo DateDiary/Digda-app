@@ -11,33 +11,56 @@ class AppBottomNavBar extends StatelessWidget {
     this.onTap,
   });
 
+  void _navigate(BuildContext context, int index) {
+    if (currentIndex == index) return;
+    const routes = ['/home', '/diary', '/quiz', '/my-page'];
+    if (index < routes.length) {
+      Navigator.of(context).pushReplacementNamed(routes[index]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      height: 70,
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(
           top: BorderSide(color: AppColors.gray100, width: 1),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          _buildTab(0, Icons.calendar_today_outlined, '일정'),
-          _buildTab(1, Icons.menu_book_outlined, '일기'),
-          _buildTab(2, Icons.sports_esports_outlined, '게임'),
-          _buildTab(3, Icons.person_outline, '마이'),
+          SizedBox(
+            height: 62,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildTab(context, 0, Icons.calendar_today_outlined, '일정'),
+                _buildTab(context, 1, Icons.menu_book_outlined, '일기'),
+                _buildTab(context, 2, Icons.sports_esports_outlined, '게임'),
+                _buildTab(context, 3, Icons.person_outline, '마이'),
+              ],
+            ),
+          ),
+          SizedBox(height: bottomPadding),
         ],
       ),
     );
   }
 
-  Widget _buildTab(int index, IconData icon, String label) {
+  Widget _buildTab(BuildContext context, int index, IconData icon, String label) {
     final bool isSelected = currentIndex == index;
     final Color color = isSelected ? AppColors.primary : AppColors.gray400;
     return GestureDetector(
-      onTap: () => onTap?.call(index),
+      onTap: () {
+        if (onTap != null) {
+          onTap!.call(index);
+        } else {
+          _navigate(context, index);
+        }
+      },
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 60,
