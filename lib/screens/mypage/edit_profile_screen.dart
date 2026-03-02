@@ -142,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 16),
           ],
         ),
       ),

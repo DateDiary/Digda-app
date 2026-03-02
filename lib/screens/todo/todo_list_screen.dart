@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/center_title_header.dart';
 import '../../widgets/todo_item.dart';
 
@@ -279,7 +278,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
 }
