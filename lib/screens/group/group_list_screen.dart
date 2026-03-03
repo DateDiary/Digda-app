@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/group_list_tile.dart';
 
 class GroupListScreen extends StatelessWidget {
@@ -37,35 +36,34 @@ class GroupListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
       body: SafeArea(
         child: Column(
           children: [
             // 헤더
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).maybePop(),
+                    child: const Icon(
                       Icons.arrow_back_ios,
-                      size: 20,
+                      size: 14,
                       color: AppColors.gray900,
                     ),
-                    onPressed: () => Navigator.of(context).maybePop(),
                   ),
-                  const Expanded(
-                    child: Text(
-                      '내 다이어리',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                        height: 1.3,
-                        color: AppColors.gray900,
-                      ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    '내 그룹',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      height: 1.3,
+                      color: AppColors.gray900,
                     ),
                   ),
+                  const Spacer(),
                   IconButton(
                     icon: Stack(
                       children: [
@@ -93,7 +91,7 @@ class GroupListScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(
-                      Icons.adjust_outlined,
+                      Icons.settings_outlined,
                       size: 24,
                       color: AppColors.gray700,
                     ),
@@ -104,62 +102,71 @@ class GroupListScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                children: [
-                  ..._groups.map(
-                    (g) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: GroupListTile(
-                        name: g.name,
-                        memberCount: g.memberCount,
-                        groupIcon: g.icon,
-                        groupIconBg: g.bgColor,
-                        groupIconColor: g.iconColor,
-                        showActions: g.showActions,
-                        onTap: () =>
-                            Navigator.of(context).pushNamed('/group-home'),
-                        onShare: () =>
-                            Navigator.of(context).pushNamed('/code-generate'),
-                        onSettings: () =>
-                            Navigator.of(context).pushNamed('/update-diary'),
-                      ),
+              child: _groups.length <= 4
+                  ? Center(
+                      child: _buildGroupContent(context),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildGroupContent(context),
                     ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGroupContent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ..._groups.map(
+            (g) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GroupListTile(
+                name: g.name,
+                memberCount: g.memberCount,
+                groupIcon: g.icon,
+                groupIconBg: g.bgColor,
+                groupIconColor: g.iconColor,
+                showActions: g.showActions,
+                onTap: () => Navigator.of(context).pushNamed('/group-home'),
+                onShare: () =>
+                    Navigator.of(context).pushNamed('/code-generate'),
+                onSettings: () =>
+                    Navigator.of(context).pushNamed('/update-diary'),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed('/create-diary'),
+            child: const Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add_circle_outline,
+                    size: 18,
+                    color: AppColors.primary,
                   ),
-                  const SizedBox(height: 8),
-                  // 새 다이어리 추가
-                  GestureDetector(
-                    onTap: () =>
-                        Navigator.of(context).pushNamed('/create-diary'),
-                    child: const Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            size: 18,
-                            color: AppColors.primary,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            '새 다이어리 추가',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ],
-                      ),
+                  SizedBox(width: 6),
+                  Text(
+                    '새 다이어리 추가',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

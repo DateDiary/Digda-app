@@ -4,7 +4,9 @@ import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/feature_card.dart';
 
 class GroupHomeScreen extends StatelessWidget {
-  const GroupHomeScreen({super.key});
+  const GroupHomeScreen({super.key, this.groupName = '대학 친구들'});
+
+  final String groupName;
 
   static const _memberColors = [
     AppColors.primary,
@@ -29,16 +31,16 @@ class GroupHomeScreen extends StatelessWidget {
                   IconButton(
                     icon: const Icon(
                       Icons.arrow_back_ios,
-                      size: 20,
+                      size: 14,
                       color: AppColors.gray900,
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
-                        '대학 친구들',
-                        style: TextStyle(
+                        groupName,
+                        style: const TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                           fontSize: 17,
@@ -59,7 +61,7 @@ class GroupHomeScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(
-                      Icons.adjust_outlined,
+                      Icons.settings_outlined,
                       size: 22,
                       color: AppColors.gray700,
                     ),
@@ -77,7 +79,7 @@ class GroupHomeScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     // 멤버 아바타
                     _buildMemberSection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 40),
                     // 기능 카드들
                     FeatureCard(
                       icon: Icons.calendar_month_outlined,

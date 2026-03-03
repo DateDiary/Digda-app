@@ -15,7 +15,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   late final TextEditingController _nameController;
   late int _maxMembers;
 
-  static const List<int?> _presets = [2, 4, 6, 10, null]; // null = 제한없음
+  static const List<int?> _presets = [2, 4, 6, 8, 10, null]; // null = 제한없음
 
   bool get _canCreate => _nameController.text.trim().isNotEmpty;
 
@@ -56,21 +56,18 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
           children: [
             // 헤더
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Stack(
-                alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Row(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        size: 20,
-                        color: AppColors.gray900,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
                     ),
                   ),
+                  const SizedBox(width: 16),
                   const Text(
                     '다이어리',
                     style: TextStyle(

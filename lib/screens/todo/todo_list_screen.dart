@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../widgets/center_title_header.dart';
-import '../../widgets/todo_item.dart';
 
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
@@ -22,10 +21,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
   ];
 
   final TextEditingController _addController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
     _addController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -35,8 +36,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
       todo['isCompleted'] = !(todo['isCompleted'] as bool);
       if (todo['isCompleted'] as bool) {
         final now = DateTime.now();
-        todo['completedDate'] =
-            '${now.month}월 ${now.day}일 완료';
+        todo['completedDate'] = '${now.month}월 ${now.day}일 완료';
       } else {
         todo['completedDate'] = null;
       }
@@ -54,6 +54,15 @@ class _TodoListScreenState extends State<TodoListScreen> {
       });
       _addController.clear();
     });
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -68,7 +77,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
     final progressPct = (progress * 100).round();
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.scaffoldBg,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
@@ -78,15 +88,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
             ),
             Expanded(
               child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 children: [
                   // 진행률 카드
                   Container(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppColors.gray50,
-                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +123,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                                     color: AppColors.gray700,
                                   ),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: 4),
                                 Text(
                                   '$total개 중 $completedCount개 완료',
                                   style: const TextStyle(
@@ -129,13 +146,13 @@ class _TodoListScreenState extends State<TodoListScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(6),
                           child: LinearProgressIndicator(
                             value: progress,
-                            minHeight: 6,
-                            backgroundColor: AppColors.gray200,
+                            minHeight: 8,
+                            backgroundColor: AppColors.gray100,
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               AppColors.blue,
                             ),
@@ -144,58 +161,52 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   // 할 일 섹션
                   if (pending.isNotEmpty) ...[
                     const Padding(
-                      padding: EdgeInsets.only(left: 4, bottom: 8),
+                      padding: EdgeInsets.only(left: 4, bottom: 10),
                       child: Text(
                         '할 일',
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                           color: AppColors.gray700,
                         ),
                       ),
                     ),
                     ...pending.map((todo) {
                       final index = _todos.indexOf(todo);
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: TodoItem(
-                          text: todo['text'] as String,
-                          isCompleted: false,
-                          onToggle: () => _toggleTodo(index),
-                        ),
+                      return _buildTodoCard(
+                        text: todo['text'] as String,
+                        isCompleted: false,
+                        onToggle: () => _toggleTodo(index),
                       );
                     }),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                   ],
                   // 완료 섹션
                   if (completed.isNotEmpty) ...[
                     Padding(
-                      padding: const EdgeInsets.only(left: 4, bottom: 8),
+                      padding: const EdgeInsets.only(left: 4, bottom: 10),
                       child: Text(
                         '완료 ($completedCount)',
                         style: const TextStyle(
                           fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                           color: AppColors.gray400,
                         ),
                       ),
                     ),
                     ...completed.map((todo) {
                       final index = _todos.indexOf(todo);
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: TodoItem(
-                          text: todo['text'] as String,
-                          isCompleted: true,
-                          completedDate: todo['completedDate'] as String?,
-                          onToggle: () => _toggleTodo(index),
-                        ),
+                      return _buildTodoCard(
+                        text: todo['text'] as String,
+                        isCompleted: true,
+                        completedDate: todo['completedDate'] as String?,
+                        onToggle: () => _toggleTodo(index),
                       );
                     }),
                   ],
@@ -206,14 +217,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
             // 하단 입력 바
             Container(
               padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
+                left: 20,
+                right: 20,
                 top: 12,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom > 0
+                    ? 12
+                    : MediaQuery.of(context).padding.bottom + 12,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.white,
-                border: Border(top: BorderSide(color: AppColors.gray100)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -223,7 +242,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.gray50,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.gray100),
                       ),
                       child: TextField(
                         controller: _addController,
@@ -242,8 +260,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                             color: AppColors.gray400,
                           ),
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 12),
+                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
                         onSubmitted: (_) => _addTodo(),
                       ),
@@ -253,22 +270,16 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   GestureDetector(
                     onTap: _addTodo,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
+                      width: 44,
+                      height: 44,
+                      decoration: const BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(24),
+                        shape: BoxShape.circle,
                       ),
-                      child: const Text(
-                        '추가',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: AppColors.white,
-                        ),
+                      child: const Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 22,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
@@ -276,6 +287,85 @@ class _TodoListScreenState extends State<TodoListScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTodoCard({
+    required String text,
+    required bool isCompleted,
+    String? completedDate,
+    required VoidCallback onToggle,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: GestureDetector(
+        onTap: onToggle,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: isCompleted ? AppColors.blue : Colors.transparent,
+                  borderRadius: BorderRadius.circular(6),
+                  border: isCompleted
+                      ? null
+                      : Border.all(color: AppColors.gray300, width: 1.5),
+                ),
+                child: isCompleted
+                    ? const Icon(Icons.check, size: 14, color: AppColors.white)
+                    : null,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      text,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        color: isCompleted ? AppColors.gray400 : AppColors.gray900,
+                        decoration: isCompleted
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        decorationColor: AppColors.gray400,
+                      ),
+                    ),
+                    if (completedDate != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        completedDate,
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
+                          color: AppColors.gray400,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

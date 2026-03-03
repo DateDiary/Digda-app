@@ -18,7 +18,59 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
 
   void _onDeleteTap() {
     setState(() => _showMenu = false);
-    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          '일기 삭제',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: const Text(
+          '이 일기를 삭제하시겠습니까?',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '취소',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: AppColors.gray500,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              '삭제',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -31,12 +83,9 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
+                // Header - 좌측 정렬
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Row(
                     children: [
                       GestureDetector(
@@ -47,53 +96,17 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                           color: AppColors.gray900,
                         ),
                       ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: _onEditTap,
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.edit_outlined,
-                              size: 16,
-                              color: AppColors.gray700,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              '편집',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                color: AppColors.gray700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(width: 16),
-                      GestureDetector(
-                        onTap: _onDeleteTap,
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.delete_outline,
-                              size: 16,
-                              color: AppColors.primaryDark,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              '삭제',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                color: AppColors.primaryDark,
-                              ),
-                            ),
-                          ],
+                      const Text(
+                        '일기 상세',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                          color: AppColors.gray900,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const Spacer(),
                       GestureDetector(
                         onTap: () => setState(() => _showMenu = !_showMenu),
                         child: const Icon(
@@ -126,11 +139,10 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 ),
                               ),
                               const Spacer(),
-                              // Weather icon
                               Container(
                                 width: 32,
                                 height: 32,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: AppColors.gray100,
                                   shape: BoxShape.circle,
                                 ),
@@ -141,7 +153,6 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              // Mood emoji
                               Container(
                                 width: 32,
                                 height: 32,
@@ -301,7 +312,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
               ),
               Positioned(
                 top: 44,
-                right: 20,
+                right: 24,
                 child: _buildDropdownMenu(),
               ),
             ],
@@ -312,73 +323,74 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
   }
 
   Widget _buildDropdownMenu() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: _onEditTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.edit_outlined,
-                    size: 16,
-                    color: AppColors.gray700,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '편집',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: AppColors.gray900,
+    return Material(
+      elevation: 0,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: 140,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: _onEditTap,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Icon(Icons.edit_outlined, size: 18, color: AppColors.gray700),
+                    SizedBox(width: 10),
+                    Text(
+                      '편집',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: AppColors.gray900,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Container(height: 1, color: AppColors.gray100),
-          GestureDetector(
-            onTap: _onDeleteTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 16,
-                    color: AppColors.primaryDark,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '삭제',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: AppColors.primaryDark,
+            Container(
+              height: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              color: AppColors.gray100,
+            ),
+            GestureDetector(
+              onTap: _onDeleteTap,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_outline, size: 18, color: AppColors.primary),
+                    SizedBox(width: 10),
+                    Text(
+                      '삭제',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: AppColors.primary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

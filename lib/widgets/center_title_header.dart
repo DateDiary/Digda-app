@@ -22,20 +22,17 @@ class CenterTitleHeader extends StatelessWidget {
         top: 8,
         bottom: 8,
       ),
-      child: Stack(
-        alignment: Alignment.center,
+      child: Row(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: GestureDetector(
-              onTap: onBack ?? () => Navigator.of(context).pop(),
-              child: const Icon(
-                Icons.arrow_back_ios,
-                size: 14,
-                color: AppColors.gray900,
-              ),
+          GestureDetector(
+            onTap: onBack ?? () => Navigator.of(context).pop(),
+            child: const Icon(
+              Icons.arrow_back_ios,
+              size: 14,
+              color: AppColors.gray900,
             ),
           ),
+          const SizedBox(width: 16),
           Text(
             title,
             style: const TextStyle(
@@ -47,11 +44,8 @@ class CenterTitleHeader extends StatelessWidget {
               color: AppColors.gray900,
             ),
           ),
-          if (trailing != null)
-            Align(
-              alignment: Alignment.centerRight,
-              child: trailing!,
-            ),
+          const Spacer(),
+          if (trailing != null) trailing!,
         ],
       ),
     );

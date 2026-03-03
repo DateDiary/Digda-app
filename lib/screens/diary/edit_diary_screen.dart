@@ -39,12 +39,6 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-    final weekday = weekdays[date.weekday - 1];
-    return '${date.year}년 ${date.month}월 ${date.day}일 ${weekday}요일';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +50,7 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
             // Header
             Container(
               color: AppColors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   GestureDetector(
@@ -67,7 +61,7 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 16),
                   const Text(
                     '일기 수정',
                     style: TextStyle(

@@ -101,7 +101,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w700,
-                                fontSize: 26,
+                                fontSize: 20,
                                 color: AppColors.gray900,
                               ),
                             ),

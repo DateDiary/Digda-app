@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
+import '../onboarding/empty_state_screen.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({super.key});
@@ -87,13 +87,23 @@ class MyPageScreen extends StatelessWidget {
                       context,
                       icon: Icons.menu_outlined,
                       label: '그룹방 목록 보기',
-                      onTap: () => Navigator.of(context).pushNamed('/home'),
+                      onTap: () => Navigator.of(context).pushNamed('/group-list'),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.keyboard_outlined,
                       label: '초대 코드 입력',
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (context) => const CodeInputBottomSheet(),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
                     // 설정 section

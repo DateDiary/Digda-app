@@ -38,10 +38,10 @@ class SocialLoginScreen extends StatelessWidget {
               text: '카카오로 시작하기',
               backgroundColor: AppColors.kakaoYellow,
               textColor: AppColors.kakaoText,
-              icon: const Icon(
-                Icons.chat_bubble,
-                size: 20,
-                color: AppColors.kakaoText,
+              icon: SvgPicture.asset(
+                'assets/svg/kakao_logo.svg',
+                width: 20,
+                height: 20,
               ),
               onPressed: () => Navigator.of(context).pushNamed('/terms', arguments: 'kakao'),
             ),

@@ -52,7 +52,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
             // Header
             Container(
               color: AppColors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   GestureDetector(
@@ -63,7 +63,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 16),
                   const Text(
                     '일기 쓰기',
                     style: TextStyle(

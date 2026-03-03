@@ -28,7 +28,7 @@ class EmptyStateScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   const Text(
-                    'Date Diary',
+                    'Digda',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
@@ -181,7 +181,7 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
         left: 24,
         right: 24,
         top: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+        bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

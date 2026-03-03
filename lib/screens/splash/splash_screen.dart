@@ -67,34 +67,77 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-class _LoadingDots extends StatelessWidget {
+class _LoadingDots extends StatefulWidget {
   const _LoadingDots();
+
+  @override
+  State<_LoadingDots> createState() => _LoadingDotsState();
+}
+
+class _LoadingDotsState extends State<_LoadingDots>
+    with TickerProviderStateMixin {
+  late final List<AnimationController> _controllers;
+  late final List<Animation<double>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(3, (index) {
+      return AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 600),
+      );
+    });
+
+    _animations = _controllers.map((controller) {
+      return Tween<double>(begin: 0, end: -8).animate(
+        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+      );
+    }).toList();
+
+    for (int i = 0; i < 3; i++) {
+      Future.delayed(Duration(milliseconds: i * 180), () {
+        if (mounted) {
+          _controllers[i].repeat(reverse: true);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _Dot(),
-        const SizedBox(width: 8),
-        _Dot(),
-        const SizedBox(width: 8),
-        _Dot(),
-      ],
-    );
-  }
-}
-
-class _Dot extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 7,
-      height: 7,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.primary.withOpacity(0.25),
-      ),
+      children: List.generate(3, (index) {
+        return Padding(
+          padding: EdgeInsets.only(left: index == 0 ? 0 : 8),
+          child: AnimatedBuilder(
+            animation: _animations[index],
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _animations[index].value),
+                child: child,
+              );
+            },
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

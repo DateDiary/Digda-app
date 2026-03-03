@@ -37,10 +37,10 @@ class AppBottomNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildTab(context, 0, Icons.home_outlined, '홈'),
-                _buildTab(context, 1, Icons.calendar_today_outlined, '일정'),
-                _buildTab(context, 2, Icons.menu_book_outlined, '일기'),
-                _buildTab(context, 3, Icons.sports_esports_outlined, '게임'),
+                _buildTab(context, 0, Icons.home_rounded, Icons.home_outlined),
+                _buildTab(context, 1, Icons.calendar_today_rounded, Icons.calendar_today_outlined),
+                _buildTab(context, 2, Icons.menu_book_rounded, Icons.menu_book_outlined),
+                _buildTab(context, 3, Icons.sports_esports_rounded, Icons.sports_esports_outlined),
               ],
             ),
           ),
@@ -50,9 +50,10 @@ class AppBottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildTab(BuildContext context, int index, IconData icon, String label) {
+  Widget _buildTab(BuildContext context, int index, IconData activeIcon, IconData inactiveIcon) {
     final bool isSelected = currentIndex == index;
     final Color color = isSelected ? AppColors.primary : AppColors.gray400;
+    final IconData icon = isSelected ? activeIcon : inactiveIcon;
     return GestureDetector(
       onTap: () {
         if (onTap != null) {
@@ -63,24 +64,9 @@ class AppBottomNavBar extends StatelessWidget {
       },
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 60,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 18, color: color),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 10,
-                height: 1.21,
-                letterSpacing: 0,
-                color: color,
-              ),
-            ),
-          ],
+        width: 72,
+        child: Center(
+          child: Icon(icon, size: 28, color: color),
         ),
       ),
     );
