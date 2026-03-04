@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app_router.dart';
 import 'theme/colors.dart';
 
@@ -10,6 +11,16 @@ class DigdaApp extends StatelessWidget {
     return MaterialApp(
       title: '디그다',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+        Locale('en', 'US'),
+      ],
+      locale: const Locale('ko', 'KR'),
       theme: ThemeData(
         fontFamily: 'Inter',
         colorScheme: ColorScheme.fromSeed(

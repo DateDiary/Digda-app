@@ -83,39 +83,35 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header - 좌측 정렬
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                          size: 14,
-                          color: AppColors.gray900,
+                // Header
+                SizedBox(
+                  height: 52,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            size: 14,
+                            color: AppColors.gray900,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Text(
-                        '일기 상세',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
-                          color: AppColors.gray900,
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () => setState(() => _showMenu = !_showMenu),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.more_horiz,
+                              size: 22,
+                              color: AppColors.gray700,
+                            ),
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () => setState(() => _showMenu = !_showMenu),
-                        child: const Icon(
-                          Icons.more_horiz,
-                          size: 22,
-                          color: AppColors.gray700,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 // Content

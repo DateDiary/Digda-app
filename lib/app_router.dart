@@ -5,6 +5,7 @@ import 'screens/auth/terms_agreement_screen.dart';
 import 'screens/onboarding/empty_state_screen.dart';
 import 'screens/onboarding/code_generate_screen.dart';
 import 'screens/onboarding/create_diary_screen.dart';
+import 'screens/onboarding/code_input_screen.dart';
 import 'screens/group/group_list_screen.dart';
 import 'screens/group/group_home_screen.dart';
 import 'screens/schedule/schedule_calendar_screen.dart';
@@ -23,59 +24,93 @@ import 'screens/notifications/notifications_screen.dart';
 import 'screens/todo/todo_list_screen.dart';
 
 class AppRouter {
+  // 탭 전환 시 푸터 애니메이션 없이 즉시 전환
+  static PageRoute<T> _tabRoute<T>(Widget screen, RouteSettings settings) {
+    return PageRouteBuilder<T>(
+      settings: settings,
+      pageBuilder: (_, __, ___) => screen,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    );
+  }
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const SplashScreen());
       case '/login':
-        return MaterialPageRoute(builder: (_) => const SocialLoginScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const SocialLoginScreen());
       case '/terms':
         final loginType = settings.arguments as String? ?? 'kakao';
         return MaterialPageRoute(
+            settings: settings,
             builder: (_) => TermsAgreementScreen(loginType: loginType));
       case '/home':
-        return MaterialPageRoute(builder: (_) => const EmptyStateScreen());
+        return _tabRoute(const EmptyStateScreen(), settings);
       case '/code-generate':
-        return MaterialPageRoute(builder: (_) => const CodeGenerateScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const CodeGenerateScreen());
       case '/create-diary':
-        return MaterialPageRoute(builder: (_) => const CreateDiaryScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const CreateDiaryScreen());
       case '/update-diary':
         return MaterialPageRoute(
+            settings: settings,
             builder: (_) => const CreateDiaryScreen(isEdit: true));
       case '/group-list':
-        return MaterialPageRoute(builder: (_) => const GroupListScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const GroupListScreen());
       case '/group-home':
-        return MaterialPageRoute(builder: (_) => const GroupHomeScreen());
+        return _tabRoute(const GroupHomeScreen(), settings);
       case '/schedule':
-        return MaterialPageRoute(builder: (_) => const ScheduleCalendarScreen());
+        return _tabRoute(const ScheduleCalendarScreen(), settings);
       case '/schedule-detail':
-        return MaterialPageRoute(builder: (_) => const ScheduleDetailScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const ScheduleDetailScreen());
       case '/add-schedule':
-        return MaterialPageRoute(builder: (_) => const AddScheduleScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const AddScheduleScreen());
       case '/diary':
-        return MaterialPageRoute(builder: (_) => const DiaryCalendarScreen());
+        return _tabRoute(const DiaryCalendarScreen(), settings);
       case '/diary-detail':
-        return MaterialPageRoute(builder: (_) => const DiaryDetailScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const DiaryDetailScreen());
       case '/write-diary':
-        return MaterialPageRoute(builder: (_) => const WriteDiaryScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const WriteDiaryScreen());
       case '/edit-diary':
-        return MaterialPageRoute(builder: (_) => const EditDiaryScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const EditDiaryScreen());
       case '/quiz':
-        return MaterialPageRoute(builder: (_) => const QuizComingSoonScreen());
+        return _tabRoute(const QuizComingSoonScreen(), settings);
       case '/my-page':
-        return MaterialPageRoute(builder: (_) => const MyPageScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const MyPageScreen());
       case '/edit-profile':
-        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const EditProfileScreen());
       case '/notification-settings':
-        return MaterialPageRoute(builder: (_) => const NotificationSettingsScreen());
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => const NotificationSettingsScreen());
       case '/privacy-settings':
-        return MaterialPageRoute(builder: (_) => const PrivacySettingsScreen());
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => const PrivacySettingsScreen());
       case '/notifications':
-        return MaterialPageRoute(builder: (_) => const NotificationsScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const NotificationsScreen());
       case '/todo':
-        return MaterialPageRoute(builder: (_) => const TodoListScreen());
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const TodoListScreen());
+      case '/code-input':
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const CodeInputScreen());
       default:
         return MaterialPageRoute(
+          settings: settings,
           builder: (_) => Scaffold(
             body: Center(
               child: Text('경로를 찾을 수 없어요: ${settings.name}'),

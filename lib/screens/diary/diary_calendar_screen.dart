@@ -75,33 +75,22 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
+                  // Header - 메인 탭 스타일
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: const Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              size: 14,
-                              color: AppColors.gray900,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text(
                               '그림일기',
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w700,
-                                fontSize: 20,
+                                fontSize: 17,
                                 color: AppColors.gray900,
                               ),
                             ),
@@ -117,49 +106,40 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                           ],
                         ),
                         const Spacer(),
-                        Column(
-                          children: [
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => Navigator.of(context)
-                                      .pushNamed('/notifications'),
-                                  child: Stack(
-                                    children: [
-                                      const Icon(
-                                        Icons.notifications_outlined,
-                                        size: 22,
-                                        color: AppColors.gray700,
-                                      ),
-                                      Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        child: Container(
-                                          width: 6,
-                                          height: 6,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.primary,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                        GestureDetector(
+                          onTap: () => Navigator.of(context)
+                              .pushNamed('/notifications'),
+                          child: Stack(
+                            children: [
+                              const Icon(
+                                Icons.notifications_outlined,
+                                size: 22,
+                                color: AppColors.gray700,
+                              ),
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                                const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () => Navigator.of(context)
-                                      .pushNamed('/my-page'),
-                                  child: const Icon(
-                                    Icons.settings_outlined,
-                                    size: 22,
-                                    color: AppColors.gray700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context)
+                              .pushNamed('/my-page'),
+                          child: const Icon(
+                            Icons.settings_outlined,
+                            size: 22,
+                            color: AppColors.gray700,
+                          ),
                         ),
                       ],
                     ),

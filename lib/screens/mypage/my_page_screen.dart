@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
-import '../onboarding/empty_state_screen.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({super.key});
@@ -93,17 +92,8 @@ class MyPageScreen extends StatelessWidget {
                       context,
                       icon: Icons.keyboard_outlined,
                       label: '초대 코드 입력',
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          builder: (context) => const CodeInputBottomSheet(),
-                        );
-                      },
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/code-input'),
                     ),
                     const SizedBox(height: 16),
                     // 설정 section
