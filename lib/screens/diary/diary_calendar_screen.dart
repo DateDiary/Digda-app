@@ -81,7 +81,8 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
+                        Flexible(
+                      child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -93,6 +94,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                                 fontSize: 17,
                                 color: AppColors.gray900,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               '${_focusedDay.year}년 ${_focusedDay.month}월',
@@ -105,6 +107,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                             ),
                           ],
                         ),
+                    ),
                         const Spacer(),
                         GestureDetector(
                           onTap: () => Navigator.of(context)

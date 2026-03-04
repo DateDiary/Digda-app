@@ -81,7 +81,6 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
   }
 
   void _showParticipantPopup() {
-    // Navigate to participant popup (reuse from add_schedule)
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -272,7 +271,8 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
                         const SizedBox(height: 28),
                         // Info rows
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
                               _buildInfoRow(
@@ -325,7 +325,7 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
                 ),
               ],
             ),
-            // Dropdown menu overlay
+            // Dropdown menu overlay - 모던한 스타일
             if (_showMenu) ...[
               GestureDetector(
                 onTap: () => setState(() => _showMenu = false),
@@ -340,6 +340,7 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
           ],
         ),
       ),
+      // 댓글 입력 바 - 텍스트 입력 + 전송 아이콘만
       bottomNavigationBar: _buildBottomCommentBar(),
     );
   }
@@ -426,7 +427,8 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
                 color: AppColors.primary.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.person, size: 16, color: AppColors.primary),
+              child: const Icon(Icons.person,
+                  size: 16, color: AppColors.primary),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -556,6 +558,7 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
     );
   }
 
+  // 모던한 편집/삭제 드롭다운 메뉴
   Widget _buildDropdownMenu() {
     return Material(
       elevation: 0,
@@ -579,10 +582,12 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
             GestureDetector(
               onTap: _onEditTap,
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Row(
                   children: [
-                    Icon(Icons.edit_outlined, size: 18, color: AppColors.gray700),
+                    Icon(Icons.edit_outlined,
+                        size: 18, color: AppColors.gray700),
                     SizedBox(width: 10),
                     Text(
                       '편집',
@@ -605,10 +610,12 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
             GestureDetector(
               onTap: _onDeleteTap,
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Row(
                   children: [
-                    Icon(Icons.delete_outline, size: 18, color: AppColors.primary),
+                    Icon(Icons.delete_outline,
+                        size: 18, color: AppColors.primary),
                     SizedBox(width: 10),
                     Text(
                       '삭제',
@@ -629,6 +636,7 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
     );
   }
 
+  // 댓글 입력 바 - 입력 필드 + 전송 아이콘만
   Widget _buildBottomCommentBar() {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(

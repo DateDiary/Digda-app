@@ -39,7 +39,7 @@ class GroupListScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더
+            // 헤더 - 푸터 제거됨, 제목 변경
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
@@ -101,6 +101,7 @@ class GroupListScreen extends StatelessWidget {
                 ],
               ),
             ),
+            // 그룹 리스트 - 그룹 수에 따라 동적 중앙 배치
             Expanded(
               child: _groups.length <= 4
                   ? Center(
@@ -113,6 +114,7 @@ class GroupListScreen extends StatelessWidget {
           ],
         ),
       ),
+      // 푸터 제거됨
     );
   }
 
@@ -132,7 +134,8 @@ class GroupListScreen extends StatelessWidget {
                 groupIconBg: g.bgColor,
                 groupIconColor: g.iconColor,
                 showActions: g.showActions,
-                onTap: () => Navigator.of(context).pushNamed('/group-home'),
+                onTap: () => Navigator.of(context).pushNamed('/group-home',
+                    arguments: g.name),
                 onShare: () =>
                     Navigator.of(context).pushNamed('/code-generate'),
                 onSettings: () =>
