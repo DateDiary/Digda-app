@@ -49,13 +49,25 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header - 중앙 타이틀 + 좌측 뒤로가기 + 우측 저장
+            // Header - 좌측 뒤로가기 + 제목 + 우측 저장
             Container(
               color: AppColors.white,
               height: 52,
-              child: Stack(
-                alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
                 children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   const Text(
                     '일기 쓰기',
                     style: TextStyle(
@@ -65,47 +77,31 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  Positioned(
-                    left: 12,
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          size: 14,
-                          color: AppColors.gray900,
-                        ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: _canSave
+                        ? () => Navigator.of(context).pop()
+                        : null,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 16,
-                    child: GestureDetector(
-                      onTap: _canSave
-                          ? () => Navigator.of(context).pop()
-                          : null,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
+                      decoration: BoxDecoration(
+                        color: _canSave
+                            ? AppColors.primary
+                            : AppColors.gray200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '저장',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                           color: _canSave
-                              ? AppColors.primary
-                              : AppColors.gray200,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '저장',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                            color: _canSave
-                                ? AppColors.white
-                                : AppColors.gray400,
-                          ),
+                              ? AppColors.white
+                              : AppColors.gray400,
                         ),
                       ),
                     ),

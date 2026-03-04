@@ -63,7 +63,9 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings, builder: (_) => const GroupListScreen());
       case '/group-home':
-        return _tabRoute(const GroupHomeScreen(), settings);
+        return _tabRoute(GroupHomeScreen(
+          groupName: settings.arguments as String? ?? '대학 친구들',
+        ), settings);
       case '/schedule':
         return _tabRoute(const ScheduleCalendarScreen(), settings);
       case '/schedule-detail':

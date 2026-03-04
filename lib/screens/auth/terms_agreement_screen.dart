@@ -53,17 +53,17 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
               ),
               const SizedBox(height: 32),
               _buildCheckAll(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               _buildCheckItem(0, '이용약관 동의', true),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               _buildCheckItem(1, '개인정보 수집 및 이용 동의', true),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               _buildCheckItem(2, '만 14세 이상입니다', true),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               Container(height: 1, color: AppColors.gray100),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               _buildCheckItem(3, '마케팅 정보 수신 동의', false),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               _buildCheckItem(4, '푸시 알림 수신 동의', false),
               const Spacer(),
               Center(
@@ -122,9 +122,11 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
   Widget _buildCheckItem(int index, String label, bool isRequired) {
     return GestureDetector(
       onTap: () => _toggleItem(index, !_checks[index]),
-      child: Row(
-        children: [
-          Icon(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Row(
+          children: [
+            Icon(
             _checks[index] ? Icons.check_box : Icons.check_box_outline_blank,
             size: 20,
             color: _checks[index] ? AppColors.primary : AppColors.gray300,
@@ -160,7 +162,8 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
             size: 16,
             color: AppColors.gray400,
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

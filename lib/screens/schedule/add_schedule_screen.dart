@@ -18,11 +18,36 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   Color _selectedColor = AppColors.primary;
 
   final List<Map<String, dynamic>> _allParticipants = [
-    {'name': '승호', 'isMe': true, 'color': AppColors.primary, 'selected': true},
-    {'name': '지수', 'isMe': false, 'color': AppColors.blue, 'selected': true},
-    {'name': '민호', 'isMe': false, 'color': AppColors.green, 'selected': true},
-    {'name': '수진', 'isMe': false, 'color': const Color(0xFFFBBF24), 'selected': false},
-    {'name': '현우', 'isMe': false, 'color': AppColors.purple, 'selected': false},
+    {
+      'name': '승호',
+      'isMe': true,
+      'color': AppColors.primary,
+      'selected': true
+    },
+    {
+      'name': '지수',
+      'isMe': false,
+      'color': AppColors.blue,
+      'selected': true
+    },
+    {
+      'name': '민호',
+      'isMe': false,
+      'color': AppColors.green,
+      'selected': true
+    },
+    {
+      'name': '수진',
+      'isMe': false,
+      'color': const Color(0xFFFBBF24),
+      'selected': false
+    },
+    {
+      'name': '현우',
+      'isMe': false,
+      'color': AppColors.purple,
+      'selected': false
+    },
   ];
 
   int get _selectedCount =>
@@ -114,7 +139,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    // Category/Color - 회색 배경 영역에 중앙 정렬
+                    // Category/Color - 회색 배경 + 정중앙 정렬, "+" 제거
                     _buildSectionLabel('카테고리 분류'),
                     const SizedBox(height: 12),
                     _buildColorPicker(),
@@ -270,6 +295,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
     );
   }
 
+  // 색상 선택 - "+" 제거, 회색 배경 영역, 정중앙 정렬
   Widget _buildColorPicker() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -364,7 +390,8 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
           const SizedBox(height: 2),
           Row(
             children: [
-              const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.gray400),
+              const Icon(Icons.calendar_today_outlined,
+                  size: 14, color: AppColors.gray400),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -506,12 +533,15 @@ class _ParticipantPopupState extends State<_ParticipantPopup> {
         .toList();
   }
 
-  int get _selectedCount => _local.where((p) => p['selected'] as bool).length;
+  int get _selectedCount =>
+      _local.where((p) => p['selected'] as bool).length;
 
   String get _headerTitle {
-    final me = _local.firstWhere((p) => p['isMe'] as bool, orElse: () => {});
+    final me =
+        _local.firstWhere((p) => p['isMe'] as bool, orElse: () => {});
     final myName = me.isNotEmpty ? me['name'] as String : '나';
-    final others = _selectedCount - (me.isNotEmpty && me['selected'] as bool ? 1 : 0);
+    final others = _selectedCount -
+        (me.isNotEmpty && me['selected'] as bool ? 1 : 0);
     return '참가자 : $myName(나), 기타 $others명';
   }
 

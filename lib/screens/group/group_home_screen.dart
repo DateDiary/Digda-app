@@ -17,13 +17,17 @@ class GroupHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // S3-Group_List에서 전달된 그룹 이름 동적으로 받기
+    final dynamicName =
+        ModalRoute.of(context)?.settings.arguments as String? ?? groupName;
+
     return Scaffold(
       backgroundColor: AppColors.white,
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더 - 그룹명 정중앙 정렬 (Stack 사용)
+            // 헤더 - 그룹명 정확히 정중앙 정렬
             SizedBox(
               height: 52,
               child: Stack(
@@ -31,7 +35,7 @@ class GroupHomeScreen extends StatelessWidget {
                 children: [
                   // 중앙 타이틀
                   Text(
-                    groupName,
+                    dynamicName,
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
@@ -40,7 +44,7 @@ class GroupHomeScreen extends StatelessWidget {
                       color: AppColors.gray900,
                     ),
                   ),
-                  // 좌우 버튼
+                  // 좌측 뒤로가기
                   Positioned(
                     left: 0,
                     child: IconButton(
@@ -52,6 +56,7 @@ class GroupHomeScreen extends StatelessWidget {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
+                  // 우측 알림/설정
                   Positioned(
                     right: 0,
                     child: Row(
@@ -63,8 +68,8 @@ class GroupHomeScreen extends StatelessWidget {
                             size: 22,
                             color: AppColors.gray700,
                           ),
-                          onPressed: () =>
-                              Navigator.of(context).pushNamed('/notifications'),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed('/notifications'),
                         ),
                         IconButton(
                           icon: const Icon(
@@ -89,7 +94,8 @@ class GroupHomeScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     // 멤버 아바타
                     _buildMemberSection(),
-                    const SizedBox(height: 64),
+                    // 버튼을 아래로 이동 - 여백 증가
+                    const SizedBox(height: 40),
                     // 기능 카드들
                     FeatureCard(
                       icon: Icons.calendar_month_outlined,
@@ -109,7 +115,8 @@ class GroupHomeScreen extends StatelessWidget {
                       cardBgColor: const Color(0xFFFFFBEE),
                       title: '그림일기',
                       subtitle: '오늘의 추억을 기록해요',
-                      onTap: () => Navigator.of(context).pushNamed('/diary'),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/diary'),
                     ),
                     const SizedBox(height: 12),
                     FeatureCard(
@@ -167,9 +174,10 @@ class GroupHomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onTap: () => Navigator.of(context).pushNamed('/todo'),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/todo'),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

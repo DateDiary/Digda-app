@@ -22,7 +22,6 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   @override
   void initState() {
     super.initState();
-    // 수정 모드: 기존 값 pre-fill (실제 앱에서는 인자로 전달)
     _nameController = TextEditingController(
       text: widget.isEdit ? '여행 모임' : '',
     );
@@ -54,20 +53,12 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
+            // 헤더 - 중앙 정렬 "다이어리"
+            SizedBox(
+              height: 52,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 14,
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                   const Text(
                     '다이어리',
                     style: TextStyle(
@@ -76,6 +67,20 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                       fontSize: 17,
                       height: 1.3,
                       color: AppColors.gray900,
+                    ),
+                  ),
+                  Positioned(
+                    left: 8,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          size: 14,
+                          color: AppColors.gray900,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -127,11 +132,13 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                         fillColor: AppColors.gray50,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.gray100),
+                          borderSide:
+                              const BorderSide(color: AppColors.gray100),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide:
+                              const BorderSide(color: AppColors.primary),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,

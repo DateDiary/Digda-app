@@ -7,7 +7,8 @@ class ScheduleCalendarScreen extends StatefulWidget {
   const ScheduleCalendarScreen({super.key});
 
   @override
-  State<ScheduleCalendarScreen> createState() => _ScheduleCalendarScreenState();
+  State<ScheduleCalendarScreen> createState() =>
+      _ScheduleCalendarScreenState();
 }
 
 class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
@@ -27,7 +28,11 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     ],
     DateTime.utc(2026, 2, 8): [
       {'title': '야근', 'color': AppColors.primary, 'time': '종일'},
-      {'title': '출근 늦게', 'color': AppColors.purple, 'time': '오후 2:00 - 5:00'},
+      {
+        'title': '출근 늦게',
+        'color': AppColors.purple,
+        'time': '오후 2:00 - 5:00'
+      },
     ],
     DateTime.utc(2026, 2, 14): [
       {'title': '출근 늦게', 'color': AppColors.purple},
@@ -98,9 +103,9 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Custom calendar header
+            // Custom calendar header - 상단 여백 확보
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -144,7 +149,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pushNamed('/notifications'),
+                    onTap: () =>
+                        Navigator.of(context).pushNamed('/notifications'),
                     child: Stack(
                       children: [
                         const Icon(
@@ -169,7 +175,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                   ),
                   const SizedBox(width: 16),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pushNamed('/my-page'),
+                    onTap: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
                     child: const Icon(
                       Icons.settings_outlined,
                       size: 22,
@@ -179,17 +186,19 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            // 캘린더 - 하단까지 확장
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // 6행 기준 동적 rowHeight 계산 (요일 헤더 ~20px 제외)
-                  final rowHeight = ((constraints.maxHeight - 20) / 6).clamp(64.0, 100.0);
+                  final rowHeight =
+                      ((constraints.maxHeight - 20) / 6).clamp(64.0, 100.0);
                   return TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: _focusedDay,
-                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    selectedDayPredicate: (day) =>
+                        isSameDay(_selectedDay, day),
                     eventLoader: _getEventsForDay,
                     calendarFormat: CalendarFormat.month,
                     headerVisible: false,
@@ -205,7 +214,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         fontSize: 13,
                         color: AppColors.white,
                       ),
-                      // todayDecoration은 calendarBuilders로 커스텀 처리
                       todayDecoration: const BoxDecoration(),
                       todayTextStyle: const TextStyle(
                         fontFamily: 'Inter',
@@ -251,14 +259,14 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                     ),
                     calendarBuilders: CalendarBuilders(
-                      // 오늘 날짜 - 작은 검은 원
+                      // 오늘 날짜 - 셀 크기에 맞는 작은 검은 원
                       todayBuilder: (context, day, focusedDay) {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: 26,
-                              height: 26,
+                              width: 24,
+                              height: 24,
                               decoration: const BoxDecoration(
                                 color: AppColors.black,
                                 shape: BoxShape.circle,
@@ -269,7 +277,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     color: AppColors.white,
                                   ),
                                 ),
@@ -278,6 +286,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                           ],
                         );
                       },
+                      // 이벤트 마커 - 숫자 바로 아래에 밀착
                       markerBuilder: (context, day, events) {
                         if (events.isEmpty) return const SizedBox.shrink();
                         return Column(
@@ -288,7 +297,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                                 final event = e as Map<String, dynamic>;
                                 final color = event['color'] as Color;
                                 return Container(
-                                  margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+                                  margin: const EdgeInsets.only(
+                                      top: 1, left: 2, right: 2),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 4,
                                     vertical: 1,
@@ -331,17 +341,19 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           ],
         ),
       ),
+      // FAB - 왼쪽 위 대각선으로 이동, 크기 확대
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 24, right: 16),
+        padding: const EdgeInsets.only(bottom: 16, right: 4),
         child: SizedBox(
-          width: 60,
-          height: 60,
+          width: 64,
+          height: 64,
           child: FloatingActionButton(
-            onPressed: () => Navigator.of(context).pushNamed('/add-schedule'),
+            onPressed: () =>
+                Navigator.of(context).pushNamed('/add-schedule'),
             backgroundColor: AppColors.primary,
             shape: const CircleBorder(),
             elevation: 4,
-            child: const Icon(Icons.add, color: AppColors.white, size: 30),
+            child: const Icon(Icons.add, color: AppColors.white, size: 32),
           ),
         ),
       ),
@@ -381,7 +393,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
         bottom: MediaQuery.of(context).padding.bottom + 24,
       ),
       constraints: BoxConstraints(
-        // 동일한 최대 높이 - 일정 유무와 무관하게
+        // 동일한 최대 높이 - 일정 유무와 무관
         maxHeight: MediaQuery.of(context).size.height * 0.6,
       ),
       child: Column(
@@ -473,7 +485,8 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                       height: 44,
                                       decoration: BoxDecoration(
                                         color: color,
-                                        borderRadius: BorderRadius.circular(2),
+                                        borderRadius:
+                                            BorderRadius.circular(2),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -483,7 +496,8 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            event['time'] as String? ?? '종일',
+                                            event['time'] as String? ??
+                                                '종일',
                                             style: TextStyle(
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w400,
@@ -511,6 +525,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                             ),
                           );
                         }),
+                        // 일정이 있는 경우 "다른 일정이 없어요" 표시 안 함
                       ],
                     ),
                   ),
