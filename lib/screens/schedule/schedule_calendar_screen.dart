@@ -179,124 +179,152 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Expanded(
-              child: TableCalendar(
-                firstDay: DateTime.utc(2020, 1, 1),
-                lastDay: DateTime.utc(2030, 12, 31),
-                focusedDay: _focusedDay,
-                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                eventLoader: _getEventsForDay,
-                calendarFormat: CalendarFormat.month,
-                headerVisible: false,
-                rowHeight: 72,
-                calendarStyle: CalendarStyle(
-                  selectedDecoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  selectedTextStyle: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: AppColors.white,
-                  ),
-                  todayDecoration: BoxDecoration(
-                    color: AppColors.black,
-                    shape: BoxShape.circle,
-                  ),
-                  todayTextStyle: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: AppColors.white,
-                  ),
-                  defaultTextStyle: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    color: AppColors.gray900,
-                  ),
-                  weekendTextStyle: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    color: AppColors.primary,
-                  ),
-                  outsideTextStyle: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    color: AppColors.gray300,
-                  ),
-                  markersMaxCount: 2,
-                  cellAlignment: Alignment.topCenter,
-                  cellMargin: const EdgeInsets.all(1),
-                  cellPadding: const EdgeInsets.only(top: 4),
-                ),
-                daysOfWeekStyle: const DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11,
-                    color: AppColors.gray500,
-                  ),
-                  weekendStyle: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11,
-                    color: AppColors.primary,
-                  ),
-                ),
-                calendarBuilders: CalendarBuilders(
-                  markerBuilder: (context, day, events) {
-                    if (events.isEmpty) return const SizedBox.shrink();
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 1),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: events
-                            .take(2)
-                            .map((e) {
-                              final event = e as Map<String, dynamic>;
-                              final color = event['color'] as Color;
-                              return Container(
-                                margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                  vertical: 1,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  event['title'] as String,
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 8,
-                                    color: color,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              );
-                            })
-                            .toList(),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // 6행 기준 동적 rowHeight 계산 (요일 헤더 ~20px 제외)
+                  final rowHeight = ((constraints.maxHeight - 20) / 6).clamp(64.0, 100.0);
+                  return TableCalendar(
+                    firstDay: DateTime.utc(2020, 1, 1),
+                    lastDay: DateTime.utc(2030, 12, 31),
+                    focusedDay: _focusedDay,
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    eventLoader: _getEventsForDay,
+                    calendarFormat: CalendarFormat.month,
+                    headerVisible: false,
+                    rowHeight: rowHeight,
+                    calendarStyle: CalendarStyle(
+                      selectedDecoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
                       ),
-                    );
-                  },
-                ),
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
-                  _showDayDetail(selectedDay);
-                },
-                onPageChanged: (focusedDay) {
-                  setState(() => _focusedDay = focusedDay);
+                      selectedTextStyle: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: AppColors.white,
+                      ),
+                      // todayDecoration은 calendarBuilders로 커스텀 처리
+                      todayDecoration: const BoxDecoration(),
+                      todayTextStyle: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: AppColors.white,
+                      ),
+                      defaultTextStyle: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        color: AppColors.gray900,
+                      ),
+                      weekendTextStyle: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        color: AppColors.primary,
+                      ),
+                      outsideTextStyle: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        color: AppColors.gray300,
+                      ),
+                      markersMaxCount: 2,
+                      cellAlignment: Alignment.topCenter,
+                      cellMargin: const EdgeInsets.all(1),
+                      cellPadding: const EdgeInsets.only(top: 4),
+                    ),
+                    daysOfWeekStyle: const DaysOfWeekStyle(
+                      weekdayStyle: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 11,
+                        color: AppColors.gray500,
+                      ),
+                      weekendStyle: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 11,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    calendarBuilders: CalendarBuilders(
+                      // 오늘 날짜 - 작은 검은 원
+                      todayBuilder: (context, day, focusedDay) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 26,
+                              height: 26,
+                              decoration: const BoxDecoration(
+                                color: AppColors.black,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      markerBuilder: (context, day, events) {
+                        if (events.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: events
+                              .take(2)
+                              .map((e) {
+                                final event = e as Map<String, dynamic>;
+                                final color = event['color'] as Color;
+                                return Container(
+                                  margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: color.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    event['title'] as String,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 8,
+                                      color: color,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                );
+                              })
+                              .toList(),
+                        );
+                      },
+                    ),
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                      _showDayDetail(selectedDay);
+                    },
+                    onPageChanged: (focusedDay) {
+                      setState(() => _focusedDay = focusedDay);
+                    },
+                  );
                 },
               ),
             ),
@@ -304,16 +332,16 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 8, right: 4),
+        padding: const EdgeInsets.only(bottom: 24, right: 16),
         child: SizedBox(
-          width: 56,
-          height: 56,
+          width: 60,
+          height: 60,
           child: FloatingActionButton(
             onPressed: () => Navigator.of(context).pushNamed('/add-schedule'),
             backgroundColor: AppColors.primary,
             shape: const CircleBorder(),
             elevation: 4,
-            child: const Icon(Icons.add, color: AppColors.white, size: 28),
+            child: const Icon(Icons.add, color: AppColors.white, size: 30),
           ),
         ),
       ),

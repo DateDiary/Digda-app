@@ -13,7 +13,7 @@ class AppBottomNavBar extends StatelessWidget {
 
   void _navigate(BuildContext context, int index) {
     if (currentIndex == index) return;
-    const routes = ['/group-list', '/schedule', '/diary', '/quiz'];
+    const routes = ['/group-home', '/schedule', '/diary', '/quiz'];
     if (index < routes.length) {
       Navigator.of(context).pushReplacementNamed(routes[index]);
     }

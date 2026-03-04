@@ -23,50 +23,60 @@ class GroupHomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
+            // 헤더 - 그룹명 정중앙 정렬 (Stack 사용)
+            SizedBox(
+              height: 52,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 14,
+                  // 중앙 타이틀
+                  Text(
+                    groupName,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      height: 1.3,
                       color: AppColors.gray900,
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        groupName,
-                        style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
-                          height: 1.3,
-                          color: AppColors.gray900,
-                        ),
+                  // 좌우 버튼
+                  Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 14,
+                        color: AppColors.gray900,
                       ),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      size: 22,
-                      color: AppColors.gray700,
+                  Positioned(
+                    right: 0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_outlined,
+                            size: 22,
+                            color: AppColors.gray700,
+                          ),
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed('/notifications'),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.settings_outlined,
+                            size: 22,
+                            color: AppColors.gray700,
+                          ),
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed('/my-page'),
+                        ),
+                      ],
                     ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/notifications'),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                      size: 22,
-                      color: AppColors.gray700,
-                    ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/my-page'),
                   ),
                 ],
               ),
@@ -79,7 +89,7 @@ class GroupHomeScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     // 멤버 아바타
                     _buildMemberSection(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 64),
                     // 기능 카드들
                     FeatureCard(
                       icon: Icons.calendar_month_outlined,

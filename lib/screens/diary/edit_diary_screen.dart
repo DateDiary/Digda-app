@@ -47,21 +47,13 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
+            // Header - 중앙 타이틀 + 좌측 뒤로가기 + 우측 저장
             Container(
               color: AppColors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Row(
+              height: 52,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 14,
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                   const Text(
                     '일기 수정',
                     style: TextStyle(
@@ -71,18 +63,48 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: _canSave
-                        ? () => Navigator.of(context).pop()
-                        : null,
-                    child: Text(
-                      '저장',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: _canSave ? AppColors.primary : AppColors.gray400,
+                  Positioned(
+                    left: 12,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          size: 14,
+                          color: AppColors.gray900,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 16,
+                    child: GestureDetector(
+                      onTap: _canSave
+                          ? () => Navigator.of(context).pop()
+                          : null,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _canSave
+                              ? AppColors.primary
+                              : AppColors.gray200,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '저장',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: _canSave
+                                ? AppColors.white
+                                : AppColors.gray400,
+                          ),
+                        ),
                       ),
                     ),
                   ),
