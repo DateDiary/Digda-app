@@ -53,17 +53,18 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더 - 좌측 정렬
+            // 헤더 - 중앙 정렬
             SizedBox(
               height: 52,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    GestureDetector(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
                       child: const Padding(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.only(left: 8),
                         child: Icon(
                           Icons.arrow_back_ios,
                           size: 14,
@@ -71,20 +72,18 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '다이어리',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
-                        height: 1.3,
-                        color: AppColors.gray900,
-                      ),
+                  ),
+                  const Text(
+                    '다이어리',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      height: 1.3,
+                      color: AppColors.gray900,
                     ),
-                    const Spacer(),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             Expanded(

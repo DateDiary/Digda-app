@@ -22,31 +22,49 @@ class CenterTitleHeader extends StatelessWidget {
         top: 8,
         bottom: 8,
       ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: onBack ?? () => Navigator.of(context).pop(),
-            child: const Icon(
-              Icons.arrow_back_ios,
-              size: 14,
-              color: AppColors.gray900,
+      child: SizedBox(
+        height: 36,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Center(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                  height: 1.21,
+                  letterSpacing: 0,
+                  color: AppColors.gray900,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w700,
-              fontSize: 17,
-              height: 1.21,
-              letterSpacing: 0,
-              color: AppColors.gray900,
+            Positioned(
+              left: 0,
+              child: GestureDetector(
+                onTap: onBack ?? () => Navigator.of(context).pop(),
+                child: const SizedBox(
+                  width: 32,
+                  height: 36,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          const Spacer(),
-          if (trailing != null) trailing!,
-        ],
+            if (trailing != null)
+              Positioned(
+                right: 0,
+                child: trailing!,
+              ),
+          ],
+        ),
       ),
     );
   }

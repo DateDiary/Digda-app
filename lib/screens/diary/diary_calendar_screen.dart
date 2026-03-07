@@ -182,16 +182,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                     selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                     eventLoader: _getDiariesForDay,
                     calendarFormat: CalendarFormat.month,
-                    headerStyle: const HeaderStyle(
-                      formatButtonVisible: false,
-                      titleCentered: false,
-                      headerPadding: EdgeInsets.zero,
-                      titleTextStyle: TextStyle(fontSize: 0),
-                      leftChevronPadding: EdgeInsets.zero,
-                      rightChevronPadding: EdgeInsets.zero,
-                      leftChevronIcon: SizedBox.shrink(),
-                      rightChevronIcon: SizedBox.shrink(),
-                    ),
+                    headerVisible: false,
                     calendarStyle: const CalendarStyle(
                       selectedDecoration: BoxDecoration(
                         color: AppColors.primary,

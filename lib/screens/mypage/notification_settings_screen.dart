@@ -129,7 +129,7 @@ class _NotificationSettingsScreenState
                                 }
                               });
                             },
-                            activeColor: AppColors.primary,
+                            activeThumbColor: AppColors.primary,
                             activeTrackColor:
                                 AppColors.primary.withValues(alpha: 0.3),
                           ),
@@ -249,7 +249,7 @@ class _NotificationSettingsScreenState
                 _allEnabled = _groups.every((g) => g['enabled'] as bool);
               });
             },
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
           ),
         ],
