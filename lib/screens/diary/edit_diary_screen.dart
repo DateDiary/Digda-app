@@ -11,6 +11,13 @@ class EditDiaryScreen extends StatefulWidget {
 class _EditDiaryScreenState extends State<EditDiaryScreen> {
   final TextEditingController _titleController =
       TextEditingController(text: '설날 모임');
+
+  String _formatDate(DateTime date) {
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final weekday = weekdays[date.weekday - 1];
+    return '${date.year}년 ${date.month}월 ${date.day}일 ${weekday}요일';
+  }
+
   final TextEditingController _contentController = TextEditingController(
     text: '오늘은 설날이라서 친구들이랑 같이 떡국을\n먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n오후에는 영화관에서 영화를 봤는데 너무\n재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n저녁에는 집에 와서 같이 셀카도 찍었다.\n다음에도 이렇게 만나고 싶다!',
   );
@@ -202,6 +209,20 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Date display
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                            child: Text(
+                              _formatDate(DateTime(2026, 2, 8)),
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                color: AppColors.gray400,
+                              ),
+                            ),
+                          ),
+                          const Divider(color: AppColors.gray100, height: 1),
                           // Title input
                           Row(
                             children: [
