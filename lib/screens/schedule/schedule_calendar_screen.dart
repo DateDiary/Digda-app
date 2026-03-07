@@ -427,7 +427,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       ),
       // FAB - 왼쪽 위 대각선으로 이동, 크기 확대
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 12, right: 8),
+        padding: const EdgeInsets.only(bottom: 60, right: 20),
         child: SizedBox(
           width: 68,
           height: 68,
@@ -468,8 +468,8 @@ class _DayDetailBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.3,
+      initialChildSize: 0.85,
+      minChildSize: 0.5,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
         return Container(
