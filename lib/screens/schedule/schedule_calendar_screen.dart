@@ -61,10 +61,10 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       {'title': '부랄 저녁', 'color': AppColors.purple},
     ],
     DateTime.utc(2026, 3, 1): [
-      {'title': '삼일절', 'color': AppColors.eventHoliday},
+      {'title': '삼일절', 'color': AppColors.eventHoliday, 'isHoliday': true},
     ],
     DateTime.utc(2026, 3, 2): [
-      {'title': '대체휴일', 'color': AppColors.eventHoliday},
+      {'title': '대체휴일', 'color': AppColors.eventHoliday, 'isHoliday': true},
     ],
   };
 
@@ -72,15 +72,22 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return _events[DateTime.utc(day.year, day.month, day.day)] ?? [];
   }
 
+  // 사용자 일정만 (공휴일 제외)
+  List<Map<String, dynamic>> _getUserEventsForDay(DateTime day) {
+    return _getEventsForDay(day)
+        .where((e) => e['isHoliday'] != true)
+        .toList();
+  }
+
   void _showDayDetail(DateTime day) {
-    final events = _getEventsForDay(day);
+    final userEvents = _getUserEventsForDay(day);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _DayDetailBottomSheet(
         day: day,
-        events: events,
+        events: userEvents,
         onAddSchedule: () {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/add-schedule');
@@ -91,7 +98,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
         },
       ),
     ).then((_) {
-      // Bottom sheet 닫히면 선택 해제
       setState(() => _selectedDay = null);
     });
   }
@@ -103,49 +109,67 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Custom calendar header - 상단 여백 확보
+            // 헤더 - 제목 "일정" + 우측 아이콘
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => setState(() {
-                      _focusedDay = DateTime(
-                        _focusedDay.year,
-                        _focusedDay.month - 1,
-                      );
-                    }),
-                    child: const Icon(
-                      Icons.chevron_left,
-                      size: 24,
-                      color: AppColors.gray700,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${_focusedDay.year}년 ${_focusedDay.month}월',
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                      height: 1.21,
-                      letterSpacing: 0,
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: () => setState(() {
-                      _focusedDay = DateTime(
-                        _focusedDay.year,
-                        _focusedDay.month + 1,
-                      );
-                    }),
-                    child: const Icon(
-                      Icons.chevron_right,
-                      size: 24,
-                      color: AppColors.gray700,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        '일정',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                          color: AppColors.gray900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              _focusedDay = DateTime(
+                                _focusedDay.year,
+                                _focusedDay.month - 1,
+                              );
+                            }),
+                            child: const Icon(
+                              Icons.chevron_left,
+                              size: 18,
+                              color: AppColors.gray500,
+                            ),
+                          ),
+                          Text(
+                            '${_focusedDay.year}년 ${_focusedDay.month}월',
+                            style: const TextStyle(
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: AppColors.gray500,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              _focusedDay = DateTime(
+                                _focusedDay.year,
+                                _focusedDay.month + 1,
+                              );
+                            }),
+                            child: const Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: AppColors.gray500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   GestureDetector(
@@ -186,13 +210,13 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // 캘린더 - 하단까지 확장
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final rowHeight =
-                      ((constraints.maxHeight - 20) / 6).clamp(64.0, 100.0);
+                      ((constraints.maxHeight - 28) / 6).clamp(64.0, 100.0);
                   return TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
@@ -203,37 +227,37 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     calendarFormat: CalendarFormat.month,
                     headerVisible: false,
                     rowHeight: rowHeight,
-                    calendarStyle: CalendarStyle(
-                      selectedDecoration: const BoxDecoration(
+                    calendarStyle: const CalendarStyle(
+                      selectedDecoration: BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      selectedTextStyle: const TextStyle(
+                      selectedTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                         color: AppColors.white,
                       ),
-                      todayDecoration: const BoxDecoration(),
-                      todayTextStyle: const TextStyle(
+                      todayDecoration: BoxDecoration(),
+                      todayTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                         color: AppColors.white,
                       ),
-                      defaultTextStyle: const TextStyle(
+                      defaultTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                         color: AppColors.gray900,
                       ),
-                      weekendTextStyle: const TextStyle(
+                      weekendTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                         color: AppColors.primary,
                       ),
-                      outsideTextStyle: const TextStyle(
+                      outsideTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
@@ -241,8 +265,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                       markersMaxCount: 2,
                       cellAlignment: Alignment.topCenter,
-                      cellMargin: const EdgeInsets.all(1),
-                      cellPadding: const EdgeInsets.only(top: 4),
+                      cellMargin: EdgeInsets.all(1),
+                      cellPadding: EdgeInsets.only(top: 4),
                     ),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
@@ -259,12 +283,13 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                     ),
                     calendarBuilders: CalendarBuilders(
-                      // 오늘 날짜 - 셀 크기에 맞는 작은 검은 원
+                      // 오늘 날짜 - 검은 원, 다른 날짜와 동일한 높이
                       todayBuilder: (context, day, focusedDay) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
+                        return Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
                               width: 24,
                               height: 24,
                               decoration: const BoxDecoration(
@@ -283,7 +308,35 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        );
+                      },
+                      // 선택된 날짜 - 빨간 원 (검은 원과 동일한 크기)
+                      selectedBuilder: (context, day, focusedDay) {
+                        return Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         );
                       },
                       // 이벤트 마커 - 숫자 바로 아래에 밀착
@@ -343,21 +396,20 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       ),
       // FAB - 왼쪽 위 대각선으로 이동, 크기 확대
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 16, right: 4),
+        padding: const EdgeInsets.only(bottom: 12, right: 8),
         child: SizedBox(
-          width: 64,
-          height: 64,
+          width: 68,
+          height: 68,
           child: FloatingActionButton(
             onPressed: () =>
                 Navigator.of(context).pushNamed('/add-schedule'),
             backgroundColor: AppColors.primary,
             shape: const CircleBorder(),
             elevation: 4,
-            child: const Icon(Icons.add, color: AppColors.white, size: 32),
+            child: const Icon(Icons.add, color: AppColors.white, size: 30),
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
     );
   }
@@ -379,94 +431,97 @@ class _DayDetailBottomSheet extends StatelessWidget {
   String _formatDayLabel(DateTime day) {
     const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
     final weekday = weekdays[day.weekday - 1];
-    return '${day.month}월 ${day.day}일 ${weekday}요일';
+    return '${day.month}월 ${day.day}일 $weekday요일';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).padding.bottom + 24,
-      ),
-      constraints: BoxConstraints(
-        // 동일한 최대 높이 - 일정 유무와 무관
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.gray200,
-              borderRadius: BorderRadius.circular(2),
-            ),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      minChildSize: 0.3,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.gray200,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _formatDayLabel(day),
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                        color: AppColors.gray900,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _formatDayLabel(day),
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                            color: AppColors.gray900,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '일정 ${events.length}개',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '일정 ${events.length}개',
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        color: AppColors.gray500,
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: onAddSchedule,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: AppColors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: onAddSchedule,
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: AppColors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: events.isEmpty
-                ? _buildEmptyState()
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        ...events.map((event) {
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: events.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          bottom: MediaQuery.of(context).padding.bottom + 16,
+                        ),
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
                           final color = event['color'] as Color;
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
@@ -524,19 +579,18 @@ class _DayDetailBottomSheet extends StatelessWidget {
                               ),
                             ),
                           );
-                        }),
-                        // 일정이 있는 경우 "다른 일정이 없어요" 표시 안 함
-                      ],
-                    ),
-                  ),
+                        },
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -545,8 +599,8 @@ class _DayDetailBottomSheet extends StatelessWidget {
             size: 48,
             color: AppColors.gray200,
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12),
+          Text(
             '일정이 없어요',
             style: TextStyle(
               fontFamily: 'Inter',

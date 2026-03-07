@@ -85,20 +85,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Stack(
-                alignment: Alignment.center,
+              child: Row(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                        size: 14,
-                        color: AppColors.gray900,
-                      ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
                     ),
                   ),
+                  const SizedBox(width: 12),
                   const Text(
                     '알림',
                     style: TextStyle(
@@ -108,18 +105,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: _markAllRead,
-                      child: const Text(
-                        '모두 읽음',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: AppColors.primary,
-                        ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: _markAllRead,
+                    child: const Text(
+                      '모두 읽음',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),

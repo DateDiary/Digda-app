@@ -53,25 +53,14 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더 - 중앙 정렬 "다이어리"
+            // 헤더 - 좌측 정렬
             SizedBox(
               height: 52,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  const Text(
-                    '다이어리',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                      height: 1.3,
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  Positioned(
-                    left: 8,
-                    child: GestureDetector(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
                       child: const Padding(
                         padding: EdgeInsets.all(8),
@@ -82,8 +71,20 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 4),
+                    const Text(
+                      '다이어리',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                        height: 1.3,
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
+                ),
               ),
             ),
             Expanded(

@@ -53,17 +53,17 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
               ),
               const SizedBox(height: 32),
               _buildCheckAll(),
-              const SizedBox(height: 28),
+              const SizedBox(height: 32),
               _buildCheckItem(0, '이용약관 동의', true),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               _buildCheckItem(1, '개인정보 수집 및 이용 동의', true),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               _buildCheckItem(2, '만 14세 이상입니다', true),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               Container(height: 1, color: AppColors.gray100),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               _buildCheckItem(3, '마케팅 정보 수신 동의', false),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               _buildCheckItem(4, '푸시 알림 수신 동의', false),
               const Spacer(),
               Center(
@@ -123,45 +123,45 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
     return GestureDetector(
       onTap: () => _toggleItem(index, !_checks[index]),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: Row(
           children: [
             Icon(
-            _checks[index] ? Icons.check_box : Icons.check_box_outline_blank,
-            size: 20,
-            color: _checks[index] ? AppColors.primary : AppColors.gray300,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              label,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.gray900,
+              _checks[index] ? Icons.check_box : Icons.check_box_outline_blank,
+              size: 22,
+              color: _checks[index] ? AppColors.primary : AppColors.gray300,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.gray900,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: isRequired
-                  ? AppColors.primary.withValues(alpha: 0.1)
-                  : AppColors.gray100,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              isRequired ? '필수' : '선택',
-              style: AppTextStyles.tiny.copyWith(
-                color: isRequired ? AppColors.primary : AppColors.gray500,
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: isRequired
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : AppColors.gray100,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                isRequired ? '필수' : '선택',
+                style: AppTextStyles.tiny.copyWith(
+                  color: isRequired ? AppColors.primary : AppColors.gray500,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 4),
-          const Icon(
-            Icons.chevron_right,
-            size: 16,
-            color: AppColors.gray400,
-          ),
+            const SizedBox(width: 4),
+            const Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: AppColors.gray400,
+            ),
           ],
         ),
       ),

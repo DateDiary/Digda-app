@@ -82,32 +82,32 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Flexible(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              '그림일기',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 17,
-                                color: AppColors.gray900,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                '그림일기',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  color: AppColors.gray900,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              '${_focusedDay.year}년 ${_focusedDay.month}월',
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                color: AppColors.gray500,
+                              Text(
+                                '${_focusedDay.year}년 ${_focusedDay.month}월',
+                                style: const TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: AppColors.gray500,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                    ),
                         const Spacer(),
                         GestureDetector(
                           onTap: () => Navigator.of(context)
@@ -166,46 +166,46 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                       leftChevronIcon: SizedBox.shrink(),
                       rightChevronIcon: SizedBox.shrink(),
                     ),
-                    calendarStyle: CalendarStyle(
-                      selectedDecoration: const BoxDecoration(
+                    calendarStyle: const CalendarStyle(
+                      selectedDecoration: BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      todayDecoration: const BoxDecoration(
+                      todayDecoration: BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
-                      todayTextStyle: const TextStyle(
+                      todayTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                         color: AppColors.white,
                       ),
-                      defaultTextStyle: const TextStyle(
+                      defaultTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                         color: AppColors.gray900,
                       ),
-                      weekendTextStyle: const TextStyle(
+                      weekendTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                         color: AppColors.primary,
                       ),
-                      outsideTextStyle: const TextStyle(
+                      outsideTextStyle: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
                         fontSize: 13,
                         color: AppColors.gray300,
                       ),
                       markersMaxCount: 1,
-                      markerDecoration: const BoxDecoration(
+                      markerDecoration: BoxDecoration(
                         color: Color(0xFFFBBF24),
                         shape: BoxShape.circle,
                       ),
                       markerSize: 5,
-                      markerMargin: const EdgeInsets.only(top: 1),
+                      markerMargin: EdgeInsets.only(top: 1),
                     ),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
@@ -233,10 +233,10 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                     },
                   ),
                   // Legend
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 8, 20, 20),
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(
                           Icons.circle,
                           size: 8,

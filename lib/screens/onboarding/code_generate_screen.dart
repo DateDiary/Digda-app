@@ -49,7 +49,7 @@ class _CodeGenerateScreenState extends State<CodeGenerateScreen> {
                     child: Container(
                       width: double.infinity,
                       padding:
-                          EdgeInsets.fromLTRB(24, 24, 24, bottomPadding + 48),
+                          EdgeInsets.fromLTRB(24, 24, 24, bottomPadding + 24),
                       decoration: const BoxDecoration(
                         color: AppColors.white,
                         borderRadius:

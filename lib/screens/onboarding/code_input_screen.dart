@@ -63,7 +63,7 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
           // 하단 흰색 시트
           Container(
             width: double.infinity,
-            padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding + 32),
+            padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding + 48),
             decoration: const BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
