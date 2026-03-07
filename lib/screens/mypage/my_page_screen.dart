@@ -30,7 +30,7 @@ class MyPageScreen extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
-                      fontSize: 22,
+                      fontSize: 17,
                       color: AppColors.gray900,
                     ),
                   ),

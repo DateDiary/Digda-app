@@ -190,18 +190,21 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
                 SizedBox(
                   height: 52,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            size: 14,
-                            color: AppColors.gray900,
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              size: 14,
+                              color: AppColors.gray900,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 12),
                         const Text(
                           '일정 상세',
                           style: TextStyle(
