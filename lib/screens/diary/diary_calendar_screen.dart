@@ -75,37 +75,18 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header - 메인 탭 스타일
+                  // Header - 제목 + 우측 아이콘
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text(
-                                '그림일기',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
-                                  color: AppColors.gray900,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                '${_focusedDay.year}년 ${_focusedDay.month}월',
-                                style: const TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
-                                  color: AppColors.gray500,
-                                ),
-                              ),
-                            ],
+                        const Text(
+                          '그림일기',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17,
+                            color: AppColors.gray900,
                           ),
                         ),
                         const Spacer(),
@@ -147,7 +128,52 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  // 날짜 네비게이션 - 가운데 정렬
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            _focusedDay = DateTime(
+                              _focusedDay.year,
+                              _focusedDay.month - 1,
+                            );
+                          }),
+                          child: const Icon(
+                            Icons.chevron_left,
+                            size: 20,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${_focusedDay.year}년 ${_focusedDay.month}월',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: AppColors.gray700,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            _focusedDay = DateTime(
+                              _focusedDay.year,
+                              _focusedDay.month + 1,
+                            );
+                          }),
+                          child: const Icon(
+                            Icons.chevron_right,
+                            size: 20,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   // Calendar
                   TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
