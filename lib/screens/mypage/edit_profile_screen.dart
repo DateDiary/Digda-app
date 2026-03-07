@@ -41,7 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
                   const Text(
                     '프로필 편집',
                     style: TextStyle(

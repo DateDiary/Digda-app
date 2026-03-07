@@ -95,7 +95,7 @@ class GroupHomeScreen extends StatelessWidget {
                     // 멤버 아바타
                     _buildMemberSection(),
                     // 버튼을 아래로 이동 - 여백 증가
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 60),
                     // 기능 카드들
                     FeatureCard(
                       icon: Icons.calendar_month_outlined,

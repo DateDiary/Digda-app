@@ -103,7 +103,7 @@ class GroupListScreen extends StatelessWidget {
             ),
             // 그룹 리스트 - 그룹 수에 따라 동적 중앙 배치
             Expanded(
-              child: _groups.length <= 4
+              child: _groups.length < 6
                   ? Center(
                       child: _buildGroupContent(context),
                     )

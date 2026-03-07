@@ -22,12 +22,36 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   final TextEditingController _addController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _inputFocusNode.addListener(_onFocusChange);
+  }
 
   @override
   void dispose() {
     _addController.dispose();
     _scrollController.dispose();
+    _inputFocusNode.removeListener(_onFocusChange);
+    _inputFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (_inputFocusNode.hasFocus) {
+      // 키보드가 올라오면 목록 하단으로 스크롤
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
   }
 
   void _toggleTodo(int index) {
@@ -54,6 +78,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
       });
       _addController.clear();
     });
+    // 새로 추가된 항목이 보이도록 맨 위로 스크롤
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -184,7 +209,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                         onToggle: () => _toggleTodo(index),
                       );
                     }),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                   ],
                   // 완료 섹션
                   if (completed.isNotEmpty) ...[
@@ -239,12 +264,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 44,
                       decoration: BoxDecoration(
                         color: AppColors.gray50,
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(22),
                       ),
                       child: TextField(
                         controller: _addController,
+                        focusNode: _inputFocusNode,
                         style: const TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
@@ -299,36 +326,42 @@ class _TodoListScreenState extends State<TodoListScreen> {
     required VoidCallback onToggle,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onTap: onToggle,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isCompleted ? AppColors.gray100 : AppColors.gray100,
+              width: 1,
+            ),
+            boxShadow: isCompleted
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
               Container(
-                width: 22,
-                height: 22,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: isCompleted ? AppColors.blue : Colors.transparent,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(7),
                   border: isCompleted
                       ? null
                       : Border.all(color: AppColors.gray300, width: 1.5),
                 ),
                 child: isCompleted
-                    ? const Icon(Icons.check, size: 14, color: AppColors.white)
+                    ? const Icon(Icons.check, size: 16, color: AppColors.white)
                     : null,
               ),
               const SizedBox(width: 14),
@@ -340,7 +373,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       text,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
+                        fontWeight: isCompleted ? FontWeight.w400 : FontWeight.w500,
                         fontSize: 15,
                         color: isCompleted ? AppColors.gray400 : AppColors.gray900,
                         decoration: isCompleted
@@ -350,7 +383,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       ),
                     ),
                     if (completedDate != null) ...[
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 3),
                       Text(
                         completedDate,
                         style: const TextStyle(
