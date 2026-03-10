@@ -26,6 +26,8 @@ class DigdaApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           primary: AppColors.primary,
+          surface: AppColors.white,
+          onSurface: AppColors.gray900,
         ),
         scaffoldBackgroundColor: AppColors.white,
         appBarTheme: const AppBarTheme(
