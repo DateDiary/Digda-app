@@ -27,13 +27,26 @@ class PrimaryButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isEnabled ? backgroundColor : AppColors.gray50,
-          foregroundColor: isEnabled ? textColor : AppColors.gray400,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return AppColors.gray100;
+            }
+            return backgroundColor;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return AppColors.gray400;
+            }
+            return textColor;
+          }),
+          elevation: WidgetStateProperty.all(0),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(26),
+            ),
           ),
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
         ),
         child: Text(
           text,
@@ -43,7 +56,6 @@ class PrimaryButton extends StatelessWidget {
             fontSize: fontSize,
             height: 1.21,
             letterSpacing: 0,
-            color: isEnabled ? textColor : AppColors.gray400,
           ),
         ),
       ),

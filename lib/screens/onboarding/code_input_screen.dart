@@ -42,28 +42,14 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Scaffold(
-      backgroundColor: AppColors.gray400,
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
-          // 상단 닫기 버튼
-          SafeArea(
-            bottom: false,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
-          ),
           const Spacer(),
           // 하단 흰색 시트
           Container(
             width: double.infinity,
-            padding: EdgeInsets.fromLTRB(24, 16, 24, bottomPadding + 48),
+            padding: EdgeInsets.fromLTRB(24, 12, 24, bottomPadding + 30),
             decoration: const BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -132,15 +118,15 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
                           fillColor: AppColors.gray50,
                           contentPadding: EdgeInsets.zero,
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
                               color: _controllers[index].text.isNotEmpty
                                   ? AppColors.primary
-                                  : AppColors.gray200,
+                                  : AppColors.gray100,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
                               color: AppColors.primary,
                               width: 1.5,
@@ -159,7 +145,7 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
                   text: '참여하기',
                   onPressed: _isFilled
                       ? () => Navigator.of(context)
-                          .pushReplacementNamed('/group-list')
+                          .pushReplacementNamed('/group-home')
                       : null,
                 ),
               ],

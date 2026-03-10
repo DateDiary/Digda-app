@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../widgets/image_pick_helper.dart';
 
 class WriteDiaryScreen extends StatefulWidget {
   const WriteDiaryScreen({super.key});
@@ -12,8 +14,9 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
-  int _selectedWeather = 0; // 0=맑음, 1=흐림, 2=비, 3=눈
-  int _selectedMood = 1;    // 0~3 emoji index
+  int _selectedWeather = 0;
+  int _selectedMood = 1;
+  File? _pickedImage;
 
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
@@ -44,30 +47,18 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF8F4),
+      backgroundColor: const Color(0xFFFFFDF5),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header - 좌측 뒤로가기 + 제목 + 우측 저장
+            // ── 헤더: < 일기 쓰기(중앙) 저장(우) ──
             Container(
-              color: AppColors.white,
+              color: const Color(0xFFFFFDF5),
               height: 52,
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: 14,
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   const Text(
                     '일기 쓰기',
                     style: TextStyle(
@@ -77,123 +68,146 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: _canSave
-                        ? () => Navigator.of(context).pop()
-                        : null,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _canSave
-                            ? AppColors.primary
-                            : AppColors.gray200,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '저장',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: _canSave
-                              ? AppColors.white
-                              : AppColors.gray400,
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            size: 14,
+                            color: AppColors.gray900,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Weather + Mood selector
-            Container(
-              color: AppColors.white,
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-              child: Row(
-                children: [
-                  const Text(
-                    '날씨',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 13,
-                      color: AppColors.gray500,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ...List.generate(_weatherOptions.length, (i) {
-                    final opt = _weatherOptions[i];
-                    final isSelected = _selectedWeather == i;
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedWeather = i),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? opt.color.withValues(alpha: 0.15)
-                              : Colors.transparent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          opt.icon,
-                          size: 20,
-                          color: isSelected ? opt.color : AppColors.gray400,
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(width: 16),
-                  const Text(
-                    '기분',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 13,
-                      color: AppColors.gray500,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ...List.generate(_moodEmojis.length, (i) {
-                    final isSelected = _selectedMood == i;
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedMood = i),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primary.withValues(alpha: 0.15)
-                              : Colors.transparent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: _canSave
+                            ? () => Navigator.of(context).pop()
+                            : null,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _canSave
+                                ? AppColors.primary
+                                : AppColors.gray200,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Text(
-                            _moodEmojis[i],
+                            '저장',
                             style: TextStyle(
-                              fontSize: isSelected ? 20 : 18,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                              color: _canSave
+                                  ? AppColors.white
+                                  : AppColors.gray400,
                             ),
                           ),
                         ),
                       ),
-                    );
-                  }),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-            // Writing area
+            // ── 날씨 + 기분 선택 바 ──
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFFAF9F4),
+                border: Border(
+                  bottom: BorderSide(color: AppColors.gray100),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    const Text(
+                      '날씨',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: AppColors.gray500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ...List.generate(_weatherOptions.length, (i) {
+                      final opt = _weatherOptions[i];
+                      final isSelected = _selectedWeather == i;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedWeather = i),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 6),
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? opt.color.withValues(alpha: 0.15)
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            opt.icon,
+                            size: 18,
+                            color: isSelected ? opt.color : AppColors.gray400,
+                          ),
+                        ),
+                      );
+                    }),
+                    const SizedBox(width: 12),
+                    const Text(
+                      '기분',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: AppColors.gray500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ...List.generate(_moodEmojis.length, (i) {
+                      final isSelected = _selectedMood == i;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedMood = i),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 6),
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primary.withValues(alpha: 0.15)
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              _moodEmojis[i],
+                              style: TextStyle(
+                                fontSize: isSelected ? 18 : 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+            // ── 본문 영역 ──
             Expanded(
               child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 8),
                 child: Column(
                   children: [
-                    // Date + title + image block
+                    // 날짜 + 제목 + 이미지 카드
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
@@ -204,8 +218,10 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 날짜
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                            padding:
+                                const EdgeInsets.fromLTRB(16, 14, 16, 10),
                             child: Text(
                               _formatDate(DateTime.now()),
                               style: const TextStyle(
@@ -216,9 +232,12 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                               ),
                             ),
                           ),
-                          const Divider(color: AppColors.gray100, height: 1),
-                          // Title input
-                          Row(
+                          const Divider(
+                              color: AppColors.gray100, height: 1),
+                          // 제목 입력
+                          Container(
+                            color: const Color(0xFFFFF8F0),
+                            child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -227,16 +246,17 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                                 ),
                                 decoration: const BoxDecoration(
                                   border: Border(
-                                    right: BorderSide(color: AppColors.gray100),
+                                    right:
+                                        BorderSide(color: AppColors.gray100),
                                   ),
                                 ),
                                 child: const Text(
                                   '제목',
                                   style: TextStyle(
                                     fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w700,
                                     fontSize: 14,
-                                    color: AppColors.gray400,
+                                    color: AppColors.gray900,
                                   ),
                                 ),
                               ),
@@ -266,51 +286,119 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                               ),
                             ],
                           ),
-                          const Divider(color: AppColors.gray100, height: 1),
-                          // Image picker
+                          ),
+                          const Divider(
+                              color: AppColors.gray100, height: 1),
+                          // 이미지 추가 영역
                           GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              height: 160,
-                              color: Colors.transparent,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: AppColors.gray300,
-                                        width: 1.5,
+                            onTap: () async {
+                              final file = await pickImage(context);
+                              if (file != null) {
+                                setState(() => _pickedImage = file);
+                              }
+                            },
+                            child: _pickedImage != null
+                                ? Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(12),
+                                          bottomRight: Radius.circular(12),
+                                        ),
+                                        child: Image.file(
+                                          _pickedImage!,
+                                          width: double.infinity,
+                                          height: 200,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Icon(
-                                      Icons.add,
-                                      size: 28,
-                                      color: AppColors.gray300,
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: GestureDetector(
+                                          onTap: () =>
+                                              setState(() => _pickedImage = null),
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors.gray700,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : SizedBox(
+                                    width: double.infinity,
+                                    height: 160,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Container(
+                                              width: 72,
+                                              height: 56,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: AppColors.gray300,
+                                                  width: 1.5,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.image_outlined,
+                                                size: 32,
+                                                color: AppColors.gray300,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: -6,
+                                              right: -6,
+                                              child: Container(
+                                                width: 18,
+                                                height: 18,
+                                                decoration: const BoxDecoration(
+                                                  color: AppColors.gray400,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  size: 12,
+                                                  color: AppColors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          '탭하여 그림·사진 추가',
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                            color: AppColors.gray400,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    '탭하여 그림·사진 추가',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 13,
-                                      color: AppColors.gray400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ),
                         ],
                       ),
                     ),
-                    // Lined writing area
+                    // 줄이 있는 본문 입력 영역
                     _buildLinedArea(),
                     const SizedBox(height: 40),
                   ],
@@ -328,13 +416,12 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Stack(
         children: [
-          // Lines
           Column(
             children: List.generate(
               12,
               (i) => Container(
                 height: 44,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: AppColors.gray100, width: 1),
                   ),
@@ -342,7 +429,6 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
               ),
             ),
           ),
-          // Text input
           TextField(
             controller: _contentController,
             maxLines: null,
@@ -351,7 +437,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
               fontFamily: 'Inter',
               fontWeight: FontWeight.w400,
               fontSize: 15,
-              height: 2.93, // matches 44px line height
+              height: 2.93,
               color: AppColors.gray800,
             ),
             decoration: const InputDecoration(
@@ -364,7 +450,8 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                 color: AppColors.gray300,
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             ),
             onChanged: (_) => setState(() {}),
           ),
