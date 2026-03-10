@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../widgets/image_pick_helper.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -12,6 +14,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController =
       TextEditingController(text: '김민수');
   final TextEditingController _statusController = TextEditingController();
+  File? _profileImage;
 
   @override
   void dispose() {
@@ -78,41 +81,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Center(
                       child: Column(
                         children: [
-                          Stack(
-                            children: [
-                              Container(
-                                width: 96,
-                                height: 96,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.15),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 54,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.gray700,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: AppColors.white, width: 2),
+                          GestureDetector(
+                            onTap: () async {
+                              final file = await pickImage(context);
+                              if (file != null) {
+                                setState(() => _profileImage = file);
+                              }
+                            },
+                            child: Stack(
+                              children: [
+                                _profileImage != null
+                                    ? ClipOval(
+                                        child: Image.file(
+                                          _profileImage!,
+                                          width: 96,
+                                          height: 96,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(
+                                        width: 96,
+                                        height: 96,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary
+                                              .withValues(alpha: 0.15),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.person,
+                                          size: 54,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                Positioned(
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.gray700,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: AppColors.white, width: 2),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: 16,
+                                      color: AppColors.white,
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.camera_alt_outlined,
-                                    size: 16,
-                                    color: AppColors.white,
-                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 8),
                           const Text(
@@ -215,19 +236,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.15),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 26,
-                              color: AppColors.primary,
-                            ),
-                          ),
+                          _profileImage != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    _profileImage!,
+                                    width: 44,
+                                    height: 44,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.15),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 26,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
                           const SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

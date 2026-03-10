@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/image_pick_helper.dart';
 
 class CreateDiaryScreen extends StatefulWidget {
   const CreateDiaryScreen({super.key, this.isEdit = false});
@@ -16,6 +18,8 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   late int _maxMembers;
 
   static const List<int?> _presets = [2, 4, 6, 8, 10, null]; // null = 제한없음
+
+  File? _pickedImage;
 
   bool get _canCreate => _nameController.text.trim().isNotEmpty;
 
@@ -175,42 +179,79 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                     ),
                     const SizedBox(height: 12),
                     GestureDetector(
-                      onTap: () {
-                        // 이미지 선택 (추후 구현)
+                      onTap: () async {
+                        final file = await pickImage(context);
+                        if (file != null) {
+                          setState(() => _pickedImage = file);
+                        }
                       },
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.gray200,
-                            width: 1.5,
-                            style: BorderStyle.solid,
-                          ),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera_alt_outlined,
-                              size: 24,
-                              color: AppColors.gray400,
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              '사진 추가',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 11,
-                                color: AppColors.gray400,
+                      child: _pickedImage != null
+                          ? Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.file(
+                                    _pickedImage!,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: -4,
+                                  right: -4,
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        setState(() => _pickedImage = null),
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.gray700,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: AppColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.gray200,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 24,
+                                    color: AppColors.gray400,
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '사진 추가',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 11,
+                                      color: AppColors.gray400,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 28),
                     // 최대 인원
