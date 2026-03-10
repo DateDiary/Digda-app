@@ -101,16 +101,6 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          '일기 상세',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17,
-                            color: AppColors.gray900,
-                          ),
-                        ),
                         const Spacer(),
                         GestureDetector(
                           onTap: () => setState(() => _showMenu = !_showMenu),
