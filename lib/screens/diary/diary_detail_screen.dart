@@ -248,18 +248,11 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Diary content
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
+                        // Diary content with ruled lines
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildRuledText(
                             '오늘은 설날이라서 친구들이랑 같이 떡국을\n먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n오후에는 영화관에서 영화를 봤는데 너무\n재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n저녁에는 집에 와서 같이 셀카도 찍었다.\n다음에도 이렇게 만나고 싶다!',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
-                              height: 1.9,
-                              color: AppColors.gray800,
-                            ),
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -318,6 +311,35 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildRuledText(String text) {
+    final lines = text.split('\n');
+    const lineHeight = 36.0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        return Container(
+          width: double.infinity,
+          height: lineHeight,
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: AppColors.gray100, width: 1),
+            ),
+          ),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            line,
+            style: const TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: AppColors.gray800,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 

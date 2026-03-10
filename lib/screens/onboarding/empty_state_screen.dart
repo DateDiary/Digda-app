@@ -272,7 +272,10 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
           PrimaryButton(
             text: '참여하기',
             onPressed: _isFilled
-                ? () => Navigator.of(context).pushReplacementNamed('/group-list')
+                ? () {
+                    Navigator.of(context).pop(); // 바텀시트 닫기
+                    Navigator.of(context).pushReplacementNamed('/group-home');
+                  }
                 : null,
           ),
         ],

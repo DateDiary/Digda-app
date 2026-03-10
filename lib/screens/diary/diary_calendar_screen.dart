@@ -189,7 +189,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                         shape: BoxShape.circle,
                       ),
                       todayDecoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: AppColors.gray900,
                         shape: BoxShape.circle,
                       ),
                       todayTextStyle: TextStyle(
@@ -243,7 +243,72 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      Navigator.of(context).pushNamed('/diary-detail');
+                      final hasDiary = _getDiariesForDay(selectedDay).isNotEmpty;
+                      if (hasDiary) {
+                        Navigator.of(context).pushNamed('/diary-detail').then((_) {
+                          setState(() => _selectedDay = null);
+                        });
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: const Text(
+                              '일기가 없어요',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 17,
+                                color: AppColors.gray900,
+                              ),
+                            ),
+                            content: const Text(
+                              '이 날의 일기를 작성할까요?',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: AppColors.gray700,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  setState(() => _selectedDay = null);
+                                },
+                                child: const Text(
+                                  '취소',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColors.gray500,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  setState(() => _selectedDay = null);
+                                  Navigator.of(context).pushNamed('/write-diary');
+                                },
+                                child: const Text(
+                                  '작성하기',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                     onPageChanged: (focusedDay) {
                       setState(() => _focusedDay = focusedDay);

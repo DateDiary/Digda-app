@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
+import '../../widgets/image_pick_helper.dart';
 
 class EditDiaryScreen extends StatefulWidget {
   const EditDiaryScreen({super.key});
@@ -24,7 +26,7 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
 
   int _selectedWeather = 0;
   int _selectedMood = 1;
-  bool _hasImage = true;
+  File? _pickedImage;
 
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
@@ -267,47 +269,28 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                             ],
                           ),
                           const Divider(color: AppColors.gray100, height: 1),
-                          // Image area (with existing image + remove button)
-                          if (_hasImage)
+                          // Image area
+                          if (_pickedImage != null)
                             Stack(
                               children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: 200,
-                                  margin: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(alpha: 0.07),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: AppColors.primary.withValues(alpha: 0.3),
-                                      style: BorderStyle.solid,
-                                    ),
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
                                   ),
-                                  child: Center(
-                                    child: Container(
-                                      width: 80,
-                                      height: 64,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: const Color(0xFFFBBF24),
-                                          width: 1.5,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: const Icon(
-                                        Icons.image_outlined,
-                                        size: 32,
-                                        color: Color(0xFFFBBF24),
-                                      ),
-                                    ),
+                                  child: Image.file(
+                                    _pickedImage!,
+                                    width: double.infinity,
+                                    height: 200,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                                 Positioned(
-                                  top: 16,
-                                  right: 16,
+                                  top: 8,
+                                  right: 8,
                                   child: GestureDetector(
                                     onTap: () =>
-                                        setState(() => _hasImage = false),
+                                        setState(() => _pickedImage = null),
                                     child: Container(
                                       width: 24,
                                       height: 24,
@@ -327,7 +310,12 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                             )
                           else
                             GestureDetector(
-                              onTap: () => setState(() => _hasImage = true),
+                              onTap: () async {
+                                final file = await pickImage(context);
+                                if (file != null) {
+                                  setState(() => _pickedImage = file);
+                                }
+                              },
                               child: Container(
                                 width: double.infinity,
                                 height: 100,
