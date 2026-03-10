@@ -28,7 +28,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isEnabled ? backgroundColor : AppColors.gray50,
+          backgroundColor: isEnabled ? backgroundColor : AppColors.gray100,
           foregroundColor: isEnabled ? textColor : AppColors.gray400,
           elevation: 0,
           shape: RoundedRectangleBorder(
