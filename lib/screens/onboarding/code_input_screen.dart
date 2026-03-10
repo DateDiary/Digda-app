@@ -145,7 +145,7 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
                   text: '참여하기',
                   onPressed: _isFilled
                       ? () => Navigator.of(context)
-                          .pushReplacementNamed('/group-list')
+                          .pushReplacementNamed('/group-home')
                       : null,
                 ),
               ],
