@@ -42,16 +42,10 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.4),
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              behavior: HitTestBehavior.opaque,
-              child: const SizedBox.expand(),
-            ),
-          ),
+          const Spacer(),
           // 하단 흰색 시트
           Container(
             width: double.infinity,
