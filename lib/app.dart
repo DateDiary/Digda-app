@@ -22,13 +22,14 @@ class DigdaApp extends StatelessWidget {
       ],
       locale: const Locale('ko', 'KR'),
       theme: ThemeData(
+        useMaterial3: false,
         fontFamily: 'Inter',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
+        primaryColor: AppColors.primary,
+        colorScheme: const ColorScheme.light(
           primary: AppColors.primary,
+          onPrimary: AppColors.white,
           surface: AppColors.white,
           onSurface: AppColors.gray900,
-          surfaceTint: Colors.transparent,
         ),
         scaffoldBackgroundColor: AppColors.white,
         appBarTheme: const AppBarTheme(
