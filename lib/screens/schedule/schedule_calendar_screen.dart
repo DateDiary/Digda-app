@@ -454,7 +454,17 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      _showDayDetail(selectedDay);
+                      // 공휴일만 있는 날은 바텀시트 안 띄움
+                      final allEvents = _getEventsForDay(selectedDay);
+                      final userEvents = _getUserEventsForDay(selectedDay);
+                      if (userEvents.isNotEmpty || allEvents.isEmpty) {
+                        _showDayDetail(selectedDay);
+                      } else {
+                        // 공휴일만 있는 날 — 선택만 하고 바텀시트 X
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          if (mounted) setState(() => _selectedDay = null);
+                        });
+                      }
                     },
                     onPageChanged: (focusedDay) {
                       setState(() => _focusedDay = focusedDay);
