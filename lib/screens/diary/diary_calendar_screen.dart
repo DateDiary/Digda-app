@@ -481,10 +481,12 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: TableCalendar(
                       firstDay: DateTime.utc(2020, 1, 1),
-                      lastDay: DateTime.utc(2030, 12, 31),
+                      lastDay: DateTime.now(),
                       focusedDay: pickerFocusedDay,
                       selectedDayPredicate: (day) =>
                           isSameDay(pickerSelectedDay, day),
+                      enabledDayPredicate: (day) =>
+                          !day.isAfter(DateTime.now()),
                       calendarFormat: CalendarFormat.month,
                       headerVisible: false,
                       calendarStyle: const CalendarStyle(
@@ -519,6 +521,12 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
                           color: AppColors.gray300,
+                        ),
+                        disabledTextStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: AppColors.gray200,
                         ),
                       ),
                       daysOfWeekStyle: const DaysOfWeekStyle(
@@ -556,8 +564,12 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                       child: ElevatedButton(
                         onPressed: pickerSelectedDay != null
                             ? () {
+                                final selected = pickerSelectedDay!;
                                 Navigator.of(context).pop();
-                                Navigator.of(context).pushNamed('/write-diary');
+                                Navigator.of(context).pushNamed(
+                                  '/write-diary',
+                                  arguments: selected,
+                                );
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

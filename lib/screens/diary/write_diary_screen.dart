@@ -14,13 +14,30 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
+  static const int _maxTitleLength = 20;
+  static const int _maxContentLength = 300;
+
   int _selectedWeather = 0;
   int _selectedMood = 1;
   File? _pickedImage;
+  DateTime _selectedDate = DateTime.now();
+  bool _dateInitialized = false;
 
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
       _contentController.text.trim().isNotEmpty;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_dateInitialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is DateTime) {
+        _selectedDate = args;
+      }
+      _dateInitialized = true;
+    }
+  }
 
   final List<_WeatherOption> _weatherOptions = const [
     _WeatherOption(icon: Icons.wb_sunny_outlined, color: Color(0xFFFBBF24)),
@@ -218,17 +235,30 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 날짜
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                            child: Text(
-                              _formatDate(DateTime.now()),
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                color: AppColors.gray400,
+                          // 날짜 (클릭하여 변경)
+                          GestureDetector(
+                            onTap: () => _showDateChangeDialog(),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    _formatDate(_selectedDate),
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 13,
+                                      color: AppColors.gray400,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(
+                                    Icons.edit_calendar_outlined,
+                                    size: 14,
+                                    color: AppColors.gray400,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -263,22 +293,30 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _titleController,
+                                  maxLength: _maxTitleLength,
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
                                     color: AppColors.gray900,
                                   ),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: '제목을 입력하세요',
-                                    hintStyle: TextStyle(
+                                    hintStyle: const TextStyle(
                                       fontFamily: 'Inter',
                                       fontSize: 14,
                                       color: AppColors.gray300,
                                     ),
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 14,
+                                    ),
+                                    counterText:
+                                        '${_titleController.text.length}/$_maxTitleLength',
+                                    counterStyle: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      color: AppColors.gray400,
                                     ),
                                   ),
                                   onChanged: (_) => setState(() {}),
@@ -411,6 +449,31 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
     );
   }
 
+  Future<void> _showDateChangeDialog() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.gray900,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
+  }
+
   Widget _buildLinedArea() {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -431,6 +494,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
           ),
           TextField(
             controller: _contentController,
+            maxLength: _maxContentLength,
             maxLines: null,
             minLines: 12,
             style: const TextStyle(
@@ -440,9 +504,9 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
               height: 2.93,
               color: AppColors.gray800,
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: '오늘의 소중한 순간을 기록해보세요...',
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w400,
                 fontSize: 15,
@@ -451,7 +515,14 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
               ),
               border: InputBorder.none,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              counterText:
+                  '${_contentController.text.length}/$_maxContentLength',
+              counterStyle: const TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 11,
+                color: AppColors.gray400,
+              ),
             ),
             onChanged: (_) => setState(() {}),
           ),
