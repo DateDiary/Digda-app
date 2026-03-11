@@ -184,16 +184,26 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
                             color: AppColors.white,
-                            border: Border.all(color: AppColors.gray100),
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // 빨간 상단 라인 (일기장 느낌)
+                              Container(
+                                height: 3,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                ),
+                              ),
                               // 날짜 + 날씨/기분
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
-                                    16, 16, 16, 0),
+                                    16, 14, 16, 0),
                                 child: Row(
                                   children: [
                                     const Text(
@@ -507,34 +517,6 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GestureDetector(
-            onTap: _onEditTap,
-            behavior: HitTestBehavior.opaque,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Row(
-                children: [
-                  Icon(Icons.edit_outlined,
-                      size: 18, color: AppColors.gray700),
-                  SizedBox(width: 10),
-                  Text(
-                    '수정',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 1,
-            margin: const EdgeInsets.symmetric(horizontal: 14),
-            color: AppColors.gray100,
-          ),
           GestureDetector(
             onTap: _onDeleteTap,
             behavior: HitTestBehavior.opaque,
