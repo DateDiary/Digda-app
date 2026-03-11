@@ -467,54 +467,64 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
   Widget _buildLinedArea() {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Column(
-            children: List.generate(
-              12,
-              (i) => Container(
-                height: 44,
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.gray100, width: 1),
+          Stack(
+            children: [
+              Column(
+                children: List.generate(
+                  12,
+                  (i) => Container(
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: AppColors.gray100, width: 1),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          TextField(
-            controller: _contentController,
-            maxLength: _maxContentLength,
-            maxLines: null,
-            minLines: 12,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              height: 2.93,
-              color: AppColors.gray800,
-            ),
-            decoration: InputDecoration(
-              hintText: '오늘의 소중한 순간을 기록해보세요...',
-              hintStyle: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 15,
-                height: 2.93,
-                color: AppColors.gray300,
+              TextField(
+                controller: _contentController,
+                maxLength: _maxContentLength,
+                maxLines: null,
+                minLines: 12,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  height: 2.93,
+                  color: AppColors.gray800,
+                ),
+                decoration: const InputDecoration(
+                  hintText: '오늘의 소중한 순간을 기록해보세요...',
+                  hintStyle: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    height: 2.93,
+                    color: AppColors.gray300,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  counterText: '',
+                ),
+                onChanged: (_) => setState(() {}),
               ),
-              border: InputBorder.none,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              counterText:
-                  '${_contentController.text.length}/$_maxContentLength',
-              counterStyle: const TextStyle(
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 6, right: 4),
+            child: Text(
+              '${_contentController.text.length}/$_maxContentLength',
+              style: const TextStyle(
                 fontFamily: 'Inter',
                 fontSize: 11,
                 color: AppColors.gray400,
               ),
             ),
-            onChanged: (_) => setState(() {}),
           ),
         ],
       ),
