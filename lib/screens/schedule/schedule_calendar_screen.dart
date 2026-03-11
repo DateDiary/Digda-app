@@ -214,9 +214,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return SizedBox(
       height: rowHeight,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           if (circleBg != null)
             Container(
               width: 24,
@@ -252,10 +251,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 ),
               ),
             ),
-          // 이벤트 마커
-          ...schedules.take(2).map((schedule) {
-            return _buildEventPill(day, schedule);
-          }),
+          const SizedBox(height: 2),
+          ...schedules.take(2).map((s) => _buildEventPill(day, s)),
         ],
       ),
     );
@@ -267,29 +264,55 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     final isEnd = schedule.isEndDay(day);
     final isMulti = schedule.isMultiDay;
 
-    // 요일로 줄 시작/끝 판단 (일요일=줄 시작, 토요일=줄 끝)
+    // 단일 일정 — 둥근 pill
+    if (!isMulti) {
+      return Container(
+        height: 14,
+        margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          schedule.title,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 8,
+            color: color,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      );
+    }
+
+    // 다일 일정 — 연결 바
     final isRowStart = day.weekday == DateTime.sunday;
     final isRowEnd = day.weekday == DateTime.saturday;
 
-    // 실제 라운드/마진 결정
-    final showLeftRound = isStart || (!isMulti) || isRowStart;
-    final showRightRound = isEnd || (!isMulti) || isRowEnd;
-    final leftMargin = showLeftRound ? 2.0 : 0.0;
-    final rightMargin = showRightRound ? 2.0 : 0.0;
-
-    // 텍스트는 시작일 또는 줄 시작일(주 넘김)에만 표시
-    final showText = isStart || (isMulti && isRowStart && !isEnd);
+    final roundLeft = isStart || isRowStart;
+    final roundRight = isEnd || isRowEnd;
+    final showText = isStart || (isRowStart && !isEnd);
 
     return Container(
-      margin: EdgeInsets.only(top: 1, left: leftMargin, right: rightMargin),
-      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+      height: 14,
+      margin: EdgeInsets.only(
+        top: 1,
+        left: roundLeft ? 2 : 0,
+        right: roundRight ? 2 : 0,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.horizontal(
-          left: showLeftRound ? const Radius.circular(4) : Radius.zero,
-          right: showRightRound ? const Radius.circular(4) : Radius.zero,
+          left: roundLeft ? const Radius.circular(4) : Radius.zero,
+          right: roundRight ? const Radius.circular(4) : Radius.zero,
         ),
       ),
+      alignment: Alignment.centerLeft,
       child: showText
           ? Text(
               schedule.title,
@@ -302,7 +325,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             )
-          : const SizedBox(height: 10),
+          : null,
     );
   }
 
@@ -435,6 +458,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: _focusedDay,
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
                     selectedDayPredicate: (day) =>
                         isSameDay(_selectedDay, day),
                     eventLoader: _eventLoader,
@@ -480,8 +504,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                       markersMaxCount: 2,
                       cellAlignment: Alignment.topCenter,
-                      cellMargin: EdgeInsets.all(1),
-                      cellPadding: EdgeInsets.only(top: 4),
+                      cellMargin: EdgeInsets.zero,
+                      cellPadding: EdgeInsets.zero,
                     ),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
