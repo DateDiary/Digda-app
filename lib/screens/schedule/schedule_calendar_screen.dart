@@ -3,6 +3,39 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
 
+class _Schedule {
+  final String title;
+  final Color color;
+  final DateTime start;
+  final DateTime end;
+  final String? time;
+  final bool isHoliday;
+
+  const _Schedule({
+    required this.title,
+    required this.color,
+    required this.start,
+    DateTime? end,
+    this.time,
+    this.isHoliday = false,
+  }) : end = end ?? start;
+
+  bool get isMultiDay =>
+      start.year != end.year ||
+      start.month != end.month ||
+      start.day != end.day;
+
+  bool coversDay(DateTime day) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    final s = DateTime.utc(start.year, start.month, start.day);
+    final e = DateTime.utc(end.year, end.month, end.day);
+    return !d.isBefore(s) && !d.isAfter(e);
+  }
+
+  bool isStartDay(DateTime day) => isSameDay(start, day);
+  bool isEndDay(DateTime day) => isSameDay(end, day);
+}
+
 class ScheduleCalendarScreen extends StatefulWidget {
   const ScheduleCalendarScreen({super.key});
 
@@ -15,68 +48,107 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  final Map<DateTime, List<Map<String, dynamic>>> _events = {
-    DateTime.utc(2026, 2, 1): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 5): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 7): [
-      {'title': '출근 일찍', 'color': AppColors.primary},
-      {'title': '카페로 데이트', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 8): [
-      {'title': '야근', 'color': AppColors.primary, 'time': '종일'},
-      {
-        'title': '출근 늦게',
-        'color': AppColors.purple,
-        'time': '오후 2:00 - 5:00'
-      },
-    ],
-    DateTime.utc(2026, 2, 14): [
-      {'title': '출근 늦게', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 16): [
-      {'title': '설날연휴', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 17): [
-      {'title': '설날', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 18): [
-      {'title': '설날연휴', 'color': AppColors.primary},
-      {'title': '영화보기', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 20): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 22): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 26): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 28): [
-      {'title': '출근 일찍', 'color': AppColors.primary},
-      {'title': '부랄 저녁', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 3, 1): [
-      {'title': '삼일절', 'color': AppColors.eventHoliday, 'isHoliday': true},
-    ],
-    DateTime.utc(2026, 3, 2): [
-      {'title': '대체휴일', 'color': AppColors.eventHoliday, 'isHoliday': true},
-    ],
-  };
+  // 일정 데이터 — start/end로 다일 이벤트 지원
+  final List<_Schedule> _schedules = [
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 1),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 5),
+    ),
+    _Schedule(
+      title: '출근 일찍',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 7),
+    ),
+    _Schedule(
+      title: '카페로 데이트',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 7),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 8),
+      time: '종일',
+    ),
+    _Schedule(
+      title: '출근 늦게',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 8),
+      time: '오후 2:00 - 5:00',
+    ),
+    _Schedule(
+      title: '출근 늦게',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 14),
+    ),
+    // 설날연휴 — 3일 연결
+    _Schedule(
+      title: '설날연휴',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 16),
+      end: DateTime.utc(2026, 2, 18),
+      isHoliday: true,
+    ),
+    _Schedule(
+      title: '영화보기',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 18),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 20),
+    ),
+    // 출장 — 2일
+    _Schedule(
+      title: '제주 출장',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 22),
+      end: DateTime.utc(2026, 2, 23),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 26),
+    ),
+    _Schedule(
+      title: '출근 일찍',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 28),
+    ),
+    _Schedule(
+      title: '부랄 저녁',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 28),
+    ),
+    _Schedule(
+      title: '삼일절',
+      color: AppColors.eventHoliday,
+      start: DateTime.utc(2026, 3, 1),
+      end: DateTime.utc(2026, 3, 2),
+      isHoliday: true,
+    ),
+  ];
 
-  List<Map<String, dynamic>> _getEventsForDay(DateTime day) {
-    return _events[DateTime.utc(day.year, day.month, day.day)] ?? [];
+  /// 해당 날짜에 걸치는 모든 일정
+  List<_Schedule> _getSchedulesForDay(DateTime day) {
+    return _schedules.where((s) => s.coversDay(day)).toList();
   }
 
-  // 사용자 일정만 (공휴일 제외)
-  List<Map<String, dynamic>> _getUserEventsForDay(DateTime day) {
-    return _getEventsForDay(day)
-        .where((e) => e['isHoliday'] != true)
-        .toList();
+  /// 사용자 일정만 (공휴일 제외)
+  List<_Schedule> _getUserSchedulesForDay(DateTime day) {
+    return _getSchedulesForDay(day).where((s) => !s.isHoliday).toList();
+  }
+
+  /// eventLoader용 (TableCalendar에 전달)
+  List<dynamic> _eventLoader(DateTime day) {
+    return _getSchedulesForDay(day);
   }
 
   void _showMonthPicker() async {
@@ -108,14 +180,14 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   }
 
   void _showDayDetail(DateTime day) {
-    final userEvents = _getUserEventsForDay(day);
+    final userSchedules = _getUserSchedulesForDay(day);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _DayDetailBottomSheet(
         day: day,
-        events: userEvents,
+        schedules: userSchedules,
         onAddSchedule: () {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/add-schedule');
@@ -132,11 +204,13 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
   Widget _buildDayCell(
     DateTime day,
-    List<Map<String, dynamic>> events,
     double rowHeight, {
     Color? circleBg,
     required Color textColor,
+    bool isOutside = false,
   }) {
+    final schedules = isOutside ? <_Schedule>[] : _getSchedulesForDay(day);
+
     return SizedBox(
       height: rowHeight,
       child: Column(
@@ -178,31 +252,57 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 ),
               ),
             ),
-          // 이벤트 마커 - 숫자 바로 아래 밀착
-          ...events.take(2).map((event) {
-            final color = event['color'] as Color;
-            return Container(
-              margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                event['title'] as String,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 8,
-                  color: color,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            );
+          // 이벤트 마커
+          ...schedules.take(2).map((schedule) {
+            return _buildEventPill(day, schedule);
           }),
         ],
       ),
+    );
+  }
+
+  Widget _buildEventPill(DateTime day, _Schedule schedule) {
+    final color = schedule.color;
+    final isStart = schedule.isStartDay(day);
+    final isEnd = schedule.isEndDay(day);
+    final isMulti = schedule.isMultiDay;
+
+    // 요일로 줄 시작/끝 판단 (일요일=줄 시작, 토요일=줄 끝)
+    final isRowStart = day.weekday == DateTime.sunday;
+    final isRowEnd = day.weekday == DateTime.saturday;
+
+    // 실제 라운드/마진 결정
+    final showLeftRound = isStart || (!isMulti) || isRowStart;
+    final showRightRound = isEnd || (!isMulti) || isRowEnd;
+    final leftMargin = showLeftRound ? 2.0 : 0.0;
+    final rightMargin = showRightRound ? 2.0 : 0.0;
+
+    // 텍스트는 시작일 또는 줄 시작일(주 넘김)에만 표시
+    final showText = isStart || (isMulti && isRowStart && !isEnd);
+
+    return Container(
+      margin: EdgeInsets.only(top: 1, left: leftMargin, right: rightMargin),
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.horizontal(
+          left: showLeftRound ? const Radius.circular(4) : Radius.zero,
+          right: showRightRound ? const Radius.circular(4) : Radius.zero,
+        ),
+      ),
+      child: showText
+          ? Text(
+              schedule.title,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 8,
+                color: color,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            )
+          : const SizedBox(height: 10),
     );
   }
 
@@ -337,7 +437,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     focusedDay: _focusedDay,
                     selectedDayPredicate: (day) =>
                         isSameDay(_selectedDay, day),
-                    eventLoader: _getEventsForDay,
+                    eventLoader: _eventLoader,
                     calendarFormat: CalendarFormat.month,
                     headerVisible: false,
                     daysOfWeekHeight: 24,
@@ -398,53 +498,42 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                     ),
                     calendarBuilders: CalendarBuilders(
-                      // 기본 날짜 - 숫자 + 이벤트 밀착
                       defaultBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         final isWeekend =
                             day.weekday == DateTime.saturday ||
                             day.weekday == DateTime.sunday;
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
                           textColor: isWeekend
                               ? AppColors.primary
                               : AppColors.gray900,
                         );
                       },
-                      // 오늘 날짜 - 검은 원 + 이벤트 밀착
                       todayBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
                           circleBg: AppColors.black,
                           textColor: AppColors.white,
                         );
                       },
-                      // 선택된 날짜 - 빨간 원 + 이벤트 밀착
                       selectedBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
                           circleBg: AppColors.primary,
                           textColor: AppColors.white,
                         );
                       },
-                      // 이전/다음 달 날짜
                       outsideBuilder: (context, day, focusedDay) {
                         return _buildDayCell(
                           day,
-                          [],
                           rowHeight,
                           textColor: AppColors.gray300,
+                          isOutside: true,
                         );
                       },
-                      // markerBuilder 비활성 - defaultBuilder에서 직접 렌더
                       markerBuilder: (context, day, events) {
                         return const SizedBox.shrink();
                       },
@@ -454,13 +543,12 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      // 공휴일만 있는 날은 바텀시트 안 띄움
-                      final allEvents = _getEventsForDay(selectedDay);
-                      final userEvents = _getUserEventsForDay(selectedDay);
-                      if (userEvents.isNotEmpty || allEvents.isEmpty) {
+                      final allSchedules = _getSchedulesForDay(selectedDay);
+                      final userSchedules =
+                          _getUserSchedulesForDay(selectedDay);
+                      if (userSchedules.isNotEmpty || allSchedules.isEmpty) {
                         _showDayDetail(selectedDay);
                       } else {
-                        // 공휴일만 있는 날 — 선택만 하고 바텀시트 X
                         Future.delayed(const Duration(milliseconds: 300), () {
                           if (mounted) setState(() => _selectedDay = null);
                         });
@@ -476,7 +564,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           ],
         ),
       ),
-      // FAB - 왼쪽 위 대각선으로 이동, 크기 확대
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 60, right: 20),
         child: SizedBox(
@@ -499,13 +586,13 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
 class _DayDetailBottomSheet extends StatelessWidget {
   final DateTime day;
-  final List<Map<String, dynamic>> events;
+  final List<_Schedule> schedules;
   final VoidCallback onAddSchedule;
   final VoidCallback onScheduleTap;
 
   const _DayDetailBottomSheet({
     required this.day,
-    required this.events,
+    required this.schedules,
     required this.onAddSchedule,
     required this.onScheduleTap,
   });
@@ -560,7 +647,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '일정 ${events.length}개',
+                          '일정 ${schedules.length}개',
                           style: const TextStyle(
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,
@@ -592,19 +679,26 @@ class _DayDetailBottomSheet extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: events.isEmpty
+                child: schedules.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.only(
                           left: 24,
                           right: 24,
-                          bottom: MediaQuery.of(context).padding.bottom + 16,
+                          bottom:
+                              MediaQuery.of(context).padding.bottom + 16,
                         ),
-                        itemCount: events.length,
+                        itemCount: schedules.length,
                         itemBuilder: (context, index) {
-                          final event = events[index];
-                          final color = event['color'] as Color;
+                          final schedule = schedules[index];
+                          final color = schedule.color;
+                          // 다일 일정이면 날짜 범위 표시
+                          String timeText = schedule.time ?? '종일';
+                          if (schedule.isMultiDay) {
+                            timeText =
+                                '${schedule.start.month}/${schedule.start.day} - ${schedule.end.month}/${schedule.end.day}';
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: GestureDetector(
@@ -633,8 +727,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            event['time'] as String? ??
-                                                '종일',
+                                            timeText,
                                             style: TextStyle(
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w400,
@@ -644,7 +737,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            event['title'] as String,
+                                            schedule.title,
                                             style: const TextStyle(
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w700,
