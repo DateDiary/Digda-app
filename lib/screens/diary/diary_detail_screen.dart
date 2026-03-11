@@ -139,7 +139,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.gray50,
+      backgroundColor: const Color(0xFFFFFDF5),
       body: SafeArea(
         child: Stack(
           children: [
@@ -147,7 +147,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
               children: [
                 // ── 헤더 ──
                 Container(
-                  color: AppColors.white,
+                  color: const Color(0xFFFFFDF5),
                   height: 52,
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Row(
@@ -179,125 +179,146 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 상단 히어로 카드
+                        // 날짜 + 제목 + 날씨/기분 + 이미지 카드
                         Container(
-                          color: AppColors.white,
-                          padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // 날짜
-                              const Text(
-                                '2026년 2월 8일 일요일',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
-                                  color: AppColors.gray500,
+                              // 날짜 + 날씨/기분
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    16, 16, 16, 0),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      '2026년 2월 8일 일요일',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                        color: AppColors.gray400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    _buildMiniTag(
+                                      icon: Icons.wb_sunny_outlined,
+                                      iconColor: const Color(0xFFFBBF24),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    _buildMiniTag(emoji: '😊'),
+                                  ],
                                 ),
                               ),
                               const SizedBox(height: 10),
                               // 제목
-                              const Text(
-                                '설날 모임',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 22,
-                                  color: AppColors.gray900,
-                                  letterSpacing: -0.3,
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  '설날 모임',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 20,
+                                    color: AppColors.gray900,
+                                    letterSpacing: -0.3,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 14),
-                              // 날씨 + 기분 칩
-                              Row(
-                                children: [
-                                  _buildChip(
-                                    icon: Icons.wb_sunny_outlined,
-                                    iconColor: const Color(0xFFFBBF24),
-                                    label: '맑음',
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildChip(
-                                    emoji: '😊',
-                                    label: '행복',
-                                  ),
-                                ],
+                              // 이미지
+                              Container(
+                                margin: const EdgeInsets.fromLTRB(
+                                    12, 0, 12, 12),
+                                width: double.infinity,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF5F0),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary
+                                            .withValues(alpha: 0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.photo_rounded,
+                                        size: 24,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      '오늘의 사진',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                        color: AppColors.gray400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // 이미지 카드
+                        const SizedBox(height: 12),
+                        // 줄 노트 본문
                         Container(
-                          color: AppColors.white,
-                          padding: const EdgeInsets.all(20),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              width: double.infinity,
-                              height: 220,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFF5F0),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary
-                                          .withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.photo_rounded,
-                                      size: 28,
-                                      color: AppColors.primary,
-                                    ),
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              // 빨간 상단 라인 (일기장 느낌)
+                              Container(
+                                height: 3,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(12),
                                   ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '오늘의 사진',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: AppColors.gray400,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    16, 14, 16, 16),
+                                child: _buildRuledText(
+                                  '오늘은 설날이라서 친구들이랑 같이 떡국을\n'
+                                  '먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n'
+                                  '오후에는 영화관에서 영화를 봤는데 너무\n'
+                                  '재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n'
+                                  '저녁에는 집에 와서 같이 셀카도 찍었다.\n'
+                                  '다음에도 이렇게 만나고 싶다!',
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // 본문 카드
-                        Container(
-                          color: AppColors.white,
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-                          child: const Text(
-                            '오늘은 설날이라서 친구들이랑 같이 떡국을 먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n\n오후에는 영화관에서 영화를 봤는데 너무 재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n\n저녁에는 집에 와서 같이 셀카도 찍었다. 다음에도 이렇게 만나고 싶다!',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
-                              height: 1.8,
-                              color: AppColors.gray800,
-                              letterSpacing: -0.1,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         // 작성자 정보
                         Container(
-                          color: AppColors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 18,
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             children: [
@@ -305,14 +326,8 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 width: 36,
                                 height: 36,
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      AppColors.primary.withValues(alpha: 0.2),
-                                      AppColors.primary.withValues(alpha: 0.08),
-                                    ],
-                                  ),
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -401,37 +416,72 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
     );
   }
 
-  Widget _buildChip({
+  Widget _buildMiniTag({
     IconData? icon,
     Color? iconColor,
     String? emoji,
-    required String label,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      width: 32,
+      height: 32,
       decoration: BoxDecoration(
         color: AppColors.gray50,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null)
-            Icon(icon, size: 16, color: iconColor),
-          if (emoji != null)
-            Text(emoji, style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
-              color: AppColors.gray700,
+      child: Center(
+        child: icon != null
+            ? Icon(icon, size: 18, color: iconColor)
+            : Text(emoji!, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+
+  Widget _buildRuledText(String text) {
+    final lines = text.split('\n');
+    const lineHeight = 40.0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...lines.map((line) {
+          return Container(
+            width: double.infinity,
+            height: lineHeight,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.gray100,
+                  width: 1,
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              line,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+                color: AppColors.gray800,
+              ),
+            ),
+          );
+        }),
+        // 빈 줄 몇개 추가 (일기장 느낌)
+        ...List.generate(3, (_) {
+          return Container(
+            width: double.infinity,
+            height: lineHeight,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.gray100,
+                  width: 1,
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 
@@ -464,7 +514,8 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
-                  Icon(Icons.edit_outlined, size: 18, color: AppColors.gray700),
+                  Icon(Icons.edit_outlined,
+                      size: 18, color: AppColors.gray700),
                   SizedBox(width: 10),
                   Text(
                     '수정',
