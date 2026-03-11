@@ -229,18 +229,28 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        border: Border.all(color: AppColors.gray100),
+                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 빨간 상단 라인 (일기장 느낌)
+                          Container(
+                            height: 3,
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
+                            ),
+                          ),
                           // 날짜 (클릭하여 변경)
                           GestureDetector(
                             onTap: () => _showDateChangeDialog(),
                             child: Padding(
                               padding:
-                                  const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                                  const EdgeInsets.fromLTRB(16, 12, 16, 10),
                               child: Row(
                                 children: [
                                   Text(
@@ -476,57 +486,75 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
 
   Widget _buildLinedArea() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Stack(
-            children: [
-              Column(
-                children: List.generate(
-                  12,
-                  (i) => Container(
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: AppColors.gray100, width: 1),
+          // 빨간 상단 라인
+          Container(
+            height: 3,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+            child: Stack(
+              children: [
+                Column(
+                  children: List.generate(
+                    12,
+                    (i) => Container(
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.gray100, width: 1),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              TextField(
-                controller: _contentController,
-                maxLength: _maxContentLength,
-                maxLines: null,
-                minLines: 12,
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                  height: 2.93,
-                  color: AppColors.gray800,
-                ),
-                decoration: const InputDecoration(
-                  hintText: '오늘의 소중한 순간을 기록해보세요...',
-                  hintStyle: TextStyle(
+                TextField(
+                  controller: _contentController,
+                  maxLength: _maxContentLength,
+                  maxLines: null,
+                  minLines: 12,
+                  style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
                     fontSize: 15,
                     height: 2.93,
-                    color: AppColors.gray300,
+                    color: AppColors.gray800,
                   ),
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  counterText: '',
+                  decoration: const InputDecoration(
+                    hintText: '오늘의 소중한 순간을 기록해보세요...',
+                    hintStyle: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      height: 2.93,
+                      color: AppColors.gray300,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                    counterText: '',
+                  ),
+                  onChanged: (_) => setState(() {}),
                 ),
-                onChanged: (_) => setState(() {}),
-              ),
-            ],
+              ],
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 6, right: 4),
+            padding: const EdgeInsets.fromLTRB(0, 4, 16, 12),
             child: Text(
               '${_contentController.text.length}/$_maxContentLength',
               style: const TextStyle(
