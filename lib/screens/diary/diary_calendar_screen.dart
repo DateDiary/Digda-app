@@ -369,12 +369,229 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed('/write-diary'),
+        onPressed: () => _showDatePickerBottomSheet(),
         backgroundColor: AppColors.primary,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, color: AppColors.white, size: 28),
       ),
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
+    );
+  }
+
+  void _showDatePickerBottomSheet() {
+    DateTime pickerFocusedDay = DateTime.now();
+    DateTime? pickerSelectedDay;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  // Drag handle
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.gray200,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Title
+                  const Text(
+                    '날짜 선택',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    '일기를 작성할 날짜를 선택해주세요',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      color: AppColors.gray500,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Month navigation
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => setModalState(() {
+                            pickerFocusedDay = DateTime(
+                              pickerFocusedDay.year,
+                              pickerFocusedDay.month - 1,
+                            );
+                          }),
+                          child: const Icon(
+                            Icons.chevron_left,
+                            size: 20,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${pickerFocusedDay.year}년 ${pickerFocusedDay.month}월',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: AppColors.gray700,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () => setModalState(() {
+                            pickerFocusedDay = DateTime(
+                              pickerFocusedDay.year,
+                              pickerFocusedDay.month + 1,
+                            );
+                          }),
+                          child: const Icon(
+                            Icons.chevron_right,
+                            size: 20,
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Calendar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: TableCalendar(
+                      firstDay: DateTime.utc(2020, 1, 1),
+                      lastDay: DateTime.utc(2030, 12, 31),
+                      focusedDay: pickerFocusedDay,
+                      selectedDayPredicate: (day) =>
+                          isSameDay(pickerSelectedDay, day),
+                      calendarFormat: CalendarFormat.month,
+                      headerVisible: false,
+                      calendarStyle: const CalendarStyle(
+                        selectedDecoration: BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        todayDecoration: BoxDecoration(
+                          color: AppColors.gray900,
+                          shape: BoxShape.circle,
+                        ),
+                        todayTextStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: AppColors.white,
+                        ),
+                        defaultTextStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: AppColors.gray900,
+                        ),
+                        weekendTextStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: AppColors.primary,
+                        ),
+                        outsideTextStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: AppColors.gray300,
+                        ),
+                      ),
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
+                          color: AppColors.gray500,
+                        ),
+                        weekendStyle: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        setModalState(() {
+                          pickerSelectedDay = selectedDay;
+                          pickerFocusedDay = focusedDay;
+                        });
+                      },
+                      onPageChanged: (focusedDay) {
+                        setModalState(() => pickerFocusedDay = focusedDay);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Confirm button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: pickerSelectedDay != null
+                            ? () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushNamed('/write-diary');
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: AppColors.gray200,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          pickerSelectedDay != null
+                              ? '${pickerSelectedDay!.month}월 ${pickerSelectedDay!.day}일에 일기 쓰기'
+                              : '날짜를 선택해주세요',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: pickerSelectedDay != null
+                                ? AppColors.white
+                                : AppColors.gray400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                      height: MediaQuery.of(context).padding.bottom + 8),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
