@@ -148,13 +148,26 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          '${_focusedDay.year}년 ${_focusedDay.month}월',
-                          style: const TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            color: AppColors.gray700,
+                        GestureDetector(
+                          onTap: () => _showMonthPicker(),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${_focusedDay.year}년 ${_focusedDay.month}월',
+                                style: const TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: AppColors.gray700,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 18,
+                                color: AppColors.gray500,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -376,6 +389,34 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
       ),
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
+  }
+
+  void _showMonthPicker() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _focusedDay,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030, 12, 31),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.gray900,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _focusedDay = picked;
+        _selectedDay = null;
+      });
+    }
   }
 
   void _showDatePickerBottomSheet() {

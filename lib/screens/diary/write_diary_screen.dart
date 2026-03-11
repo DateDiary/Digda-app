@@ -229,22 +229,12 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                        border: Border.all(color: AppColors.gray100),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 빨간 상단 라인 (일기장 느낌)
-                          Container(
-                            height: 3,
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                            ),
-                          ),
                           // 날짜 (클릭하여 변경)
                           GestureDetector(
                             onTap: () => _showDateChangeDialog(),
@@ -489,22 +479,12 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       decoration: BoxDecoration(
         color: AppColors.white,
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.gray100),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 빨간 상단 라인
-          Container(
-            height: 3,
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Stack(
