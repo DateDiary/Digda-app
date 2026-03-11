@@ -380,7 +380,7 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
 
   void _showDatePickerBottomSheet() {
     DateTime pickerFocusedDay = DateTime.now();
-    DateTime? pickerSelectedDay;
+    DateTime? pickerSelectedDay = DateTime.now();
 
     showModalBottomSheet(
       context: context,
