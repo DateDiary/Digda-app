@@ -89,30 +89,31 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                         ),
                       ),
                       const Spacer(),
-                      GestureDetector(
-                        onTap: _canSave
-                            ? () => Navigator.of(context).pop()
-                            : null,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _canSave
-                                ? AppColors.primary
-                                : AppColors.gray200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '저장',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: _canSave
-                                  ? AppColors.white
-                                  : AppColors.gray400,
+                      Material(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(8),
+                        child: InkWell(
+                          onTap: _canSave
+                              ? () => Navigator.of(context).pop()
+                              : null,
+                          borderRadius: BorderRadius.circular(8),
+                          splashColor: AppColors.primary.withValues(alpha: 0.3),
+                          highlightColor: AppColors.primary.withValues(alpha: 0.15),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              '저장',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                color: _canSave
+                                    ? AppColors.gray700
+                                    : AppColors.gray400,
+                              ),
                             ),
                           ),
                         ),
@@ -440,11 +441,14 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
   }
 
   Future<void> _showDateChangeDialog() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      lastDate: today,
+      selectableDayPredicate: (day) => !day.isAfter(today),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -501,7 +505,7 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
                     fontSize: 15,
-                    height: 2.93,
+                    height: 2.933,
                     color: AppColors.gray800,
                   ),
                   decoration: const InputDecoration(
@@ -510,12 +514,12 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                       fontSize: 15,
-                      height: 2.93,
+                      height: 2.933,
                       color: AppColors.gray300,
                     ),
                     border: InputBorder.none,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                    isDense: true,
+                    contentPadding: EdgeInsets.only(top: 12),
                     counterText: '',
                   ),
                   onChanged: (_) => setState(() {}),
