@@ -304,6 +304,17 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     );
   }
 
+  DateTime _previousSunday(DateTime day) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    return d.subtract(Duration(days: d.weekday % 7));
+  }
+
+  DateTime _nextSaturday(DateTime day) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    final daysUntilSat = (DateTime.saturday - d.weekday) % 7;
+    return d.add(Duration(days: daysUntilSat == 0 ? 0 : daysUntilSat));
+  }
+
   Widget _buildEventPill(DateTime day, _Schedule schedule) {
     final color = schedule.color;
     final isStart = schedule.isStartDay(day);
@@ -341,7 +352,22 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
     final roundLeft = isStart || isRowStart;
     final roundRight = isEnd || isRowEnd;
-    final showText = isStart || (isRowStart && !isEnd);
+
+    // 현재 주(row)에서 보이는 구간의 중간 날짜에만 텍스트 표시 (정중앙)
+    final rowStartDay = isStart ? day : _previousSunday(day);
+    final visibleStart = isStart || isSameDay(rowStartDay, day)
+        ? day
+        : (schedule.start.isAfter(rowStartDay) ? schedule.start : rowStartDay);
+    final rowEndDay = isEnd ? day : _nextSaturday(day);
+    final visibleEnd = isEnd || isSameDay(rowEndDay, day)
+        ? day
+        : (schedule.end.isBefore(rowEndDay) ? schedule.end : rowEndDay);
+    final visibleSpan = DateTime.utc(visibleEnd.year, visibleEnd.month, visibleEnd.day)
+            .difference(DateTime.utc(visibleStart.year, visibleStart.month, visibleStart.day))
+            .inDays;
+    final midOffset = visibleSpan ~/ 2;
+    final midDay = DateTime.utc(visibleStart.year, visibleStart.month, visibleStart.day + midOffset);
+    final showText = isSameDay(day, midDay);
 
     return Container(
       height: 14,
@@ -358,7 +384,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           right: roundRight ? const Radius.circular(4) : Radius.zero,
         ),
       ),
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: showText
           ? Text(
               schedule.title,
