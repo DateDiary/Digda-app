@@ -451,7 +451,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
 
   Widget _buildRuledText(String text) {
     final lines = text.split('\n');
-    const lineHeight = 40.0;
+    const lineHeight = 44.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -474,6 +474,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w400,
                 fontSize: 15,
+                height: 1.3,
                 color: AppColors.gray800,
               ),
             ),
