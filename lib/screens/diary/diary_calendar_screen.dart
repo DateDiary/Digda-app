@@ -161,12 +161,6 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                                   color: AppColors.gray700,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              const Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 18,
-                                color: AppColors.gray500,
-                              ),
                             ],
                           ),
                         ),
@@ -251,6 +245,12 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                         color: AppColors.primary,
                       ),
                     ),
+                    enabledDayPredicate: (day) {
+                      final now = DateTime.now();
+                      final today = DateTime.utc(now.year, now.month, now.day);
+                      final d = DateTime.utc(day.year, day.month, day.day);
+                      return !d.isAfter(today);
+                    },
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         _selectedDay = selectedDay;

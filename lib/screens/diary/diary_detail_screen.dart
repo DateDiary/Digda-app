@@ -351,7 +351,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '나',
+                                    '김민지',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w600,
@@ -361,7 +361,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                   ),
                                   SizedBox(height: 2),
                                   Text(
-                                    '오후 8:32에 작성',
+                                    '2026.02.08 오후 8:32에 작성',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
@@ -372,24 +372,27 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 ],
                               ),
                               const Spacer(),
-                              GestureDetector(
-                                onTap: _onEditTap,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.gray50,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Text(
-                                    '수정하기',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: AppColors.gray700,
+                              Material(
+                                color: AppColors.gray50,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  onTap: _onEditTap,
+                                  borderRadius: BorderRadius.circular(20),
+                                  splashColor: AppColors.primary.withValues(alpha: 0.3),
+                                  highlightColor: AppColors.primary.withValues(alpha: 0.15),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    child: Text(
+                                      '수정하기',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                        color: AppColors.gray700,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -448,7 +451,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
 
   Widget _buildRuledText(String text) {
     final lines = text.split('\n');
-    const lineHeight = 40.0;
+    const lineHeight = 44.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -464,7 +467,8 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                 ),
               ),
             ),
-            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(bottom: 6),
+            alignment: Alignment.bottomLeft,
             child: Text(
               line,
               style: const TextStyle(

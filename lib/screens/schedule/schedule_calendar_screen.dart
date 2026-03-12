@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:world_holidays/world_holidays.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
 
@@ -9,7 +10,6 @@ class _Schedule {
   final DateTime start;
   final DateTime end;
   final String? time;
-  final bool isHoliday;
 
   const _Schedule({
     required this.title,
@@ -17,7 +17,6 @@ class _Schedule {
     required this.start,
     DateTime? end,
     this.time,
-    this.isHoliday = false,
   }) : end = end ?? start;
 
   bool get isMultiDay =>
@@ -47,6 +46,37 @@ class ScheduleCalendarScreen extends StatefulWidget {
 class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
+  /// 공휴일 맵: 날짜(utc normalized) → 공휴일명
+  final Map<DateTime, String> _holidays = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHolidays();
+  }
+
+  Future<void> _loadHolidays() async {
+    final wh = WorldHolidays();
+    // 2024~2026 한국 공휴일 로드
+    final holidays = await wh.getHolidays('KR');
+    if (!mounted) return;
+    setState(() {
+      for (final h in holidays) {
+        // national만 (기념일 제외, 법정 공휴일만)
+        if (h.type == HolidayType.national) {
+          final key = DateTime.utc(h.date.year, h.date.month, h.date.day);
+          _holidays[key] = h.descriptionKo ?? h.name;
+        }
+      }
+    });
+  }
+
+  /// 공휴일 이름
+  String? _getHolidayName(DateTime day) {
+    final key = DateTime.utc(day.year, day.month, day.day);
+    return _holidays[key];
+  }
 
   // 일정 데이터 — start/end로 다일 이벤트 지원
   final List<_Schedule> _schedules = [
@@ -87,14 +117,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       color: AppColors.purple,
       start: DateTime.utc(2026, 2, 14),
     ),
-    // 설날연휴 — 3일 연결
-    _Schedule(
-      title: '설날연휴',
-      color: AppColors.primary,
-      start: DateTime.utc(2026, 2, 16),
-      end: DateTime.utc(2026, 2, 18),
-      isHoliday: true,
-    ),
+    // 설날연휴는 world_holidays에서 자동 로드
     _Schedule(
       title: '영화보기',
       color: AppColors.purple,
@@ -127,13 +150,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       color: AppColors.purple,
       start: DateTime.utc(2026, 2, 28),
     ),
-    _Schedule(
-      title: '삼일절',
-      color: AppColors.eventHoliday,
-      start: DateTime.utc(2026, 3, 1),
-      end: DateTime.utc(2026, 3, 2),
-      isHoliday: true,
-    ),
+    // 삼일절은 world_holidays에서 자동 로드
   ];
 
   /// 해당 날짜에 걸치는 모든 일정
@@ -141,9 +158,9 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return _schedules.where((s) => s.coversDay(day)).toList();
   }
 
-  /// 사용자 일정만 (공휴일 제외)
+  /// 사용자 일정만
   List<_Schedule> _getUserSchedulesForDay(DateTime day) {
-    return _getSchedulesForDay(day).where((s) => !s.isHoliday).toList();
+    return _getSchedulesForDay(day);
   }
 
   /// eventLoader용 (TableCalendar에 전달)
@@ -204,12 +221,18 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
   Widget _buildDayCell(
     DateTime day,
-    double rowHeight, {
+    double rowHeight,
+    double cellWidth, {
     Color? circleBg,
     required Color textColor,
     bool isOutside = false,
   }) {
     final schedules = isOutside ? <_Schedule>[] : _getSchedulesForDay(day);
+    final holidayName = isOutside ? null : _getHolidayName(day);
+
+    // 공휴일이면 날짜 텍스트를 공휴일 색으로 (circleBg가 없을 때만)
+    final dayTextColor =
+        (holidayName != null && circleBg == null) ? AppColors.eventHoliday : textColor;
 
     return SizedBox(
       height: rowHeight,
@@ -246,19 +269,62 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
-                    color: textColor,
+                    color: dayTextColor,
                   ),
                 ),
               ),
             ),
           const SizedBox(height: 2),
-          ...schedules.take(2).map((s) => _buildEventPill(day, s)),
+          // 공휴일 pill (첫 번째 슬롯)
+          if (holidayName != null)
+            Container(
+              height: 14,
+              margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                color: AppColors.eventHoliday.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                holidayName,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 8,
+                  color: AppColors.eventHoliday,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          // 일반 일정 pill (공휴일이 있으면 1개만, 없으면 2개)
+          ...schedules.take(holidayName != null ? 1 : 2).map((s) => _buildEventPill(day, s, cellWidth)),
         ],
       ),
     );
   }
 
-  Widget _buildEventPill(DateTime day, _Schedule schedule) {
+  /// 현재 주(row) 내에서 이벤트가 차지하는 셀 수와 시작 오프셋 계산
+  ({int span, int offsetFromStart}) _rowSpanInfo(DateTime day, _Schedule schedule) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    final s = DateTime.utc(schedule.start.year, schedule.start.month, schedule.start.day);
+    final e = DateTime.utc(schedule.end.year, schedule.end.month, schedule.end.day);
+
+    // 이번 주 일요일~토요일
+    final rowSunday = d.subtract(Duration(days: d.weekday % 7));
+    final rowSaturday = rowSunday.add(const Duration(days: 6));
+
+    // 이번 주 내 실제 보이는 구간
+    final visStart = s.isAfter(rowSunday) ? s : rowSunday;
+    final visEnd = e.isBefore(rowSaturday) ? e : rowSaturday;
+
+    final span = visEnd.difference(visStart).inDays + 1; // 셀 수
+    final offsetFromStart = d.difference(visStart).inDays; // 현재 셀이 구간 시작에서 몇 번째
+    return (span: span, offsetFromStart: offsetFromStart);
+  }
+
+  Widget _buildEventPill(DateTime day, _Schedule schedule, double cellWidth) {
     final color = schedule.color;
     final isStart = schedule.isStartDay(day);
     final isEnd = schedule.isEndDay(day);
@@ -274,7 +340,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(4),
         ),
-        alignment: Alignment.centerLeft,
+        alignment: Alignment.center,
         child: Text(
           schedule.title,
           style: TextStyle(
@@ -295,8 +361,55 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
     final roundLeft = isStart || isRowStart;
     final roundRight = isEnd || isRowEnd;
-    final showText = isStart || (isRowStart && !isEnd);
 
+    final info = _rowSpanInfo(day, schedule);
+
+    // 배경 바 (모든 셀에 그려짐)
+    final barDecoration = BoxDecoration(
+      color: color.withValues(alpha: 0.15),
+      borderRadius: BorderRadius.horizontal(
+        left: roundLeft ? const Radius.circular(4) : Radius.zero,
+        right: roundRight ? const Radius.circular(4) : Radius.zero,
+      ),
+    );
+
+    // 시작 셀에서만 전체 span 너비의 텍스트를 overflow로 렌더링
+    final isVisibleStart = isStart || isRowStart;
+    if (isVisibleStart) {
+      // 전체 바 너비 = 셀 너비 × span - 좌우 margin 보정
+      final totalBarWidth = cellWidth * info.span - (roundLeft ? 2 : 0) - (roundRight ? 2 : 0);
+      return Container(
+        height: 14,
+        margin: EdgeInsets.only(
+          top: 1,
+          left: roundLeft ? 2 : 0,
+          right: roundRight ? 2 : 0,
+        ),
+        decoration: barDecoration,
+        child: OverflowBox(
+          maxWidth: totalBarWidth,
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: totalBarWidth,
+            child: Center(
+              child: Text(
+                schedule.title,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 8,
+                  color: color,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 나머지 셀 — 배경만
     return Container(
       height: 14,
       margin: EdgeInsets.only(
@@ -304,28 +417,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
         left: roundLeft ? 2 : 0,
         right: roundRight ? 2 : 0,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.horizontal(
-          left: roundLeft ? const Radius.circular(4) : Radius.zero,
-          right: roundRight ? const Radius.circular(4) : Radius.zero,
-        ),
-      ),
-      alignment: Alignment.centerLeft,
-      child: showText
-          ? Text(
-              schedule.title,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                color: color,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            )
-          : null,
+      decoration: barDecoration,
     );
   }
 
@@ -422,12 +514,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                             color: AppColors.gray700,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 18,
-                          color: AppColors.gray500,
-                        ),
                       ],
                     ),
                   ),
@@ -454,6 +540,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 builder: (context, constraints) {
                   final rowHeight =
                       ((constraints.maxHeight - 28) / 6).clamp(64.0, 100.0);
+                  final cellWidth = constraints.maxWidth / 7;
                   return TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
@@ -529,6 +616,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         return _buildDayCell(
                           day,
                           rowHeight,
+                          cellWidth,
                           textColor: isWeekend
                               ? AppColors.primary
                               : AppColors.gray900,
@@ -538,6 +626,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         return _buildDayCell(
                           day,
                           rowHeight,
+                          cellWidth,
                           circleBg: AppColors.black,
                           textColor: AppColors.white,
                         );
@@ -546,6 +635,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         return _buildDayCell(
                           day,
                           rowHeight,
+                          cellWidth,
                           circleBg: AppColors.primary,
                           textColor: AppColors.white,
                         );
@@ -554,6 +644,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         return _buildDayCell(
                           day,
                           rowHeight,
+                          cellWidth,
                           textColor: AppColors.gray300,
                           isOutside: true,
                         );
@@ -567,16 +658,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      final allSchedules = _getSchedulesForDay(selectedDay);
-                      final userSchedules =
-                          _getUserSchedulesForDay(selectedDay);
-                      if (userSchedules.isNotEmpty || allSchedules.isEmpty) {
-                        _showDayDetail(selectedDay);
-                      } else {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          if (mounted) setState(() => _selectedDay = null);
-                        });
-                      }
+                      _showDayDetail(selectedDay);
                     },
                     onPageChanged: (focusedDay) {
                       setState(() => _focusedDay = focusedDay);

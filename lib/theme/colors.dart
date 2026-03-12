@@ -42,5 +42,5 @@ class AppColors {
   // Schedule Event Colors
   static const Color eventRed = Color(0xFFFF6B6B);        // 빨강 일정
   static const Color eventPurple = Color(0xFFA78BFA);     // 보라 일정
-  static const Color eventHoliday = Color(0xFFFF6B6B);    // 공휴일 빨강 (pill bg)
+  static const Color eventHoliday = Color(0xFFCC0000);    // 공휴일 찐빨강 (pill bg)
 }
