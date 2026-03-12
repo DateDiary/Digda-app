@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:world_holidays/world_holidays.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
 
@@ -9,7 +10,6 @@ class _Schedule {
   final DateTime start;
   final DateTime end;
   final String? time;
-  final bool isHoliday;
 
   const _Schedule({
     required this.title,
@@ -17,7 +17,6 @@ class _Schedule {
     required this.start,
     DateTime? end,
     this.time,
-    this.isHoliday = false,
   }) : end = end ?? start;
 
   bool get isMultiDay =>
@@ -47,6 +46,43 @@ class ScheduleCalendarScreen extends StatefulWidget {
 class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+
+  /// 공휴일 맵: 날짜(utc normalized) → 공휴일명
+  final Map<DateTime, String> _holidays = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHolidays();
+  }
+
+  Future<void> _loadHolidays() async {
+    final wh = WorldHolidays();
+    // 2024~2026 한국 공휴일 로드
+    final holidays = await wh.getHolidays('KR');
+    if (!mounted) return;
+    setState(() {
+      for (final h in holidays) {
+        // national만 (기념일 제외, 법정 공휴일만)
+        if (h.type == HolidayType.national) {
+          final key = DateTime.utc(h.date.year, h.date.month, h.date.day);
+          _holidays[key] = h.descriptionKo ?? h.name;
+        }
+      }
+    });
+  }
+
+  /// 해당 날짜가 공휴일인지
+  bool _isHoliday(DateTime day) {
+    final key = DateTime.utc(day.year, day.month, day.day);
+    return _holidays.containsKey(key);
+  }
+
+  /// 공휴일 이름
+  String? _getHolidayName(DateTime day) {
+    final key = DateTime.utc(day.year, day.month, day.day);
+    return _holidays[key];
+  }
 
   // 일정 데이터 — start/end로 다일 이벤트 지원
   final List<_Schedule> _schedules = [
@@ -87,14 +123,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       color: AppColors.purple,
       start: DateTime.utc(2026, 2, 14),
     ),
-    // 설날연휴 — 3일 연결
-    _Schedule(
-      title: '설날연휴',
-      color: AppColors.primary,
-      start: DateTime.utc(2026, 2, 16),
-      end: DateTime.utc(2026, 2, 18),
-      isHoliday: true,
-    ),
+    // 설날연휴는 world_holidays에서 자동 로드
     _Schedule(
       title: '영화보기',
       color: AppColors.purple,
@@ -127,13 +156,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       color: AppColors.purple,
       start: DateTime.utc(2026, 2, 28),
     ),
-    _Schedule(
-      title: '삼일절',
-      color: AppColors.eventHoliday,
-      start: DateTime.utc(2026, 3, 1),
-      end: DateTime.utc(2026, 3, 2),
-      isHoliday: true,
-    ),
+    // 삼일절은 world_holidays에서 자동 로드
   ];
 
   /// 해당 날짜에 걸치는 모든 일정
@@ -141,9 +164,9 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return _schedules.where((s) => s.coversDay(day)).toList();
   }
 
-  /// 사용자 일정만 (공휴일 제외)
+  /// 사용자 일정만
   List<_Schedule> _getUserSchedulesForDay(DateTime day) {
-    return _getSchedulesForDay(day).where((s) => !s.isHoliday).toList();
+    return _getSchedulesForDay(day);
   }
 
   /// eventLoader용 (TableCalendar에 전달)
@@ -210,6 +233,11 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     bool isOutside = false,
   }) {
     final schedules = isOutside ? <_Schedule>[] : _getSchedulesForDay(day);
+    final holidayName = isOutside ? null : _getHolidayName(day);
+
+    // 공휴일이면 날짜 텍스트를 빨간색으로 (circleBg가 없을 때만)
+    final dayTextColor =
+        (holidayName != null && circleBg == null) ? AppColors.primary : textColor;
 
     return SizedBox(
       height: rowHeight,
@@ -246,13 +274,37 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
-                    color: textColor,
+                    color: dayTextColor,
                   ),
                 ),
               ),
             ),
           const SizedBox(height: 2),
-          ...schedules.take(2).map((s) => _buildEventPill(day, s)),
+          // 공휴일 pill (첫 번째 슬롯)
+          if (holidayName != null)
+            Container(
+              height: 14,
+              margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                color: AppColors.eventHoliday.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                holidayName,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 8,
+                  color: AppColors.eventHoliday,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          // 일반 일정 pill (공휴일이 있으면 1개만, 없으면 2개)
+          ...schedules.take(holidayName != null ? 1 : 2).map((s) => _buildEventPill(day, s)),
         ],
       ),
     );
@@ -567,10 +619,12 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      final allSchedules = _getSchedulesForDay(selectedDay);
                       final userSchedules =
                           _getUserSchedulesForDay(selectedDay);
-                      if (userSchedules.isNotEmpty || allSchedules.isEmpty) {
+                      // 공휴일만 있고 사용자 일정이 없으면 바텀시트 안 띄움
+                      if (userSchedules.isNotEmpty ||
+                          (!_isHoliday(selectedDay) &&
+                              _getSchedulesForDay(selectedDay).isEmpty)) {
                         _showDayDetail(selectedDay);
                       } else {
                         Future.delayed(const Duration(milliseconds: 300), () {
