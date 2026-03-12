@@ -372,24 +372,27 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 ],
                               ),
                               const Spacer(),
-                              GestureDetector(
-                                onTap: _onEditTap,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Text(
-                                    '수정하기',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: AppColors.white,
+                              Material(
+                                color: AppColors.gray50,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  onTap: _onEditTap,
+                                  borderRadius: BorderRadius.circular(20),
+                                  splashColor: AppColors.primary.withValues(alpha: 0.3),
+                                  highlightColor: AppColors.primary.withValues(alpha: 0.15),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    child: Text(
+                                      '수정하기',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                        color: AppColors.gray700,
+                                      ),
                                     ),
                                   ),
                                 ),
