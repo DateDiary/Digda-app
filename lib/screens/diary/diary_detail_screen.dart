@@ -351,7 +351,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '나',
+                                    '김민지',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w600,
@@ -361,7 +361,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                   ),
                                   SizedBox(height: 2),
                                   Text(
-                                    '오후 8:32에 작성',
+                                    '2026.02.08 오후 8:32에 작성',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
