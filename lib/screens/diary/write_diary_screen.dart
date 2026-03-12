@@ -99,30 +99,31 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                         ),
                       ),
                       const Spacer(),
-                      GestureDetector(
-                        onTap: _canSave
-                            ? () => Navigator.of(context).pop()
-                            : null,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _canSave
-                                ? AppColors.primary
-                                : AppColors.gray200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '저장',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: _canSave
-                                  ? AppColors.white
-                                  : AppColors.gray400,
+                      Material(
+                        color: AppColors.gray50,
+                        borderRadius: BorderRadius.circular(8),
+                        child: InkWell(
+                          onTap: _canSave
+                              ? () => Navigator.of(context).pop()
+                              : null,
+                          borderRadius: BorderRadius.circular(8),
+                          splashColor: AppColors.primary.withValues(alpha: 0.3),
+                          highlightColor: AppColors.primary.withValues(alpha: 0.15),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              '저장',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                color: _canSave
+                                    ? AppColors.gray700
+                                    : AppColors.gray400,
+                              ),
                             ),
                           ),
                         ),

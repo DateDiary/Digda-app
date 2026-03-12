@@ -90,17 +90,15 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                       ),
                       const Spacer(),
                       Material(
-                        color: _canSave
-                            ? AppColors.primary
-                            : AppColors.gray200,
+                        color: AppColors.gray50,
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           onTap: _canSave
                               ? () => Navigator.of(context).pop()
                               : null,
                           borderRadius: BorderRadius.circular(8),
-                          splashColor: AppColors.primaryDark.withValues(alpha: 0.3),
-                          highlightColor: AppColors.primaryDark.withValues(alpha: 0.15),
+                          splashColor: AppColors.primary.withValues(alpha: 0.3),
+                          highlightColor: AppColors.primary.withValues(alpha: 0.15),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
@@ -113,7 +111,7 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                                 color: _canSave
-                                    ? AppColors.white
+                                    ? AppColors.gray700
                                     : AppColors.gray400,
                               ),
                             ),
