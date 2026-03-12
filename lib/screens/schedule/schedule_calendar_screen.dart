@@ -72,12 +72,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     });
   }
 
-  /// 해당 날짜가 공휴일인지
-  bool _isHoliday(DateTime day) {
-    final key = DateTime.utc(day.year, day.month, day.day);
-    return _holidays.containsKey(key);
-  }
-
   /// 공휴일 이름
   String? _getHolidayName(DateTime day) {
     final key = DateTime.utc(day.year, day.month, day.day);
@@ -619,18 +613,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
-                      final userSchedules =
-                          _getUserSchedulesForDay(selectedDay);
-                      // 공휴일만 있고 사용자 일정이 없으면 바텀시트 안 띄움
-                      if (userSchedules.isNotEmpty ||
-                          (!_isHoliday(selectedDay) &&
-                              _getSchedulesForDay(selectedDay).isEmpty)) {
-                        _showDayDetail(selectedDay);
-                      } else {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          if (mounted) setState(() => _selectedDay = null);
-                        });
-                      }
+                      _showDayDetail(selectedDay);
                     },
                     onPageChanged: (focusedDay) {
                       setState(() => _focusedDay = focusedDay);
