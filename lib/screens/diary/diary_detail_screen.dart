@@ -467,14 +467,14 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                 ),
               ),
             ),
-            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(bottom: 6),
+            alignment: Alignment.bottomLeft,
             child: Text(
               line,
               style: const TextStyle(
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w400,
                 fontSize: 15,
-                height: 1.3,
                 color: AppColors.gray800,
               ),
             ),
