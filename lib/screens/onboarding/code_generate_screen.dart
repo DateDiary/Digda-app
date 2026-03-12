@@ -36,18 +36,6 @@ class _CodeGenerateScreenState extends State<CodeGenerateScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 상단 닫기 버튼
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.gray700),
-                  onPressed: () => Navigator.of(context)
-                      .pushReplacementNamed('/home'),
-                ),
-              ),
-            ),
             // 코드 영역
             Expanded(
               child: Padding(
