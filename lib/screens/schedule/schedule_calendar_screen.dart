@@ -514,12 +514,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                             color: AppColors.gray700,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 18,
-                          color: AppColors.gray500,
-                        ),
                       ],
                     ),
                   ),
