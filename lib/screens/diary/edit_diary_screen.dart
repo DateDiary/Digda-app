@@ -443,11 +443,14 @@ class _EditDiaryScreenState extends State<EditDiaryScreen> {
   }
 
   Future<void> _showDateChangeDialog() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      lastDate: today,
+      selectableDayPredicate: (day) => !day.isAfter(today),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
