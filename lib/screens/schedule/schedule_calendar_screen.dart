@@ -230,9 +230,9 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     final schedules = isOutside ? <_Schedule>[] : _getSchedulesForDay(day);
     final holidayName = isOutside ? null : _getHolidayName(day);
 
-    // 공휴일이면 날짜 텍스트를 빨간색으로 (circleBg가 없을 때만)
+    // 공휴일이면 날짜 텍스트를 공휴일 색으로 (circleBg가 없을 때만)
     final dayTextColor =
-        (holidayName != null && circleBg == null) ? AppColors.primary : textColor;
+        (holidayName != null && circleBg == null) ? AppColors.eventHoliday : textColor;
 
     return SizedBox(
       height: rowHeight,
@@ -340,7 +340,7 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(4),
         ),
-        alignment: Alignment.centerLeft,
+        alignment: Alignment.center,
         child: Text(
           schedule.title,
           style: TextStyle(
