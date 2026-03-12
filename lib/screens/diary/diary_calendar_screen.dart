@@ -245,6 +245,12 @@ class _DiaryCalendarScreenState extends State<DiaryCalendarScreen> {
                         color: AppColors.primary,
                       ),
                     ),
+                    enabledDayPredicate: (day) {
+                      final now = DateTime.now();
+                      final today = DateTime.utc(now.year, now.month, now.day);
+                      final d = DateTime.utc(day.year, day.month, day.day);
+                      return !d.isAfter(today);
+                    },
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         _selectedDay = selectedDay;
