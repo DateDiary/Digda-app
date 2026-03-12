@@ -380,7 +380,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.gray50,
+                                    color: AppColors.primary,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: const Text(
@@ -389,7 +389,7 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w500,
                                       fontSize: 13,
-                                      color: AppColors.gray700,
+                                      color: AppColors.white,
                                     ),
                                   ),
                                 ),
