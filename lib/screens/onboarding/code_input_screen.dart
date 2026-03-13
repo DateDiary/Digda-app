@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../theme/colors.dart';
 import '../../widgets/primary_button.dart';
 
@@ -104,8 +105,10 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
                         focusNode: _focusNodes[index],
                         maxLength: 1,
                         textAlign: TextAlign.center,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.characters,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         style: const TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,

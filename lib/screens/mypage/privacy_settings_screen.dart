@@ -14,7 +14,7 @@ class PrivacySettingsScreen extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   GestureDetector(
@@ -25,13 +25,13 @@ class PrivacySettingsScreen extends StatelessWidget {
                       color: AppColors.gray900,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 16),
                   const Text(
                     '개인정보 관리',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
-                      fontSize: 17,
+                      fontSize: 20,
                       color: AppColors.gray900,
                     ),
                   ),
@@ -132,8 +132,7 @@ class PrivacySettingsScreen extends StatelessWidget {
                         children: [
                           _buildSecurityRow(
                             label: '로그아웃',
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed('/login'),
+                            onTap: () => _showLogoutDialog(context),
                           ),
                           const Divider(
                               color: AppColors.gray100, height: 1, indent: 16, endIndent: 16),
@@ -141,7 +140,7 @@ class PrivacySettingsScreen extends StatelessWidget {
                             label: '회원 탈퇴',
                             labelColor: AppColors.primaryDark,
                             rowColor: AppColors.primary.withValues(alpha: 0.05),
-                            onTap: () {},
+                            onTap: () => Navigator.of(context).pushNamed('/delete-account'),
                           ),
                         ],
                       ),
@@ -248,6 +247,64 @@ class PrivacySettingsScreen extends StatelessWidget {
               const SizedBox(height: 4),
               badge,
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          '로그아웃',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: const Text(
+          '정말 로그아웃 하시겠어요?',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '취소',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: AppColors.gray500,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+            child: const Text(
+              '로그아웃',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
+              ),
+            ),
           ),
         ],
       ),
