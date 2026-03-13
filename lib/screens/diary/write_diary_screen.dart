@@ -23,6 +23,16 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
   DateTime _selectedDate = DateTime.now();
   bool _dateInitialized = false;
 
+  // Mock: 이미 일기가 있는 날짜 목록
+  final Set<DateTime> _existingDiaryDates = {
+    DateTime.utc(2026, 2, 5),
+    DateTime.utc(2026, 2, 7),
+    DateTime.utc(2026, 2, 8),
+    DateTime.utc(2026, 2, 14),
+    DateTime.utc(2026, 2, 21),
+    DateTime.utc(2026, 2, 22),
+  };
+
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
       _contentController.text.trim().isNotEmpty;
@@ -471,8 +481,56 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
       },
     );
     if (picked != null) {
-      setState(() => _selectedDate = picked);
+      final pickedUtc = DateTime.utc(picked.year, picked.month, picked.day);
+      if (_existingDiaryDates.contains(pickedUtc)) {
+        _showDuplicateDiaryDialog();
+      } else {
+        setState(() => _selectedDate = picked);
+      }
     }
+  }
+
+  void _showDuplicateDiaryDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          '일기가 이미 있어요',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: const Text(
+          '해당 날짜에 이미 작성된 일기가 있어요.\n다른 날짜를 선택해주세요.',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildLinedArea() {
