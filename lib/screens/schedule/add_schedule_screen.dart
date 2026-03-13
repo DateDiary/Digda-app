@@ -125,7 +125,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
-                      fontSize: 17,
+                      fontSize: 20,
                       color: AppColors.gray900,
                     ),
                   ),

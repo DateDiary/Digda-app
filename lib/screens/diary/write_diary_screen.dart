@@ -78,67 +78,59 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── 헤더: < 일기 쓰기(중앙) 저장(우) ──
+            // ── 헤더: < 일기 쓰기 저장(우) ──
             Container(
               color: const Color(0xFFFFFDF5),
-              height: 52,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Stack(
-                alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Row(
                 children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   const Text(
                     '일기 쓰기',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
-                      fontSize: 17,
+                      fontSize: 20,
                       color: AppColors.gray900,
                     ),
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 14,
-                            color: AppColors.gray900,
+                  const Spacer(),
+                  Material(
+                    color: _canSave ? AppColors.primary : AppColors.gray200,
+                    borderRadius: BorderRadius.circular(8),
+                    child: InkWell(
+                      onTap: _canSave
+                          ? () => Navigator.of(context).pop()
+                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      splashColor: AppColors.white.withValues(alpha: 0.3),
+                      highlightColor: AppColors.white.withValues(alpha: 0.15),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        child: Text(
+                          '저장',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: _canSave
+                                ? AppColors.white
+                                : AppColors.gray400,
                           ),
                         ),
                       ),
-                      const Spacer(),
-                      Material(
-                        color: AppColors.gray50,
-                        borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: _canSave
-                              ? () => Navigator.of(context).pop()
-                              : null,
-                          borderRadius: BorderRadius.circular(8),
-                          splashColor: AppColors.primary.withValues(alpha: 0.3),
-                          highlightColor: AppColors.primary.withValues(alpha: 0.15),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 6,
-                            ),
-                            child: Text(
-                              '저장',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                                color: _canSave
-                                    ? AppColors.gray700
-                                    : AppColors.gray400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -573,6 +565,11 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                     height: 2.933,
                     color: AppColors.gray800,
                   ),
+                  strutStyle: const StrutStyle(
+                    fontSize: 15,
+                    height: 2.933,
+                    forceStrutHeight: true,
+                  ),
                   decoration: const InputDecoration(
                     hintText: '오늘의 소중한 순간을 기록해보세요...',
                     hintStyle: TextStyle(
@@ -584,7 +581,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                     ),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.only(top: 12),
+                    contentPadding: EdgeInsets.zero,
                     counterText: '',
                   ),
                   onChanged: (_) => setState(() {}),

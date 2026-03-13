@@ -22,6 +22,8 @@ import 'screens/mypage/notification_settings_screen.dart';
 import 'screens/mypage/privacy_settings_screen.dart';
 import 'screens/notifications/notifications_screen.dart';
 import 'screens/todo/todo_list_screen.dart';
+import 'screens/legal/terms_detail_screen.dart';
+import 'screens/legal/delete_account_screen.dart';
 
 class AppRouter {
   // 탭 전환 시 푸터 애니메이션 없이 즉시 전환
@@ -110,6 +112,14 @@ class AppRouter {
       case '/code-input':
         return MaterialPageRoute(
             settings: settings, builder: (_) => const CodeInputScreen());
+      case '/terms-detail':
+        final type = settings.arguments as String? ?? 'terms';
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => TermsDetailScreen(type: type));
+      case '/delete-account':
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const DeleteAccountScreen());
       default:
         return MaterialPageRoute(
           settings: settings,

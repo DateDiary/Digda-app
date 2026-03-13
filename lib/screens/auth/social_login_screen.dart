@@ -70,12 +70,48 @@ class SocialLoginScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pushNamed('/terms', arguments: 'apple'),
             ),
             const SizedBox(height: 48),
-            Text(
-              '로그인 시 이용약관과 개인정보처리방침에 동의하게 됩니다',
-              style: AppTextStyles.captionLarge.copyWith(
-                color: AppColors.gray400,
-              ),
-              textAlign: TextAlign.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '로그인 시 ',
+                  style: AppTextStyles.captionLarge.copyWith(
+                    color: AppColors.gray400,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pushNamed('/terms-detail', arguments: 'terms'),
+                  child: Text(
+                    '이용약관',
+                    style: AppTextStyles.captionLarge.copyWith(
+                      color: AppColors.gray500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                Text(
+                  '과 ',
+                  style: AppTextStyles.captionLarge.copyWith(
+                    color: AppColors.gray400,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pushNamed('/terms-detail', arguments: 'privacy'),
+                  child: Text(
+                    '개인정보처리방침',
+                    style: AppTextStyles.captionLarge.copyWith(
+                      color: AppColors.gray500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                Text(
+                  '에 동의하게 됩니다',
+                  style: AppTextStyles.captionLarge.copyWith(
+                    color: AppColors.gray400,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 48),
           ],

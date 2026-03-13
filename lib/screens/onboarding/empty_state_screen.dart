@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
@@ -39,22 +40,40 @@ class EmptyStateScreen extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      size: 24,
-                      color: AppColors.gray700,
-                    ),
-                    onPressed: () =>
+                  GestureDetector(
+                    onTap: () =>
                         Navigator.of(context).pushNamed('/notifications'),
+                    child: Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 22,
+                          color: AppColors.gray700,
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.adjust_outlined,
-                      size: 24,
+                  const SizedBox(width: 16),
+                  GestureDetector(
+                    onTap: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
+                    child: const Icon(
+                      Icons.settings_outlined,
+                      size: 22,
                       color: AppColors.gray700,
                     ),
-                    onPressed: () {},
                   ),
                 ],
               ),
@@ -233,8 +252,10 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
                   focusNode: _focusNodes[index],
                   maxLength: 1,
                   textAlign: TextAlign.center,
-                  keyboardType: TextInputType.text,
-                  textCapitalization: TextCapitalization.characters,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
