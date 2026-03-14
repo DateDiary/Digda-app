@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/colors.dart';
-import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/outline_button.dart';
 
@@ -134,7 +133,6 @@ class EmptyStateScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
 }
