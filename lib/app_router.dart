@@ -24,6 +24,7 @@ import 'screens/notifications/notifications_screen.dart';
 import 'screens/todo/todo_list_screen.dart';
 import 'screens/legal/terms_detail_screen.dart';
 import 'screens/legal/delete_account_screen.dart';
+import 'screens/onboarding/app_guide_screen.dart';
 
 class AppRouter {
   // 탭 전환 시 푸터 애니메이션 없이 즉시 전환
@@ -122,6 +123,11 @@ class AppRouter {
       case '/delete-account':
         return MaterialPageRoute(
             settings: settings, builder: (_) => const DeleteAccountScreen());
+      case '/app-guide':
+        final isFromMyPage = settings.arguments as bool? ?? false;
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => AppGuideScreen(isFromMyPage: isFromMyPage));
       default:
         return MaterialPageRoute(
           settings: settings,

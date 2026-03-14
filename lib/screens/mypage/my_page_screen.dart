@@ -118,6 +118,12 @@ class MyPageScreen extends StatelessWidget {
                     _buildSectionLabel('기타'),
                     _buildMenuItem(
                       context,
+                      icon: Icons.menu_book_outlined,
+                      label: '앱 사용 가이드',
+                      onTap: () => Navigator.of(context).pushNamed('/app-guide', arguments: true),
+                    ),
+                    _buildMenuItem(
+                      context,
                       icon: Icons.description_outlined,
                       label: '이용약관',
                       onTap: () => Navigator.of(context).pushNamed('/terms-detail', arguments: 'terms'),
