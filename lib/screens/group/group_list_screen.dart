@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../theme/colors.dart';
 import '../../widgets/group_list_tile.dart';
 
@@ -118,6 +120,15 @@ class GroupListScreen extends StatelessWidget {
     );
   }
 
+  void _showInviteCodeSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _InviteCodeBottomSheet(),
+    );
+  }
+
   Widget _buildGroupContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -136,8 +147,7 @@ class GroupListScreen extends StatelessWidget {
                 showActions: g.showActions,
                 onTap: () => Navigator.of(context).pushNamed('/group-home',
                     arguments: g.name),
-                onShare: () =>
-                    Navigator.of(context).pushNamed('/code-generate'),
+                onShare: () => _showInviteCodeSheet(context),
                 onSettings: () =>
                     Navigator.of(context).pushNamed('/update-diary'),
               ),
@@ -191,4 +201,165 @@ class _GroupData {
     required this.iconColor,
     required this.showActions,
   });
+}
+
+class _InviteCodeBottomSheet extends StatefulWidget {
+  const _InviteCodeBottomSheet();
+
+  @override
+  State<_InviteCodeBottomSheet> createState() => _InviteCodeBottomSheetState();
+}
+
+class _InviteCodeBottomSheetState extends State<_InviteCodeBottomSheet> {
+  final String _generatedCode = 'A3X9K2';
+  bool _copied = false;
+
+  void _copyCode() {
+    Clipboard.setData(ClipboardData(text: _generatedCode));
+    setState(() => _copied = true);
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _copied = false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.fromLTRB(24, 0, 24, bottomPadding + 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.gray200,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            '초대 코드가 생성됐어요!',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              height: 1.3,
+              color: AppColors.gray900,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: Text(
+                _generatedCode,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 36,
+                  letterSpacing: 6,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: _copyCode,
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.gray200),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _copied ? '복사됨' : '코드 복사',
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: AppColors.gray700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Share.share(
+                      'Digda에서 함께 일기를 써요!\n초대 코드: $_generatedCode\n\n앱에서 바로 참여하기 👉 digda://invite?code=$_generatedCode',
+                    );
+                  },
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '공유하기',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Center(
+            child: Text(
+              '상대방이 이 코드를 입력하면 연결돼요',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 13,
+                color: AppColors.gray500,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Center(
+            child: Text(
+              '코드는 24시간 후 만료됩니다',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                color: AppColors.gray400,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

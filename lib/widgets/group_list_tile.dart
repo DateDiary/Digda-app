@@ -93,7 +93,7 @@ class GroupListTile extends StatelessWidget {
               GestureDetector(
                 onTap: onSettings,
                 child: const Icon(
-                  Icons.radio_button_unchecked,
+                  Icons.settings_outlined,
                   size: 20,
                   color: AppColors.gray400,
                 ),
