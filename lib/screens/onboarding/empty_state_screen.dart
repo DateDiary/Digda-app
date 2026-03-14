@@ -165,6 +165,12 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
     super.dispose();
   }
 
+  // 목데이터: 유효한 초대 코드 목록 (나중에 API로 교체)
+  static const _validCodes = {'A3X9K2', 'B7Y2M5', 'C4Z8N1'};
+
+  String get _enteredCode =>
+      _controllers.map((c) => c.text).join();
+
   void _onChanged(String value, int index) {
     if (value.length == 1 && index < _codeLength - 1) {
       _focusNodes[index + 1].requestFocus();
@@ -172,6 +178,60 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
       _focusNodes[index - 1].requestFocus();
     }
     setState(() {});
+  }
+
+  void _onSubmit() {
+    final code = _enteredCode;
+    if (_validCodes.contains(code)) {
+      Navigator.of(context).pop(); // 바텀시트 닫기
+      Navigator.of(context).pushReplacementNamed('/group-home');
+    } else {
+      _showInvalidCodeDialog();
+    }
+  }
+
+  void _showInvalidCodeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          '초대 코드 오류',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: const Text(
+          '유효하지 않은 초대 코드예요.\n코드를 다시 확인해주세요.',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -271,12 +331,7 @@ class _CodeInputBottomSheetState extends State<CodeInputBottomSheet> {
           const SizedBox(height: 32),
           PrimaryButton(
             text: '참여하기',
-            onPressed: _isFilled
-                ? () {
-                    Navigator.of(context).pop(); // 바텀시트 닫기
-                    Navigator.of(context).pushReplacementNamed('/group-home');
-                  }
-                : null,
+            onPressed: _isFilled ? _onSubmit : null,
           ),
         ],
       ),
