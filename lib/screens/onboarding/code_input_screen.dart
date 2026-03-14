@@ -3,7 +3,9 @@ import '../../theme/colors.dart';
 import '../../widgets/primary_button.dart';
 
 class CodeInputScreen extends StatefulWidget {
-  const CodeInputScreen({super.key});
+  final String? initialCode;
+
+  const CodeInputScreen({super.key, this.initialCode});
 
   @override
   State<CodeInputScreen> createState() => _CodeInputScreenState();
@@ -17,6 +19,17 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
       List.generate(_codeLength, (_) => FocusNode());
 
   bool get _isFilled => _controllers.every((c) => c.text.isNotEmpty);
+
+  @override
+  void initState() {
+    super.initState();
+    final code = widget.initialCode;
+    if (code != null && code.length == _codeLength) {
+      for (int i = 0; i < _codeLength; i++) {
+        _controllers[i].text = code[i];
+      }
+    }
+  }
 
   @override
   void dispose() {

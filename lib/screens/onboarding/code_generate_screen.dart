@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../theme/colors.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/outline_button.dart';
@@ -25,7 +26,9 @@ class _CodeGenerateScreenState extends State<CodeGenerateScreen> {
   }
 
   void _shareCode() {
-    // 공유 기능 (추후 구현)
+    Share.share(
+      'Digda에서 함께 일기를 써요!\n초대 코드: $_generatedCode\n\n앱에서 바로 참여하기 👉 digda://invite?code=$_generatedCode',
+    );
   }
 
   @override
