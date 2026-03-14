@@ -88,7 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             fontFamily: 'Inter',
             fontWeight: FontWeight.w400,
             fontSize: 14,
-            color: AppColors.gray600,
+            color: AppColors.gray700,
           ),
         ),
         actions: [

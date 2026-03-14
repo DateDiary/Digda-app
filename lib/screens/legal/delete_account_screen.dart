@@ -34,7 +34,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
             fontWeight: FontWeight.w400,
             fontSize: 14,
             height: 1.5,
-            color: AppColors.gray600,
+            color: AppColors.gray700,
           ),
         ),
         actions: [
