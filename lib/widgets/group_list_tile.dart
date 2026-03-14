@@ -84,9 +84,9 @@ class GroupListTile extends StatelessWidget {
               GestureDetector(
                 onTap: onShare,
                 child: const Icon(
-                  Icons.ios_share_outlined,
-                  size: 20,
-                  color: AppColors.gray400,
+                  Icons.share_outlined,
+                  size: 22,
+                  color: AppColors.gray700,
                 ),
               ),
               const SizedBox(width: 12),
@@ -94,8 +94,8 @@ class GroupListTile extends StatelessWidget {
                 onTap: onSettings,
                 child: const Icon(
                   Icons.settings_outlined,
-                  size: 20,
-                  color: AppColors.gray400,
+                  size: 22,
+                  color: AppColors.gray700,
                 ),
               ),
             ],

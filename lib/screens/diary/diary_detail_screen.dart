@@ -18,57 +18,120 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
 
   void _onDeleteTap() {
     setState(() => _showMenu = false);
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          '일기 삭제',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w700,
-            fontSize: 17,
-            color: AppColors.gray900,
-          ),
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        content: const Text(
-          '이 일기를 삭제하시겠습니까?',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-            color: AppColors.gray700,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              '취소',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.gray200,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.delete_outline_rounded,
+                color: AppColors.primary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '일기를 삭제할까요?',
               style: TextStyle(
                 fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w700,
+                fontSize: 17,
+                color: AppColors.gray900,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              '삭제한 일기는 되돌릴 수 없어요',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
                 fontSize: 14,
                 color: AppColors.gray500,
               ),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              '삭제',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: AppColors.primary,
-              ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.gray200),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        '취소',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: AppColors.gray700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        '삭제',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+          ],
+        ),
       ),
     );
   }
@@ -76,214 +139,262 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: const Color(0xFFFFFDF5),
       body: SafeArea(
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                SizedBox(
+                // ── 헤더 ──
+                Container(
+                  color: const Color(0xFFFFFDF5),
                   height: 52,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              size: 14,
-                              color: AppColors.gray900,
-                            ),
-                          ),
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_rounded,
+                          size: 18,
+                          color: AppColors.gray900,
                         ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () => setState(() => _showMenu = !_showMenu),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Icon(
-                              Icons.more_horiz,
-                              size: 22,
-                              color: AppColors.gray700,
-                            ),
-                          ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () =>
+                            setState(() => _showMenu = !_showMenu),
+                        icon: const Icon(
+                          Icons.more_horiz_rounded,
+                          size: 22,
+                          color: AppColors.gray700,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                // Content
+                // ── 본문 ──
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Date + mood
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: [
-                              const Text(
-                                '2026년 2월 8일 일요일',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
-                                  color: AppColors.gray400,
-                                ),
-                              ),
-                              const Spacer(),
-                              Container(
-                                width: 32,
-                                height: 32,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.gray100,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.wb_sunny_outlined,
-                                  size: 18,
-                                  color: Color(0xFFFBBF24),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.15),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '😊',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Title row
+                        // 날짜 + 제목 + 날씨/기분 + 이미지 카드
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.gray100),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
-                            ),
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // 빨간 상단 라인 (일기장 느낌)
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
+                                height: 3,
                                 decoration: const BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(color: AppColors.gray100),
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  '제목',
+                              ),
+                              // 날짜 + 날씨/기분
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    16, 14, 16, 0),
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      '2026년 2월 8일 일요일',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                        color: AppColors.gray400,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    _buildMiniTag(
+                                      icon: Icons.wb_sunny_outlined,
+                                      iconColor: const Color(0xFFFBBF24),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    _buildMiniTag(emoji: '😊'),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              // 제목
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  '설날 모임',
                                   style: TextStyle(
                                     fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 14,
-                                    color: AppColors.gray400,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 20,
+                                    color: AppColors.gray900,
+                                    letterSpacing: -0.3,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                '설날 모임',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: AppColors.gray900,
+                              const SizedBox(height: 14),
+                              // 이미지
+                              Container(
+                                margin: const EdgeInsets.fromLTRB(
+                                    12, 0, 12, 12),
+                                width: double.infinity,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF5F0),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary
+                                            .withValues(alpha: 0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.photo_rounded,
+                                        size: 24,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      '오늘의 사진',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                        color: AppColors.gray400,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        // Image area
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          height: 180,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.07),
-                            border: Border.all(color: AppColors.gray100),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                            ),
-                          ),
-                          child: Center(
-                            child: Container(
-                              width: 80,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: const Color(0xFFFBBF24),
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.image_outlined,
-                                size: 32,
-                                color: Color(0xFFFBBF24),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Diary content with ruled lines
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _buildRuledText(
-                            '오늘은 설날이라서 친구들이랑 같이 떡국을\n먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n오후에는 영화관에서 영화를 봤는데 너무\n재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n저녁에는 집에 와서 같이 셀카도 찍었다.\n다음에도 이렇게 만나고 싶다!',
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        const Divider(color: AppColors.gray100),
                         const SizedBox(height: 12),
-                        // Author info
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                        // 줄 노트 본문
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              // 빨간 상단 라인 (일기장 느낌)
+                              Container(
+                                height: 3,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    16, 14, 16, 16),
+                                child: _buildRuledText(
+                                  '오늘은 설날이라서 친구들이랑 같이 떡국을\n'
+                                  '먹었다. 아침에 세배도 하고 세뱃돈도 받았다.\n'
+                                  '오후에는 영화관에서 영화를 봤는데 너무\n'
+                                  '재밌었다. 팝콘이랑 콜라 먹으면서 행복했다.\n'
+                                  '저녁에는 집에 와서 같이 셀카도 찍었다.\n'
+                                  '다음에도 이렇게 만나고 싶다!',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // 작성자 정보
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(color: AppColors.gray100),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Row(
                             children: [
                               Container(
-                                width: 28,
-                                height: 28,
+                                width: 36,
+                                height: 36,
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.15),
+                                  color: AppColors.primary
+                                      .withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  Icons.person,
-                                  size: 16,
+                                  Icons.person_rounded,
+                                  size: 18,
                                   color: AppColors.primary,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                '나 · 오후 8:32',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: AppColors.gray400,
+                              const SizedBox(width: 12),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '김민지',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: AppColors.gray900,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    '2026.02.08 오후 8:32에 작성',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: AppColors.gray400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Material(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  onTap: _onEditTap,
+                                  borderRadius: BorderRadius.circular(20),
+                                  splashColor: AppColors.white.withValues(alpha: 0.3),
+                                  highlightColor: AppColors.white.withValues(alpha: 0.15),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 8,
+                                    ),
+                                    child: Text(
+                                      '수정하기',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                        color: AppColors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -296,15 +407,19 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
                 ),
               ],
             ),
-            // Dropdown menu
+            // 드롭다운 메뉴 오버레이
             if (_showMenu) ...[
               GestureDetector(
                 onTap: () => setState(() => _showMenu = false),
-                child: Container(color: Colors.transparent),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.transparent,
+                ),
               ),
               Positioned(
-                top: 44,
-                right: 24,
+                top: 48,
+                right: 16,
                 child: _buildDropdownMenu(),
               ),
             ],
@@ -314,104 +429,121 @@ class _DiaryDetailScreenState extends State<DiaryDetailScreen> {
     );
   }
 
+  Widget _buildMiniTag({
+    IconData? icon,
+    Color? iconColor,
+    String? emoji,
+  }) {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: AppColors.gray50,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: icon != null
+            ? Icon(icon, size: 18, color: iconColor)
+            : Text(emoji!, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+
   Widget _buildRuledText(String text) {
     final lines = text.split('\n');
-    const lineHeight = 36.0;
+    const lineHeight = 44.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines.map((line) {
-        return Container(
-          width: double.infinity,
-          height: lineHeight,
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: AppColors.gray100, width: 1),
+      children: [
+        ...lines.map((line) {
+          return Container(
+            width: double.infinity,
+            height: lineHeight,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.gray100,
+                  width: 1,
+                ),
+              ),
             ),
-          ),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            line,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              color: AppColors.gray800,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              line,
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+                color: AppColors.gray800,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }),
+        // 빈 줄 몇개 추가 (일기장 느낌)
+        ...List.generate(3, (_) {
+          return Container(
+            width: double.infinity,
+            height: lineHeight,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.gray100,
+                  width: 1,
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 
   Widget _buildDropdownMenu() {
-    return Material(
-      elevation: 0,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        width: 140,
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: _onEditTap,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
-                  children: [
-                    Icon(Icons.edit_outlined, size: 18, color: AppColors.gray700),
-                    SizedBox(width: 10),
-                    Text(
-                      '편집',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: AppColors.gray900,
-                      ),
+    return Container(
+      width: 148,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: _onDeleteTap,
+            behavior: HitTestBehavior.opaque,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Icon(Icons.delete_outline_rounded,
+                      size: 18, color: AppColors.primary),
+                  SizedBox(width: 10),
+                  Text(
+                    '삭제',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: AppColors.primary,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            Container(
-              height: 1,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              color: AppColors.gray100,
-            ),
-            GestureDetector(
-              onTap: _onDeleteTap,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_outline, size: 18, color: AppColors.primary),
-                    SizedBox(width: 10),
-                    Text(
-                      '삭제',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

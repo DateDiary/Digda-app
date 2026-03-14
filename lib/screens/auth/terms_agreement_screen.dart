@@ -119,20 +119,43 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
     );
   }
 
+  String? _getDetailType(int index) {
+    switch (index) {
+      case 0:
+        return 'terms';
+      case 1:
+        return 'privacy';
+      case 3:
+        return 'marketing';
+      default:
+        return null;
+    }
+  }
+
   Widget _buildCheckItem(int index, String label, bool isRequired) {
-    return GestureDetector(
-      onTap: () => _toggleItem(index, !_checks[index]),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0),
-        child: Row(
-          children: [
-            Icon(
-              _checks[index] ? Icons.check_box : Icons.check_box_outline_blank,
-              size: 22,
-              color: _checks[index] ? AppColors.primary : AppColors.gray300,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => _toggleItem(index, !_checks[index]),
+            child: Row(
+              children: [
+                Icon(
+                  _checks[index]
+                      ? Icons.check_box
+                      : Icons.check_box_outline_blank,
+                  size: 22,
+                  color:
+                      _checks[index] ? AppColors.primary : AppColors.gray300,
+                ),
+                const SizedBox(width: 12),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _toggleItem(index, !_checks[index]),
               child: Text(
                 label,
                 style: AppTextStyles.bodyMedium.copyWith(
@@ -140,30 +163,39 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: isRequired
-                    ? AppColors.primary.withValues(alpha: 0.1)
-                    : AppColors.gray100,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                isRequired ? '필수' : '선택',
-                style: AppTextStyles.tiny.copyWith(
-                  color: isRequired ? AppColors.primary : AppColors.gray500,
-                ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: isRequired
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : AppColors.gray100,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              isRequired ? '필수' : '선택',
+              style: AppTextStyles.tiny.copyWith(
+                color: isRequired ? AppColors.primary : AppColors.gray500,
               ),
             ),
-            const SizedBox(width: 4),
-            const Icon(
+          ),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () {
+              final type = _getDetailType(index);
+              if (type != null) {
+                Navigator.of(context)
+                    .pushNamed('/terms-detail', arguments: type);
+              }
+            },
+            child: const Icon(
               Icons.chevron_right,
               size: 16,
               color: AppColors.gray400,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

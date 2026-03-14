@@ -29,7 +29,7 @@ class GroupHomeScreen extends StatelessWidget {
           children: [
             // 헤더 - 좌측 뒤로가기 + 그룹명 + 우측 아이콘
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   GestureDetector(
@@ -41,32 +41,33 @@ class GroupHomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    dynamicName,
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
-                      height: 1.3,
-                      color: AppColors.gray900,
+                  Expanded(
+                    child: Text(
+                      dynamicName,
+                      style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        color: AppColors.gray900,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Stack(
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pushNamed('/notifications'),
+                    child: Stack(
                       children: [
                         const Icon(
                           Icons.notifications_outlined,
-                          size: 24,
+                          size: 22,
                           color: AppColors.gray700,
                         ),
                         Positioned(
                           right: 0,
                           top: 0,
                           child: Container(
-                            width: 8,
-                            height: 8,
+                            width: 6,
+                            height: 6,
                             decoration: const BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
@@ -75,17 +76,15 @@ class GroupHomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/notifications'),
                   ),
-                  IconButton(
-                    icon: const Icon(
+                  const SizedBox(width: 16),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pushNamed('/my-page'),
+                    child: const Icon(
                       Icons.settings_outlined,
-                      size: 24,
+                      size: 22,
                       color: AppColors.gray700,
                     ),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/my-page'),
                   ),
                 ],
               ),

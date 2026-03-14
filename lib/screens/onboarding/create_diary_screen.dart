@@ -120,7 +120,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
           children: [
             // 헤더
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 children: [
                   GestureDetector(
@@ -138,7 +138,6 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
                       fontSize: 20,
-                      height: 1.3,
                       color: AppColors.gray900,
                     ),
                   ),

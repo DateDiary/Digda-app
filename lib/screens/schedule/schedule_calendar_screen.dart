@@ -1,7 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:world_holidays/world_holidays.dart';
 import '../../theme/colors.dart';
 import '../../widgets/app_bottom_nav_bar.dart';
+
+class _Schedule {
+  final String title;
+  final Color color;
+  final DateTime start;
+  final DateTime end;
+  final String? time;
+
+  const _Schedule({
+    required this.title,
+    required this.color,
+    required this.start,
+    DateTime? end,
+    this.time,
+  }) : end = end ?? start;
+
+  bool get isMultiDay =>
+      start.year != end.year ||
+      start.month != end.month ||
+      start.day != end.day;
+
+  bool coversDay(DateTime day) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    final s = DateTime.utc(start.year, start.month, start.day);
+    final e = DateTime.utc(end.year, end.month, end.day);
+    return !d.isBefore(s) && !d.isAfter(e);
+  }
+
+  bool isStartDay(DateTime day) => isSameDay(start, day);
+  bool isEndDay(DateTime day) => isSameDay(end, day);
+}
 
 class ScheduleCalendarScreen extends StatefulWidget {
   const ScheduleCalendarScreen({super.key});
@@ -15,79 +47,164 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  final Map<DateTime, List<Map<String, dynamic>>> _events = {
-    DateTime.utc(2026, 2, 1): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 5): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 7): [
-      {'title': '출근 일찍', 'color': AppColors.primary},
-      {'title': '카페로 데이트', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 8): [
-      {'title': '야근', 'color': AppColors.primary, 'time': '종일'},
-      {
-        'title': '출근 늦게',
-        'color': AppColors.purple,
-        'time': '오후 2:00 - 5:00'
-      },
-    ],
-    DateTime.utc(2026, 2, 14): [
-      {'title': '출근 늦게', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 16): [
-      {'title': '설날연휴', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 17): [
-      {'title': '설날', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 18): [
-      {'title': '설날연휴', 'color': AppColors.primary},
-      {'title': '영화보기', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 2, 20): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 22): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 26): [
-      {'title': '야근', 'color': AppColors.primary},
-    ],
-    DateTime.utc(2026, 2, 28): [
-      {'title': '출근 일찍', 'color': AppColors.primary},
-      {'title': '부랄 저녁', 'color': AppColors.purple},
-    ],
-    DateTime.utc(2026, 3, 1): [
-      {'title': '삼일절', 'color': AppColors.eventHoliday, 'isHoliday': true},
-    ],
-    DateTime.utc(2026, 3, 2): [
-      {'title': '대체휴일', 'color': AppColors.eventHoliday, 'isHoliday': true},
-    ],
-  };
+  /// 공휴일 맵: 날짜(utc normalized) → 공휴일명
+  final Map<DateTime, String> _holidays = {};
 
-  List<Map<String, dynamic>> _getEventsForDay(DateTime day) {
-    return _events[DateTime.utc(day.year, day.month, day.day)] ?? [];
+  @override
+  void initState() {
+    super.initState();
+    _loadHolidays();
   }
 
-  // 사용자 일정만 (공휴일 제외)
-  List<Map<String, dynamic>> _getUserEventsForDay(DateTime day) {
-    return _getEventsForDay(day)
-        .where((e) => e['isHoliday'] != true)
-        .toList();
+  Future<void> _loadHolidays() async {
+    final wh = WorldHolidays();
+    // 2024~2026 한국 공휴일 로드
+    final holidays = await wh.getHolidays('KR');
+    if (!mounted) return;
+    setState(() {
+      for (final h in holidays) {
+        // national만 (기념일 제외, 법정 공휴일만)
+        if (h.type == HolidayType.national) {
+          final key = DateTime.utc(h.date.year, h.date.month, h.date.day);
+          _holidays[key] = h.descriptionKo ?? h.name;
+        }
+      }
+    });
+  }
+
+  /// 공휴일 이름
+  String? _getHolidayName(DateTime day) {
+    final key = DateTime.utc(day.year, day.month, day.day);
+    return _holidays[key];
+  }
+
+  // 일정 데이터 — start/end로 다일 이벤트 지원
+  final List<_Schedule> _schedules = [
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 1),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 5),
+    ),
+    _Schedule(
+      title: '출근 일찍',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 7),
+    ),
+    _Schedule(
+      title: '카페로 데이트',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 7),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 8),
+      time: '종일',
+    ),
+    _Schedule(
+      title: '출근 늦게',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 8),
+      time: '오후 2:00 - 5:00',
+    ),
+    _Schedule(
+      title: '출근 늦게',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 14),
+    ),
+    // 설날연휴는 world_holidays에서 자동 로드
+    _Schedule(
+      title: '영화보기',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 18),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 20),
+    ),
+    // 출장 — 2일
+    _Schedule(
+      title: '제주 출장',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 22),
+      end: DateTime.utc(2026, 2, 23),
+    ),
+    _Schedule(
+      title: '야근',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 26),
+    ),
+    _Schedule(
+      title: '출근 일찍',
+      color: AppColors.primary,
+      start: DateTime.utc(2026, 2, 28),
+    ),
+    _Schedule(
+      title: '부랄 저녁',
+      color: AppColors.purple,
+      start: DateTime.utc(2026, 2, 28),
+    ),
+    // 삼일절은 world_holidays에서 자동 로드
+  ];
+
+  /// 해당 날짜에 걸치는 모든 일정
+  List<_Schedule> _getSchedulesForDay(DateTime day) {
+    return _schedules.where((s) => s.coversDay(day)).toList();
+  }
+
+  /// 사용자 일정만
+  List<_Schedule> _getUserSchedulesForDay(DateTime day) {
+    return _getSchedulesForDay(day);
+  }
+
+  /// eventLoader용 (TableCalendar에 전달)
+  List<dynamic> _eventLoader(DateTime day) {
+    return _getSchedulesForDay(day);
+  }
+
+  void _showMonthPicker() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _focusedDay,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030, 12, 31),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.gray900,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _focusedDay = picked;
+        _selectedDay = null;
+      });
+    }
   }
 
   void _showDayDetail(DateTime day) {
-    final userEvents = _getUserEventsForDay(day);
+    final userSchedules = _getUserSchedulesForDay(day);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _DayDetailBottomSheet(
         day: day,
-        events: userEvents,
+        schedules: userSchedules,
         onAddSchedule: () {
           Navigator.of(context).pop();
           Navigator.of(context).pushNamed('/add-schedule');
@@ -104,17 +221,24 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
   Widget _buildDayCell(
     DateTime day,
-    List<Map<String, dynamic>> events,
-    double rowHeight, {
+    double rowHeight,
+    double cellWidth, {
     Color? circleBg,
     required Color textColor,
+    bool isOutside = false,
   }) {
+    final schedules = isOutside ? <_Schedule>[] : _getSchedulesForDay(day);
+    final holidayName = isOutside ? null : _getHolidayName(day);
+
+    // 공휴일이면 날짜 텍스트를 공휴일 색으로 (circleBg가 없을 때만)
+    final dayTextColor =
+        (holidayName != null && circleBg == null) ? AppColors.eventHoliday : textColor;
+
     return SizedBox(
       height: rowHeight,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           if (circleBg != null)
             Container(
               width: 24,
@@ -145,23 +269,131 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
                     fontSize: 13,
-                    color: textColor,
+                    color: dayTextColor,
                   ),
                 ),
               ),
             ),
-          // 이벤트 마커 - 숫자 바로 아래 밀착
-          ...events.take(2).map((event) {
-            final color = event['color'] as Color;
-            return Container(
+          const SizedBox(height: 2),
+          // 공휴일 pill (첫 번째 슬롯)
+          if (holidayName != null)
+            Container(
+              height: 14,
               margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              padding: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
+                color: AppColors.eventHoliday.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4),
               ),
+              alignment: Alignment.center,
               child: Text(
-                event['title'] as String,
+                holidayName,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 8,
+                  color: AppColors.eventHoliday,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          // 일반 일정 pill (공휴일이 있으면 1개만, 없으면 2개)
+          ...schedules.take(holidayName != null ? 1 : 2).map((s) => _buildEventPill(day, s, cellWidth)),
+        ],
+      ),
+    );
+  }
+
+  /// 현재 주(row) 내에서 이벤트가 차지하는 셀 수와 시작 오프셋 계산
+  ({int span, int offsetFromStart}) _rowSpanInfo(DateTime day, _Schedule schedule) {
+    final d = DateTime.utc(day.year, day.month, day.day);
+    final s = DateTime.utc(schedule.start.year, schedule.start.month, schedule.start.day);
+    final e = DateTime.utc(schedule.end.year, schedule.end.month, schedule.end.day);
+
+    // 이번 주 일요일~토요일
+    final rowSunday = d.subtract(Duration(days: d.weekday % 7));
+    final rowSaturday = rowSunday.add(const Duration(days: 6));
+
+    // 이번 주 내 실제 보이는 구간
+    final visStart = s.isAfter(rowSunday) ? s : rowSunday;
+    final visEnd = e.isBefore(rowSaturday) ? e : rowSaturday;
+
+    final span = visEnd.difference(visStart).inDays + 1; // 셀 수
+    final offsetFromStart = d.difference(visStart).inDays; // 현재 셀이 구간 시작에서 몇 번째
+    return (span: span, offsetFromStart: offsetFromStart);
+  }
+
+  Widget _buildEventPill(DateTime day, _Schedule schedule, double cellWidth) {
+    final color = schedule.color;
+    final isStart = schedule.isStartDay(day);
+    final isEnd = schedule.isEndDay(day);
+    final isMulti = schedule.isMultiDay;
+
+    // 단일 일정 — 둥근 pill
+    if (!isMulti) {
+      return Container(
+        height: 14,
+        margin: const EdgeInsets.only(top: 1, left: 2, right: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          schedule.title,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 8,
+            color: color,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      );
+    }
+
+    // 다일 일정 — 연결 바
+    final isRowStart = day.weekday == DateTime.sunday;
+    final isRowEnd = day.weekday == DateTime.saturday;
+
+    final roundLeft = isStart || isRowStart;
+    final roundRight = isEnd || isRowEnd;
+
+    final info = _rowSpanInfo(day, schedule);
+
+    // 배경 바 (모든 셀에 그려짐)
+    final barDecoration = BoxDecoration(
+      color: color.withValues(alpha: 0.15),
+      borderRadius: BorderRadius.horizontal(
+        left: roundLeft ? const Radius.circular(4) : Radius.zero,
+        right: roundRight ? const Radius.circular(4) : Radius.zero,
+      ),
+    );
+
+    // 시작 셀에서만 전체 span 너비의 텍스트를 overflow로 렌더링
+    final isVisibleStart = isStart || isRowStart;
+    if (isVisibleStart) {
+      // 전체 바 너비 = 셀 너비 × span - 좌우 margin 보정
+      final totalBarWidth = cellWidth * info.span - (roundLeft ? 2 : 0) - (roundRight ? 2 : 0);
+      return Container(
+        height: 14,
+        margin: EdgeInsets.only(
+          top: 1,
+          left: roundLeft ? 2 : 0,
+          right: roundRight ? 2 : 0,
+        ),
+        decoration: barDecoration,
+        child: OverflowBox(
+          maxWidth: totalBarWidth,
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: totalBarWidth,
+            child: Center(
+              child: Text(
+                schedule.title,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w400,
@@ -171,10 +403,21 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-            );
-          }),
-        ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 나머지 셀 — 배경만
+    return Container(
+      height: 14,
+      margin: EdgeInsets.only(
+        top: 1,
+        left: roundLeft ? 2 : 0,
+        right: roundRight ? 2 : 0,
       ),
+      decoration: barDecoration,
     );
   }
 
@@ -258,13 +501,20 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    '${_focusedDay.year}년 ${_focusedDay.month}월',
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                      color: AppColors.gray700,
+                  GestureDetector(
+                    onTap: () => _showMonthPicker(),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${_focusedDay.year}년 ${_focusedDay.month}월',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: AppColors.gray700,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -290,13 +540,15 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 builder: (context, constraints) {
                   final rowHeight =
                       ((constraints.maxHeight - 28) / 6).clamp(64.0, 100.0);
+                  final cellWidth = constraints.maxWidth / 7;
                   return TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: _focusedDay,
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
                     selectedDayPredicate: (day) =>
                         isSameDay(_selectedDay, day),
-                    eventLoader: _getEventsForDay,
+                    eventLoader: _eventLoader,
                     calendarFormat: CalendarFormat.month,
                     headerVisible: false,
                     daysOfWeekHeight: 24,
@@ -339,8 +591,8 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                       markersMaxCount: 2,
                       cellAlignment: Alignment.topCenter,
-                      cellMargin: EdgeInsets.all(1),
-                      cellPadding: EdgeInsets.only(top: 4),
+                      cellMargin: EdgeInsets.zero,
+                      cellPadding: EdgeInsets.zero,
                     ),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
@@ -357,53 +609,46 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       ),
                     ),
                     calendarBuilders: CalendarBuilders(
-                      // 기본 날짜 - 숫자 + 이벤트 밀착
                       defaultBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         final isWeekend =
                             day.weekday == DateTime.saturday ||
                             day.weekday == DateTime.sunday;
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
+                          cellWidth,
                           textColor: isWeekend
                               ? AppColors.primary
                               : AppColors.gray900,
                         );
                       },
-                      // 오늘 날짜 - 검은 원 + 이벤트 밀착
                       todayBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
+                          cellWidth,
                           circleBg: AppColors.black,
                           textColor: AppColors.white,
                         );
                       },
-                      // 선택된 날짜 - 빨간 원 + 이벤트 밀착
                       selectedBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
                         return _buildDayCell(
                           day,
-                          events,
                           rowHeight,
+                          cellWidth,
                           circleBg: AppColors.primary,
                           textColor: AppColors.white,
                         );
                       },
-                      // 이전/다음 달 날짜
                       outsideBuilder: (context, day, focusedDay) {
                         return _buildDayCell(
                           day,
-                          [],
                           rowHeight,
+                          cellWidth,
                           textColor: AppColors.gray300,
+                          isOutside: true,
                         );
                       },
-                      // markerBuilder 비활성 - defaultBuilder에서 직접 렌더
                       markerBuilder: (context, day, events) {
                         return const SizedBox.shrink();
                       },
@@ -425,7 +670,6 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           ],
         ),
       ),
-      // FAB - 왼쪽 위 대각선으로 이동, 크기 확대
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 60, right: 20),
         child: SizedBox(
@@ -448,13 +692,13 @@ class _ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
 
 class _DayDetailBottomSheet extends StatelessWidget {
   final DateTime day;
-  final List<Map<String, dynamic>> events;
+  final List<_Schedule> schedules;
   final VoidCallback onAddSchedule;
   final VoidCallback onScheduleTap;
 
   const _DayDetailBottomSheet({
     required this.day,
-    required this.events,
+    required this.schedules,
     required this.onAddSchedule,
     required this.onScheduleTap,
   });
@@ -509,7 +753,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '일정 ${events.length}개',
+                          '일정 ${schedules.length}개',
                           style: const TextStyle(
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,
@@ -541,19 +785,26 @@ class _DayDetailBottomSheet extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: events.isEmpty
+                child: schedules.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
                         controller: scrollController,
                         padding: EdgeInsets.only(
                           left: 24,
                           right: 24,
-                          bottom: MediaQuery.of(context).padding.bottom + 16,
+                          bottom:
+                              MediaQuery.of(context).padding.bottom + 16,
                         ),
-                        itemCount: events.length,
+                        itemCount: schedules.length,
                         itemBuilder: (context, index) {
-                          final event = events[index];
-                          final color = event['color'] as Color;
+                          final schedule = schedules[index];
+                          final color = schedule.color;
+                          // 다일 일정이면 날짜 범위 표시
+                          String timeText = schedule.time ?? '종일';
+                          if (schedule.isMultiDay) {
+                            timeText =
+                                '${schedule.start.month}/${schedule.start.day} - ${schedule.end.month}/${schedule.end.day}';
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: GestureDetector(
@@ -582,8 +833,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            event['time'] as String? ??
-                                                '종일',
+                                            timeText,
                                             style: TextStyle(
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w400,
@@ -593,7 +843,7 @@ class _DayDetailBottomSheet extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            event['title'] as String,
+                                            schedule.title,
                                             style: const TextStyle(
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w700,

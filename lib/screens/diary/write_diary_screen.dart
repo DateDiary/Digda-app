@@ -14,13 +14,40 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
+  static const int _maxTitleLength = 20;
+  static const int _maxContentLength = 300;
+
   int _selectedWeather = 0;
   int _selectedMood = 1;
   File? _pickedImage;
+  DateTime _selectedDate = DateTime.now();
+  bool _dateInitialized = false;
+
+  // Mock: 이미 일기가 있는 날짜 목록
+  final Set<DateTime> _existingDiaryDates = {
+    DateTime.utc(2026, 2, 5),
+    DateTime.utc(2026, 2, 7),
+    DateTime.utc(2026, 2, 8),
+    DateTime.utc(2026, 2, 14),
+    DateTime.utc(2026, 2, 21),
+    DateTime.utc(2026, 2, 22),
+  };
 
   bool get _canSave =>
       _titleController.text.trim().isNotEmpty &&
       _contentController.text.trim().isNotEmpty;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_dateInitialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is DateTime) {
+        _selectedDate = args;
+      }
+      _dateInitialized = true;
+    }
+  }
 
   final List<_WeatherOption> _weatherOptions = const [
     _WeatherOption(icon: Icons.wb_sunny_outlined, color: Color(0xFFFBBF24)),
@@ -51,66 +78,59 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── 헤더: < 일기 쓰기(중앙) 저장(우) ──
+            // ── 헤더: < 일기 쓰기 저장(우) ──
             Container(
               color: const Color(0xFFFFFDF5),
-              height: 52,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Stack(
-                alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Row(
                 children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   const Text(
                     '일기 쓰기',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
-                      fontSize: 17,
+                      fontSize: 20,
                       color: AppColors.gray900,
                     ),
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 14,
-                            color: AppColors.gray900,
-                          ),
+                  const Spacer(),
+                  Material(
+                    color: _canSave ? AppColors.primary : AppColors.gray200,
+                    borderRadius: BorderRadius.circular(8),
+                    child: InkWell(
+                      onTap: _canSave
+                          ? () => Navigator.of(context).pop()
+                          : null,
+                      borderRadius: BorderRadius.circular(8),
+                      splashColor: AppColors.white.withValues(alpha: 0.3),
+                      highlightColor: AppColors.white.withValues(alpha: 0.15),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
                         ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: _canSave
-                            ? () => Navigator.of(context).pop()
-                            : null,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
+                        child: Text(
+                          '저장',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
                             color: _canSave
-                                ? AppColors.primary
-                                : AppColors.gray200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '저장',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: _canSave
-                                  ? AppColors.white
-                                  : AppColors.gray400,
-                            ),
+                                ? AppColors.white
+                                : AppColors.gray400,
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -218,17 +238,30 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 날짜
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                            child: Text(
-                              _formatDate(DateTime.now()),
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                color: AppColors.gray400,
+                          // 날짜 (클릭하여 변경)
+                          GestureDetector(
+                            onTap: () => _showDateChangeDialog(),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    _formatDate(_selectedDate),
+                                    style: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 13,
+                                      color: AppColors.gray400,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(
+                                    Icons.edit_calendar_outlined,
+                                    size: 14,
+                                    color: AppColors.gray400,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -263,22 +296,30 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _titleController,
+                                  maxLength: _maxTitleLength,
                                   style: const TextStyle(
                                     fontFamily: 'Inter',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
                                     color: AppColors.gray900,
                                   ),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: '제목을 입력하세요',
-                                    hintStyle: TextStyle(
+                                    hintStyle: const TextStyle(
                                       fontFamily: 'Inter',
                                       fontSize: 14,
                                       color: AppColors.gray300,
                                     ),
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 14,
+                                    ),
+                                    counterText:
+                                        '${_titleController.text.length}/$_maxTitleLength',
+                                    counterStyle: const TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 11,
+                                      color: AppColors.gray400,
                                     ),
                                   ),
                                   onChanged: (_) => setState(() {}),
@@ -411,49 +452,153 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
     );
   }
 
-  Widget _buildLinedArea() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: Stack(
-        children: [
-          Column(
-            children: List.generate(
-              12,
-              (i) => Container(
-                height: 44,
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.gray100, width: 1),
-                  ),
-                ),
+  Future<void> _showDateChangeDialog() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.gray900,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      final pickedUtc = DateTime.utc(picked.year, picked.month, picked.day);
+      if (_existingDiaryDates.contains(pickedUtc)) {
+        _showDuplicateDiaryDialog();
+      } else {
+        setState(() => _selectedDate = picked);
+      }
+    }
+  }
+
+  void _showDuplicateDiaryDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          '일기가 이미 있어요',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: const Text(
+          '해당 날짜에 이미 작성된 일기가 있어요.\n다른 날짜를 선택해주세요.',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
               ),
             ),
           ),
-          TextField(
-            controller: _contentController,
-            maxLines: null,
-            minLines: 12,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              height: 2.93,
-              color: AppColors.gray800,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLinedArea() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border.all(color: AppColors.gray100),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+            child: Stack(
+              children: [
+                Column(
+                  children: List.generate(
+                    12,
+                    (i) => Container(
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.gray100, width: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: _contentController,
+                  maxLength: _maxContentLength,
+                  maxLines: null,
+                  minLines: 12,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    height: 2.933,
+                    color: AppColors.gray800,
+                  ),
+                  strutStyle: const StrutStyle(
+                    fontSize: 15,
+                    height: 2.933,
+                    forceStrutHeight: true,
+                  ),
+                  decoration: const InputDecoration(
+                    hintText: '오늘의 소중한 순간을 기록해보세요...',
+                    hintStyle: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      height: 2.933,
+                      color: AppColors.gray300,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    counterText: '',
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ],
             ),
-            decoration: const InputDecoration(
-              hintText: '오늘의 소중한 순간을 기록해보세요...',
-              hintStyle: TextStyle(
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 4, 16, 12),
+            child: Text(
+              '${_contentController.text.length}/$_maxContentLength',
+              style: const TextStyle(
                 fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 15,
-                height: 2.93,
-                color: AppColors.gray300,
+                fontSize: 11,
+                color: AppColors.gray400,
               ),
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             ),
-            onChanged: (_) => setState(() {}),
           ),
         ],
       ),

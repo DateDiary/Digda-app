@@ -187,30 +187,25 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
             Column(
               children: [
                 // Header
-                SizedBox(
-                  height: 52,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     child: Row(
                       children: [
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              size: 14,
-                              color: AppColors.gray900,
-                            ),
+                          child: const Icon(
+                            Icons.arrow_back_ios,
+                            size: 14,
+                            color: AppColors.gray900,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         const Text(
                           '일정 상세',
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontSize: 20,
                             color: AppColors.gray900,
                           ),
                         ),
@@ -229,7 +224,6 @@ class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
                         ),
                       ],
                     ),
-                  ),
                 ),
                 // Content
                 Expanded(

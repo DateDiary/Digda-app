@@ -17,12 +17,22 @@ dependencies:
   table_calendar: ^3.1.0
   flutter_svg: ^2.0.10+1
   image_picker: ^1.1.2
+  world_holidays: ^2.0.1
   share_plus: ^10.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/digda_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/digda_icon.png"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
