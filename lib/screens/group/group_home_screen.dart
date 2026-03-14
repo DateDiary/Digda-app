@@ -89,7 +89,6 @@ class GroupHomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              ),
             ),
             Expanded(
               child: SingleChildScrollView(
