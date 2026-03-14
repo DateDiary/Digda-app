@@ -74,6 +74,9 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                           if (widget.loginType == 'naver') {
                             Navigator.of(context)
                                 .pushReplacementNamed('/group-list');
+                          } else if (widget.loginType == 'apple') {
+                            Navigator.of(context)
+                                .pushReplacementNamed('/app-guide');
                           } else {
                             Navigator.of(context)
                                 .pushReplacementNamed('/home');

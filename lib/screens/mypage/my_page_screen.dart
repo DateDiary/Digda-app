@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/colors.dart';
+import '../onboarding/empty_state_screen.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({super.key});
@@ -115,6 +116,12 @@ class MyPageScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     // 기타 section
                     _buildSectionLabel('기타'),
+                    _buildMenuItem(
+                      context,
+                      icon: Icons.menu_book_outlined,
+                      label: '앱 사용 가이드',
+                      onTap: () => Navigator.of(context).pushNamed('/app-guide', arguments: true),
+                    ),
                     _buildMenuItem(
                       context,
                       icon: Icons.description_outlined,

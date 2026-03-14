@@ -17,9 +17,20 @@ class GroupHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // S3-Group_List에서 전달된 그룹 이름 동적으로 받기
-    final dynamicName =
-        ModalRoute.of(context)?.settings.arguments as String? ?? groupName;
+    // S3-Group_List에서 전달된 그룹 정보 동적으로 받기
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final String dynamicName;
+    final int memberCount;
+    if (args is Map<String, dynamic>) {
+      dynamicName = args['name'] as String? ?? groupName;
+      memberCount = args['members'] as int? ?? 7;
+    } else if (args is String) {
+      dynamicName = args;
+      memberCount = 7;
+    } else {
+      dynamicName = groupName;
+      memberCount = 7;
+    }
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -96,7 +107,7 @@ class GroupHomeScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 16),
                     // 멤버 아바타
-                    _buildMemberSection(),
+                    _buildMemberSection(memberCount),
                     // 버튼을 아래로 이동 - 여백 증가
                     const SizedBox(height: 60),
                     // 기능 카드들
@@ -191,10 +202,9 @@ class GroupHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberSection() {
-    const totalMembers = 7;
-    const displayCount = 4;
-    const extraCount = totalMembers - displayCount;
+  Widget _buildMemberSection(int totalMembers) {
+    final displayCount = totalMembers > 4 ? 4 : totalMembers;
+    final extraCount = totalMembers - displayCount;
 
     return Column(
       children: [
@@ -202,8 +212,10 @@ class GroupHomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ...List.generate(displayCount, (i) => _buildAvatar(i)),
-            const SizedBox(width: 8),
-            _buildExtraAvatar(extraCount),
+            if (extraCount > 0) ...[
+              const SizedBox(width: 8),
+              _buildExtraAvatar(extraCount),
+            ],
           ],
         ),
         const SizedBox(height: 10),
@@ -213,9 +225,9 @@ class GroupHomeScreen extends StatelessWidget {
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Text(
-            '7명 참여 중',
-            style: TextStyle(
+          child: Text(
+            '$totalMembers명 참여 중',
+            style: const TextStyle(
               fontFamily: 'Inter',
               fontWeight: FontWeight.w500,
               fontSize: 12,
