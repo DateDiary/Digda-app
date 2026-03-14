@@ -7,7 +7,7 @@ class PrivacySettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.gray50,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,15 +50,8 @@ class PrivacySettingsScreen extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.gray50,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                       ),
                       child: Column(
                         children: [
@@ -153,15 +146,8 @@ class PrivacySettingsScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.gray50,
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
                       ),
                       child: Column(
                         children: [
@@ -196,15 +182,8 @@ class PrivacySettingsScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.gray50,
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
                       ),
                       child: Column(
                         children: [
