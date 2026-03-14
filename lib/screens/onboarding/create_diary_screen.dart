@@ -21,6 +21,9 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
 
   File? _pickedImage;
 
+  // 목데이터: 현재 참여 중인 멤버 수 (나중에 API로 교체)
+  static const int _currentMemberCount = 7;
+
   bool get _canCreate => _nameController.text.trim().isNotEmpty;
 
   @override
@@ -45,9 +48,67 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
   }
 
   void _decrement() {
+    if (widget.isEdit && _maxMembers - 1 < _currentMemberCount) {
+      _showMemberLimitDialog();
+      return;
+    }
     setState(() {
       if (_maxMembers > 2) _maxMembers--;
     });
+  }
+
+  void _setMaxMembers(int value) {
+    if (widget.isEdit && value < _currentMemberCount) {
+      _showMemberLimitDialog();
+      return;
+    }
+    setState(() {
+      _maxMembers = value;
+    });
+  }
+
+  void _showMemberLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text(
+          '인원 변경 불가',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            color: AppColors.gray900,
+          ),
+        ),
+        content: Text(
+          '현재 $_currentMemberCount명이 참여 중이에요.\n참여 인원보다 적게 설정할 수 없어요.',
+          style: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: AppColors.gray700,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -362,9 +423,7 @@ class _CreateDiaryScreenState extends State<CreateDiaryScreen> {
                           padding: const EdgeInsets.only(right: 8),
                           child: GestureDetector(
                             onTap: () {
-                              setState(() {
-                                _maxMembers = preset ?? 99;
-                              });
+                              _setMaxMembers(preset ?? 99);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
