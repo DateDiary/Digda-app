@@ -15,7 +15,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
   DateTime _endDate = DateTime.now();
   TimeOfDay _startTime = const TimeOfDay(hour: 14, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 17, minute: 0);
-  Color _selectedColor = AppColors.categoryRed;
+  Color _selectedColor = AppColors.primary;
 
   final List<Map<String, dynamic>> _allParticipants = [
     {
@@ -54,11 +54,11 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
       _allParticipants.where((p) => p['selected'] as bool).length;
 
   final List<Color> _colorOptions = [
-    AppColors.categoryRed,
-    AppColors.categoryPurple,
-    AppColors.categoryBlue,
-    AppColors.categoryGreen,
-    AppColors.categoryYellow,
+    AppColors.primary,
+    AppColors.purple,
+    AppColors.blue,
+    AppColors.green,
+    const Color(0xFFFBBF24),
   ];
 
   bool get _canSave => _titleController.text.trim().isNotEmpty;
@@ -318,7 +318,7 @@ class _AddScheduleScreenState extends State<AddScheduleScreen> {
                     : null,
               ),
               child: isSelected
-                  ? const Icon(Icons.check, size: 18, color: AppColors.gray900)
+                  ? const Icon(Icons.check, size: 18, color: AppColors.white)
                   : null,
             ),
           );
