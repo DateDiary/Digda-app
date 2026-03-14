@@ -110,8 +110,10 @@ class AppRouter {
         return MaterialPageRoute(
             settings: settings, builder: (_) => const TodoListScreen());
       case '/code-input':
+        final code = settings.arguments as String?;
         return MaterialPageRoute(
-            settings: settings, builder: (_) => const CodeInputScreen());
+            settings: settings,
+            builder: (_) => CodeInputScreen(initialCode: code));
       case '/terms-detail':
         final type = settings.arguments as String? ?? 'terms';
         return MaterialPageRoute(
