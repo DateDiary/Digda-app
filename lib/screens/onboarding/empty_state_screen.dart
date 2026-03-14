@@ -50,11 +50,12 @@ class EmptyStateScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(
-                      Icons.adjust_outlined,
+                      Icons.settings_outlined,
                       size: 24,
                       color: AppColors.gray700,
                     ),
-                    onPressed: () {},
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
                   ),
                 ],
               ),

@@ -54,7 +54,7 @@ class GroupListScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   const Text(
-                    '내 그룹',
+                    '내 다이어리',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
