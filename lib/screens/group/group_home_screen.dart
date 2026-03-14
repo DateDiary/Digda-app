@@ -27,86 +27,68 @@ class GroupHomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // 헤더 - 좌측 뒤로가기 + 그룹명(정중앙) + 우측 아이콘
-            SizedBox(
-              height: 52,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // 좌측: 뒤로가기
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                          size: 14,
-                          color: AppColors.gray900,
-                        ),
-                      ),
+            // 헤더 - 좌측 뒤로가기 + 그룹명 + 우측 아이콘
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 14,
+                      color: AppColors.gray900,
                     ),
-                    // 중앙: 그룹명
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 60),
-                      child: Text(
-                        dynamicName,
-                        style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
-                          height: 1.3,
-                          color: AppColors.gray900,
-                        ),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    dynamicName,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      height: 1.3,
+                      color: AppColors.gray900,
                     ),
-                    // 우측: 알림 + 설정
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pushNamed('/notifications'),
-                            child: Stack(
-                              children: [
-                                const Icon(
-                                  Icons.notifications_outlined,
-                                  size: 22,
-                                  color: AppColors.gray700,
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Stack(
+                      children: [
+                        const Icon(
+                          Icons.notifications_outlined,
+                          size: 24,
+                          color: AppColors.gray700,
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pushNamed('/my-page'),
-                            child: const Icon(
-                              Icons.settings_outlined,
-                              size: 22,
-                              color: AppColors.gray700,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/notifications'),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.settings_outlined,
+                      size: 24,
+                      color: AppColors.gray700,
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/my-page'),
+                  ),
+                ],
+              ),
               ),
             ),
             Expanded(
