@@ -438,7 +438,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                                   )
                                 : SizedBox(
                                     width: double.infinity,
-                                    height: 160,
+                                    height: 200,
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -602,7 +602,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
               children: [
                 Column(
                   children: List.generate(
-                    12,
+                    13,
                     (i) => Container(
                       height: 44,
                       decoration: const BoxDecoration(
@@ -641,7 +641,7 @@ class _WriteDiaryScreenState extends State<WriteDiaryScreen> {
                     ),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: EdgeInsets.only(top: 14),
                     counterText: '',
                   ),
                   onChanged: (_) => setState(() {}),
